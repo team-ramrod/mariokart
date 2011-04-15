@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
-<project name="" company="" manager="" phase="" project-start="20110415T000000Z" mrproject-version="2" calendar="1">
+<project name="Autonomous Go-Kart" company="University of Canterbury" manager="Andrew Bainbridge-Smith" phase="Design" project-start="20110404T000000Z" mrproject-version="2" calendar="1">
   <properties/>
-  <phases/>
+  <phases>
+    <phase name="Design"/>
+    <phase name="Build"/>
+  </phases>
   <calendars>
     <day-types>
       <day-type id="0" name="Working" description="A default working day"/>
@@ -9,17 +12,83 @@
       <day-type id="2" name="Use base" description="Use day from base calendar"/>
     </day-types>
     <calendar id="1" name="Default">
-      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
       <overridden-day-types>
         <overridden-day-type id="0">
-          <interval start="0800" end="1200"/>
-          <interval start="1300" end="1700"/>
+          <interval start="1000" end="1200"/>
+          <interval start="1300" end="1400"/>
         </overridden-day-type>
       </overridden-day-types>
       <days/>
     </calendar>
   </calendars>
-  <tasks/>
+  <tasks>
+    <task id="1" name="Autonomous Go-Kart" note="" work="2602800" start="20110404T000000Z" end="20110812T000000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="2" name="Assessment: Specification Report" note="" work="0" start="20110509T000000Z" end="20110509T000000Z" work-start="20110509T100000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20110509T000000Z"/>
+      </task>
+      <task id="3" name="Design phase" note="" work="1026000" start="20110404T000000Z" end="20110607T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="4" name="System Diagrams" note="" work="378000" start="20110404T000000Z" end="20110508T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="5" name="Parts List" note="" work="270000" start="20110508T140000Z" end="20110602T140000Z" work-start="20110509T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="4" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="6" name="Servo Selection" note="" work="162000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="7" name="Servo Mount Design" note="" work="162000" start="20110418T140000Z" end="20110503T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="6" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="8" name="Costing" note="" work="54000" start="20110602T140000Z" end="20110607T140000Z" work-start="20110603T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="7" type="FS"/>
+            <predecessor id="1" predecessor-id="6" type="FS"/>
+            <predecessor id="1" predecessor-id="5" type="FS"/>
+          </predecessors>
+        </task>
+      </task>
+      <task id="9" name="Autonomous Hardware" note="" work="324000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="9" priority="0" type="normal" scheduling="fixed-work">
+        <task id="10" name="Sensors" note="" work="162000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="11" name="Control interface" note="" work="162000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      </task>
+      <task id="12" name="Build Hardware" note="" work="162000" start="20110621T140000Z" end="20110703T140000Z" work-start="20110622T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="3" type="FS"/>
+        </predecessors>
+        <task id="13" name="Mechanical Hardware" note="" work="108000" start="20110621T140000Z" end="20110701T140000Z" work-start="20110622T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="15" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="14" name="Electronics Hardware" note="" work="54000" start="20110628T140000Z" end="20110703T140000Z" work-start="20110629T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="16" type="FS"/>
+          </predecessors>
+        </task>
+      </task>
+      <task id="15" name="Order Servos" note="" work="151200" start="20110607T140000Z" end="20110621T140000Z" work-start="20110608T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="8" type="FS"/>
+        </predecessors>
+      </task>
+      <task id="16" name="Order Electronics" note="" work="226800" start="20110607T140000Z" end="20110628T140000Z" work-start="20110608T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="8" type="FS"/>
+        </predecessors>
+      </task>
+      <task id="17" name="Software Devel" note="" work="712800" start="20110418T140000Z" end="20110602T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="9" type="FS"/>
+        </predecessors>
+        <task id="18" name="Automation Software" note="" work="486000" start="20110418T140000Z" end="20110602T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="19" name="Control Software" note="" work="226800" start="20110418T140000Z" end="20110509T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      </task>
+      <task id="20" name="Deadline for new jobs in the workshop" note="" work="0" start="20110812T000000Z" end="20110812T000000Z" work-start="20110812T100000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20110812T000000Z"/>
+      </task>
+    </task>
+  </tasks>
   <resource-groups/>
   <resources/>
   <allocations/>
