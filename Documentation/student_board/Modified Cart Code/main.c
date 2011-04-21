@@ -1,4 +1,3 @@
-// ENEL 436
 // Go Cart
 // Karl van Workum
 
