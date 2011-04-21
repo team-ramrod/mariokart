@@ -1,0 +1,1 @@
+%windir%\System32\cmd.exe /k V:\MSTdev\WinAVR\20071221\set-path.bat

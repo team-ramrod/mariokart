@@ -1,0 +1,964 @@
+begin 0190
+-i190
+-iS1200
+DEVICENAME = AT90S1200(A)
+FLASHSIZE = 512
+EEPROMSIZE = 64
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK =
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES =
+READ_FUSES =
+FUSES_MESSAGE =
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0191
+-i191
+-iS2313
+DEVICENAME = AT90S2313
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK =
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES =
+READ_FUSES =
+FUSES_MESSAGE =
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0193
+-i193
+-iS8515
+DEVICENAME = AT90S8515
+FLASHSIZE = 4096
+EEPROMSIZE = 512
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK =
+WRITE_LOCK = hlhl hhll hhhx x21x xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES =
+READ_FUSES =
+FUSES_MESSAGE =
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0192
+-i192
+-iS4414
+DEVICENAME = AT90S4414
+FLASHSIZE = 2048
+EEPROMSIZE = 256
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK =
+WRITE_LOCK = hlhl hhll hhhx x21x xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES =
+READ_FUSES =
+FUSES_MESSAGE =
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0291
+-i291
+-iS2323
+DEVICENAME = AT90S2323
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = 
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhh hhhF xxxx xxxx xxxx xxxx
+READ_FUSES = lhlh hlll xxxx xxxx xxxx xxxx 12Sx xxxF
+FUSES_MESSAGE = 11xccccx - no lock
+FUSES_MESSAGE = 01xccccx - write protected
+FUSES_MESSAGE = 00xccccx - read/write protected
+FUSES_MESSAGE = xx0ccccx - serial programming enabled
+FUSES_MESSAGE = xxxcccc0 - FSTRT reset delay, datasheet p22
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0292
+-i292
+-iS4434
+DEVICENAME = AT90S4434
+FLASHSIZE = 2048
+EEPROMSIZE = 256
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = 
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhh hhhF xxxx xxxx xxxx xxxx
+READ_FUSES = lhlh hlll xxxx xxxx xxxx xxxx 12Sx xxxF
+FUSES_MESSAGE = 11xccccx - no lock
+FUSES_MESSAGE = 01xccccx - write protected
+FUSES_MESSAGE = 00xccccx - read/write protected
+FUSES_MESSAGE = xx0ccccx - serial programming enabled
+FUSES_MESSAGE = xxxcccc0 - FSTRT reset delay, datasheet p20
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0393
+-i393
+-iS8535
+DEVICENAME = AT90S8535
+FLASHSIZE = 4096
+EEPROMSIZE = 512
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = 
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhh hhhF xxxx xxxx xxxx xxxx
+READ_FUSES = lhlh hlll xxxx xxxx xxxx xxxx 12Sx xxxF
+FUSES_MESSAGE = 11xccccx - no lock
+FUSES_MESSAGE = 01xccccx - write protected
+FUSES_MESSAGE = 00xccccx - read/write protected
+FUSES_MESSAGE = xx0ccccx - serial programming enabled
+FUSES_MESSAGE = xxxcccc0 - FSTRT reset delay, datasheet p20
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0391
+-i391
+-iS2343
+DEVICENAME = AT90S2343 or Tiny22
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = 
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhh hhhR xxxx xxxx xxxx xxxx
+READ_FUSES = lhlh hlll xxxx xxxx xxxx xxxx 12Sx xxxR
+FUSES_MESSAGE = 11xccccx - no lock
+FUSES_MESSAGE = 01xccccx - write protected
+FUSES_MESSAGE = 00xccccx - read/write protected
+FUSES_MESSAGE = xx0ccccx - serial programming enabled
+FUSES_MESSAGE = xxxcccc0 - internal RC clock enabled
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0691
+-i691
+-iT22
+DEVICENAME = ATtiny22L
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = 
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES =
+READ_FUSES = lhlh hlll xxxx xxxx xxxx xxxx 12Sx xxxl
+FUSES_MESSAGE = 11xccccx - no lock
+FUSES_MESSAGE = 01xccccx - write protected
+FUSES_MESSAGE = 00xccccx - read/write protected
+FUSES_MESSAGE = xx0ccccx - serial programming enabled
+FUSES_MESSAGE = xxxcccc0 - internal RC clock enabled
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0591
+-i591
+-iS2333
+DEVICENAME = AT90S2333
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = lhlh hlll xxxx xxxx xxxx xxxx xxxx x21x
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlh7 6543 xxxx xxxx xxxx xxxx
+READ_FUSES = lhlh llll xxxx xxxx xxxx xxxx xx87 6543
+FUSES_MESSAGE = 0xxxxx - serial programming enabled
+FUSES_MESSAGE = x0xxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = xx0xxx - brownout detection enabled
+FUSES_MESSAGE = xxxCKS - reset delay select (datasheet p20)
+FUSES_MESSAGE = NOTE: (re)enabling brownout detection
+FUSES_MESSAGE = often causes the 2333 to hang. In that
+FUSES_MESSAGE = case power must be switched off and back 
+FUSES_MESSAGE = on again before programming can continue.
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0392
+-i392
+-iS4433
+DEVICENAME = AT90S4433
+FLASHSIZE = 2048
+EEPROMSIZE = 256
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = lhlh hlll xxxx xxxx xxxx xxxx xxxx x21x
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlh7 6543 xxxx xxxx xxxx xxxx
+READ_FUSES = lhlh llll xxxx xxxx xxxx xxxx xx87 6543
+FUSES_MESSAGE = 0xxxxx - serial programming enabled
+FUSES_MESSAGE = x0xxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = xx0xxx - brownout detection enabled
+FUSES_MESSAGE = xxxCKS - reset delay select (datasheet p20)
+FUSES_MESSAGE = NOTE: (re)enabling brownout detection
+FUSES_MESSAGE = often causes the 4433 to hang. In that
+FUSES_MESSAGE = case power must be switched off and back 
+FUSES_MESSAGE = on again before programming can continue.
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0590
+-i590
+-iT12
+DEVICENAME = ATtiny12
+FLASHSIZE = 512
+EEPROMSIZE = 64
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = lhlh hlll xxxx xxxx xxxx xxxx xxxx x21x
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhx xxxx xxxx xxxx A9lh 6543
+READ_FUSES = lhlh llll xxxx xxxx xxxx xxxx A987 6543
+FUSES_MESSAGE = 0x01xxxx - BODLEVEL 2.7V (alternative 1.8V datasheet p22 p20)
+FUSES_MESSAGE = x001xxxx - brownout detection enabled
+FUSES_MESSAGE = xx01CKSL - clock and delay (datasheet p5 p20)
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES =
+READ_EXTD_FUSES =
+EXTD_FUSES_MESSAGE =
+READ_CALIBRATION = llhh hlll xxxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (datasheet p45)
+
+begin 0690
+-i690
+-iT15
+DEVICENAME = ATtiny15L
+FLASHSIZE = 512
+EEPROMSIZE = 64
+PAGEMODE = 0
+PAGESIZE =
+READ_LOCK = lhlh hlll xxxx xxxx xxxx xxxx xxxx x21x
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhx xxxx xxxx xxxx 87lh hh43
+READ_FUSES = lhlh llll xxxx xxxx xxxx xxxx 8765 xx43
+FUSES_MESSAGE = 0x0111xx - BODLEVEL 4V (alternative 2.7V)
+FUSES_MESSAGE = x00111xx - brownout detection enabled
+FUSES_MESSAGE = xx0111CK - reset delay select (datasheet p15)
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION = llhh hlll xxxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (datasheet p55)
+
+begin 0991
+-i991
+-iT26
+DEVICENAME = ATtiny26
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 1
+PAGESIZE = 16
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxxx xxoo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhhh hhii
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+FUSES_MESSAGE = 0xxxxxxx - PLLCK - Use PLL for internal clock
+FUSES_MESSAGE = x0xxxxxx - Enable internal XTAL caps 36pF (datasheet p29)
+FUSES_MESSAGE = xxSUxxxx - start-up time (page 29)
+FUSES_MESSAGE = xxxxCKSE - CKSEL (datasheet p27,28)
+FUSES_MESSAGE = xxxx0001 - CKSEL (default 0001 - 1MHz sys clock internal)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx xxxh liii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx xxxx xooo
+HIGH_FUSES_MESSAGE = 0xx - EEPROM preserved in chip erase
+HIGH_FUSES_MESSAGE = x1x - BODLEVEL 2.7V (alternative 4V)
+HIGH_FUSES_MESSAGE = xx0 - BrownOut detection disabled
+HIGH_FUSES_MESSAGE = Note: RSTDISBL 1, SPIEN 0     
+WRITE_EXTD_FUSES =
+READ_EXTD_FUSES =
+EXTD_FUSES_MESSAGE =
+READ_CALIBRATION = llhh hlll xxxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = Four Calibration Bytes available -- 1, 2, 4, 8MHz (p31 p108)
+CALIB_MESSAGE = Current Calibration Byte for 1MHz
+
+begin 0A91
+-iA91
+-iT2313
+DEVICENAME = ATtiny2313
+FLASHSIZE = 1024
+EEPROMSIZE = 128
+PAGEMODE = 1
+PAGESIZE = 16
+POLL_RDY_BSY = hhhh llll llll llll xxxx xxxx xxxx xxxo
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+FUSES_MESSAGE = 0xxxxxxx - CKDIV8 - divide clock by 8 (page 22)
+FUSES_MESSAGE = x0xxxxxx - CKOUT output clock on pin D2
+FUSES_MESSAGE = xxSUxxxx - start-up time (datasheet page 24)
+FUSES_MESSAGE = xxxxCKSE - CKSEL (datasheet page 22-24)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hili iiih
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxxx - debugWire enabled
+HIGH_FUSES_MESSAGE = x0xxxxxx - EEPROM preserved in chip erase
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - WDT always on (page 41)
+HIGH_FUSES_MESSAGE = xxxxBODx - BODLEVEL (page 34)
+HIGH_FUSES_MESSAGE = xxxxxxx1 - reset-pin enabled (page 52)
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx xxxx xxxi
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxxxxxx0 - self-programming enabled
+READ_CALIBRATION = llhh hlll lllx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (page 24, 25, 159)
+
+begin 0790
+-i790
+-iT13
+DEVICENAME = ATtiny13
+FLASHSIZE = 512
+EEPROMSIZE = 64
+PAGEMODE = 1
+PAGESIZE = 16
+POLL_RDY_BSY = hhhh llll llll llll xxxx xxxx xxxx xxxo
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx liii iiii
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+FUSES_MESSAGE = 0xxxxxxx - serial programming enabled
+FUSES_MESSAGE = x0xxxxxx - EEPROM preserved in chip erase
+FUSES_MESSAGE = xx0xxxxx - WDT always on (datasheet page 37, 101)
+FUSES_MESSAGE = xxx0xxxx - CKDIV8 - divide clock by 8 (page 24, 101)
+FUSES_MESSAGE = xxxxSUxx - start-up time (datasheet page 22, 101)
+FUSES_MESSAGE = xxxxxxCK - CKSEL (page 22, 101)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hhhi hiih
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx xxxo oooo
+HIGH_FUSES_MESSAGE = xxx0xxxx - self-programming enabled
+HIGH_FUSES_MESSAGE = xxxx0xxx - debugWire enabled
+HIGH_FUSES_MESSAGE = xxxxxBDx - BODLEVEL (page 32, 101)
+HIGH_FUSES_MESSAGE = xxxxxxx0 - reset-pin disabled (page 49, 101)
+WRITE_EXTD_FUSES =
+READ_EXTD_FUSES =
+EXTD_FUSES_MESSAGE =
+READ_CALIBRATION = llhh hlll lllx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (page 22, 23, 101)
+
+begin 0197
+begin 0101
+-i197
+-iM103
+DEVICENAME = ATmega103
+FLASHSIZE = 65536
+EEPROMSIZE = 4096
+PAGEMODE = 1
+PAGESIZE = 128
+READ_LOCK = lhlh hlll xxxx xxxx xxxx xxxx xxxx x21x
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+READ_FUSES = lhlh llll xxxx xxxx xxxx xxxx xx5x 6h43
+WRITE_FUSES = hlhl hhll hlhh 6h43 xxxx xxxx xxxx xxxx
+FUSES_MESSAGE = 01x1xx - serial programming enabled
+FUSES_MESSAGE = x101xx - 'chip erase' does not erase eeprom
+FUSES_MESSAGE = x1x1SU - start-up delay, datasheet p23
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0196
+-i196
+-iM603
+DEVICENAME = ATmega603
+FLASHSIZE = 32768
+EEPROMSIZE = 2048
+PAGEMODE = 1
+PAGESIZE = 128
+READ_LOCK = lhlh hlll xxxx xxxx xxxx xxxx xxxx x21x
+WRITE_LOCK = hlhl hhll hhhh h21h xxxx xxxx xxxx xxxx
+LOCK_MESSAGE = 11 - no lock
+LOCK_MESSAGE = 10 - write protected
+LOCK_MESSAGE = 00 - read/write protected
+READ_FUSES = lhlh llll xxxx xxxx xxxx xxxx xx5x 6h43
+WRITE_FUSES = hlhl hhll hlhh 6h43 xxxx xxxx xxxx xxxx
+FUSES_MESSAGE = 01x1xx - serial programming enabled
+FUSES_MESSAGE = x101xx - 'chip erase' does not erase eeprom
+FUSES_MESSAGE = x1x1SU - start-up delay, datasheet p23
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0194
+-i194
+-iM161
+DEVICENAME = ATmega161
+FLASHSIZE = 8192
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+READ_LOCK = lhlh hlll llll llll xxxx lxxx xx65 4321
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hh65 4321
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p116
+READ_FUSES = lhlh llll llll llll xxxx xxxx xDCB h987
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx hDhB h987
+FUSES_MESSAGE = 0cxcxxx - Boot reset address 0x1E00
+FUSES_MESSAGE = xcScCKS - reset delay select, datasheet p26
+WRITE_HIGH_FUSES =
+READ_HIGH_FUSES =
+HIGH_FUSES_MESSAGE =
+HIGH_FUSES_MESSAGE =
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =
+CALIB_MESSAGE =
+
+begin 0494
+-i494
+-iM162
+DEVICENAME = ATmega162
+FLASHSIZE = 8192
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock (datasheet page 218, 229)
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - CKDIV8 - divide clock by 8 (page 40)
+FUSES_MESSAGE = x0xxxxxx - CKOUT output clock on pin B0
+FUSES_MESSAGE = xxSUxxxx - start-up time (datasheet page 36-38)
+FUSES_MESSAGE = xxxxCKSE - CKSEL (page 35-37)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx iili iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxxx - Enable OCD (note 3, page 231)
+HIGH_FUSES_MESSAGE = x0xxxxxx - Enable JTAG (page 195)
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled 
+HIGH_FUSES_MESSAGE = xxx0xxxx - WDT always on (page 50)
+HIGH_FUSES_MESSAGE = xxxx0xxx - EEPROM preserved in chip erase
+HIGH_FUSES_MESSAGE = xxxxxBZx - Boot Size (datasheet page 227)
+HIGH_FUSES_MESSAGE = xxxxxxx0 - Select Reset Vector (page 219)
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx hhhi iiih
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxx0xxxx - ATmega161 compatibility mode (page 5)
+EXTD_FUSES_MESSAGE = xxxxBODx - BODLEVEL (datasheet page 8)
+READ_CALIBRATION = llhh hlll llxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (page 37, 38, 232)
+
+begin 0294
+-i294
+-iM163
+DEVICENAME = ATmega163
+FLASHSIZE = 8192
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+READ_LOCK = lhlh hlll llll llll xxxx lxxx xx65 4321
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hh65 4321
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p123
+READ_FUSES = lhlh llll llll llll xxxx xxxx CBxx A987
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx CBhh A987
+FUSES_MESSAGE = 0x11xxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = x011xxxx - brownout detection enabled
+FUSES_MESSAGE = xx11CKSE - clock and reset select, datasheet p5 p25
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hhhh hFED
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx xxxx hFED
+HIGH_FUSES_MESSAGE = BZx - BootSZ, datasheet p134
+HIGH_FUSES_MESSAGE = xx0 - Boot reset at flash, default address zero
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION = llhh hlll xxxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (datasheet p37 p144)
+
+begin 0694
+-i694
+-iM168
+DEVICENAME = ATmega168
+FLASHSIZE = 8192
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+POLL_RDY_BSY = hhhh llll llll llll xxxx xxxx xxxx xxxo
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock (datasheet page 259, 270)
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - CKDIV8 - divide clock by 8 (page 33, 273)
+FUSES_MESSAGE = x0xxxxxx - CKOUT output clock on pin B0
+FUSES_MESSAGE = xxSUxxxx - start-up time (datasheet page 27, 29-32, 273)
+FUSES_MESSAGE = xxxxCKSE - CKSEL (page 25, 27, 29, 273)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hhli iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxxx - reset-pin disabled (page 73, 273)
+HIGH_FUSES_MESSAGE = x0xxxxxx - debugWire enabled
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - WDT always on (page 39, 273)
+HIGH_FUSES_MESSAGE = xxxx0xxx - EEPROM preserved in chip erase
+HIGH_FUSES_MESSAGE = xxxxxBOD - BODLEVEL (datasheet page 43, 273)
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx xxxx xiii
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxxxxBZx - boot size (page 268, 269, 272)
+EXTD_FUSES_MESSAGE = xxxxxxx0 - reset at boot loader (page 13, 271, 272)
+READ_CALIBRATION = llhh hlll lllx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (datasheet page 30, 274)
+
+begin 0693
+-i693
+-iM8515
+DEVICENAME =ATmega8515
+FLASHSIZE = 4096
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE =32
+READ_LOCK =  lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock, datasheet p177
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p177
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - BODLEVEL 4V (default 2.7V, datasheet p45 p179)
+FUSES_MESSAGE = x0xxxxxx - BODEN Brown-out detection enabled
+FUSES_MESSAGE = xxSUxxxx - SUT Select startup time p38
+FUSES_MESSAGE = xxxxCKSE - CKSEL Select Clock source p34
+READ_HIGH_FUSES =lhlh hlll llll hlll xxxx xxxx oooo oooo
+WRITE_HIGH_FUSES =hlhl hhll hlhl hlll xxxx xxxx iili iiii
+HIGH_FUSES_MESSAGE = 0xxxxxxx - S8515C AT90S4414/8515 compatibility mode
+HIGH_FUSES_MESSAGE = x0xxxxxx - WDTON Watchdog Timer always on
+HIGH_FUSES_MESSAGE = xx0xxxxx - SPIEN serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - CKOPT Oscillator options p34
+HIGH_FUSES_MESSAGE = xxxx0xxx - EESAVE EEPROM is preserved through Chip Erase
+HIGH_FUSES_MESSAGE = xxxxxBZx - BOOTSZ Select Boot Size p175
+HIGH_FUSES_MESSAGE = xxxxxxx0 - BOOTRST Select Reset Vector p167
+WRITE_EXTD_FUSES =
+READ_EXTD_FUSES =
+EXTD_FUSES_MESSAGE =
+READ_CALIBRATION =llhh hlll llxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes, datasheet p179 p38
+
+begin 0893
+-i893
+-iM8535
+DEVICENAME =ATmega8535
+FLASHSIZE = 4096
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 32
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock, datasheet p234
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p234
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - BODLEVEL 4V (default 2.7V, datasheet p35 p236)
+FUSES_MESSAGE = x0xxxxxx - brownout detection enabled
+FUSES_MESSAGE = xxSUxxxx - reset delay, datasheet p28
+FUSES_MESSAGE = xxxxCKSE - clock select, datasheet p23
+READ_HIGH_FUSES =lhlh hlll llll hlll xxxx xxxx oooo oooo
+WRITE_HIGH_FUSES =hlhl hhll hlhl hlll xxxx xxxx iili iiii
+HIGH_FUSES_MESSAGE = 0xxxxxxx - S8535 compatible mode
+HIGH_FUSES_MESSAGE = x0xxxxxx - WDT always on
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - CKOPT max, datasheet p23
+HIGH_FUSES_MESSAGE = xxxx0xxx - eeprom not erased
+HIGH_FUSES_MESSAGE = xxxxxBZx - boot size, datasheet p232
+HIGH_FUSES_MESSAGE = xxxxxxx0 - reset at boot loader, p221
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION =llhh hlll llxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes, datasheet p236 p28
+
+begin 0793
+-i793
+-iM8
+DEVICENAME = ATmega8
+FLASHSIZE = 4096
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 32
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p116
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = x0xxxxxx - brownout detection enabled
+FUSES_MESSAGE = xxSUxxxx - reset delay, datasheet p28
+FUSES_MESSAGE = xxxxCKSE - clock select, datasheet p24
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hili iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx xooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxx - WDT always on
+HIGH_FUSES_MESSAGE = x0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xx0xxxx - CKOPT max, datasheet p24
+HIGH_FUSES_MESSAGE = xxx0xxx - eeprom not erased
+HIGH_FUSES_MESSAGE = xxxxBZx - boot size, datasheet p215
+HIGH_FUSES_MESSAGE = xxxxxx0 - reset at boot loader, p204
+HIGH_FUSES_MESSAGE = Note: RSTDISBL is 1
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION = llhh hlll llxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes (datasheet p28 p29 p218)
+
+begin 0394
+-i394
+-iM16
+DEVICENAME = ATmega16
+FLASHSIZE = 8192
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p254
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = x0xxxxxx - brownout detection enabled
+FUSES_MESSAGE = xxSUxxxx - reset delay, datasheet p25
+FUSES_MESSAGE = xxxxCKSE - clock select, datasheet p23
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hili iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 1xxxxxxx - Disable OCD (See note 4 p.260)
+HIGH_FUSES_MESSAGE = x0xxxxxx - Enable JTAG
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - CKOPT max, datasheet p27
+HIGH_FUSES_MESSAGE = xxxx0xxx - eeprom not erased
+HIGH_FUSES_MESSAGE = xxxxxBZx - boot size, datasheet p252
+HIGH_FUSES_MESSAGE = xxxxxxx0 - reset at boot loader, p255
+WRITE_EXTD_FUSES = 
+READ_EXTD_FUSES = 
+EXTD_FUSES_MESSAGE = 
+READ_CALIBRATION = llhh hlll llxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes (datasheet p27 p28 p256)
+
+begin 0594
+-i594
+-iM169
+DEVICENAME = ATmega169
+FLASHSIZE = 8192
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p254
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - Divide clock by 8
+FUSES_MESSAGE = x0xxxxxx - clock output enabled
+FUSES_MESSAGE = xxSUxxxx - reset delay, datasheet p25
+FUSES_MESSAGE = xxxxCKSE - clock select, datasheet p23
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hili iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 1xxxxxxx - Disable OCD (See note 4 p.260)
+HIGH_FUSES_MESSAGE = x0xxxxxx - Enable JTAG
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - WDT always on
+HIGH_FUSES_MESSAGE = xxxx0xxx - eeprom not erased
+HIGH_FUSES_MESSAGE = xxxxxBZx - boot size, datasheet p252
+HIGH_FUSES_MESSAGE = xxxxxxx0 - reset at boot loader, p255
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx hhhi iiih
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxxxBODx - BODLEVEL
+READ_CALIBRATION = llhh hlll lllx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes (datasheet p27 p28 p256)
+
+begin 0295
+-i295
+-iM32
+DEVICENAME = ATmega32
+FLASHSIZE = 16384
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 64
+READ_LOCK = lhlh hlll llll llll xxxx lxxx xx65 4321
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hh65 4321
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p254
+READ_FUSES = lhlh llll llll llll xxxx xxxx EDCB A987
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx EDCB A987
+FUSES_MESSAGE = 0xxxxxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = x0xxxxxx - brownout detection enabled
+FUSES_MESSAGE = xxSUxxxx - startup time, p25ff
+FUSES_MESSAGE = xxxxCKSE - clock select, p23ff
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx MLKJ IHGF
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx MLKJ IHGF
+HIGH_FUSES_MESSAGE = 0xxxxxxx - OCDEN 1:OCD disabled
+HIGH_FUSES_MESSAGE = x0xxxxxx - JTAGEN 1:JTAG disabled
+HIGH_FUSES_MESSAGE = xx0xxxxx - SPIEN 1: disabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - CKOPT, p24
+HIGH_FUSES_MESSAGE = xxxx0xxx - 0:EESAVE 1:EE erase
+HIGH_FUSES_MESSAGE = xxxxxBZx - BootSZ
+HIGH_FUSES_MESSAGE = xxxxxxx0 - Boot reset 1:0000 0:Bootblock reset
+WRITE_EXTD_FUSES =
+READ_EXTD_FUSES =
+EXTD_FUSES_MESSAGE =
+READ_CALIBRATION = llhh hlll xxxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes
+
+begin 0592
+-i592
+-iM48
+DEVICENAME = ATmega48
+FLASHSIZE = 2048
+EEPROMSIZE = 256
+PAGEMODE = 1
+PAGESIZE = 32
+POLL_RDY_BSY = hhhh llll llll llll xxxx xxxx xxxx xxxo
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - CKDIV8 - divide clock by 8 (page 33, 273)
+FUSES_MESSAGE = x0xxxxxx - CKOUT output clock on pin B0
+FUSES_MESSAGE = xxSUxxxx - start-up time (datasheet page 27, 29-32, 273)
+FUSES_MESSAGE = xxxxCKSE - CKSEL (page 25, 27, 29, 273)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hhli iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxxx - reset-pin disabled (page 73, 273)
+HIGH_FUSES_MESSAGE = x0xxxxxx - debugWire enabled
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - WDT always on (page 39, 273)
+HIGH_FUSES_MESSAGE = xxxx0xxx - EEPROM preserved in chip erase
+HIGH_FUSES_MESSAGE = xxxxxBOD - BODLEVEL (datasheet page 43, 273)
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx xxxx xxxi
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxxxxxx0 - self-programming enabled
+READ_CALIBRATION = llhh hlll lllx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (datasheet page 30, 274)
+
+begin 0A93
+-iA93
+-iM88
+DEVICENAME = ATmega88
+FLASHSIZE = 4096
+EEPROMSIZE = 512
+PAGEMODE = 1
+PAGESIZE = 32
+POLL_RDY_BSY = hhhh llll llll llll xxxx xxxx xxxx xxxo
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock (datasheet page 259, 270)
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - CKDIV8 - divide clock by 8 (page 33, 273)
+FUSES_MESSAGE = x0xxxxxx - CKOUT output clock on pin B0
+FUSES_MESSAGE = xxSUxxxx - start-up time (datasheet page 27, 29-32, 273)
+FUSES_MESSAGE = xxxxCKSE - CKSEL (page 25, 27, 29, 273)
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx hhli iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxxx - reset-pin disabled (page 73, 273)
+HIGH_FUSES_MESSAGE = x0xxxxxx - debugWire enabled
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - WDT always on (page 39, 273)
+HIGH_FUSES_MESSAGE = xxxx0xxx - EEPROM preserved in chip erase
+HIGH_FUSES_MESSAGE = xxxxxBOD - BODLEVEL (datasheet page 43, 273)
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx xxxx xiii
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxxxxBZx - boot size (page 268, 269, 272)
+EXTD_FUSES_MESSAGE = xxxxxxx0 - reset at boot loader (page 13, 271, 272)
+READ_CALIBRATION = llhh hlll lllx xxxx llll llll oooo oooo
+CALIB_MESSAGE = single calibration byte (datasheet page 30, 274)
+
+begin 0297
+-i297
+-iM128
+DEVICENAME = ATmega128
+FLASHSIZE = 65536
+EEPROMSIZE = 4096
+PAGEMODE = 1
+PAGESIZE = 128
+READ_LOCK = lhlh hlll llll llll xxxx xxxx xxoo oooo
+WRITE_LOCK = hlhl hhll hhhx xxxx xxxx xxxx hhii iiii
+LOCK_MESSAGE = xxxx11 - no lock
+LOCK_MESSAGE = xxxx10 - write protected
+LOCK_MESSAGE = xxxx00 - read/write protected
+LOCK_MESSAGE = BTLKxx - Boot lock, datasheet p282
+READ_FUSES = lhlh llll llll llll xxxx xxxx oooo oooo
+WRITE_FUSES = hlhl hhll hlhl llll xxxx xxxx iiii iiii
+FUSES_MESSAGE = 0xxxxxxx - BODLEVEL 4V (default 2.7V)
+FUSES_MESSAGE = x0xxxxxx - brownout detection enabled
+FUSES_MESSAGE = xxSUxxxx - reset delay, datasheet p38
+FUSES_MESSAGE = xxxxCKSE - clock select, datasheet p34
+WRITE_HIGH_FUSES = hlhl hhll hlhl hlll xxxx xxxx iiii iiii
+READ_HIGH_FUSES = lhlh hlll llll hlll xxxx xxxx oooo oooo
+HIGH_FUSES_MESSAGE = 0xxxxxxx - OCDEN enabled
+HIGH_FUSES_MESSAGE = x0xxxxxx - JTAG enabled
+HIGH_FUSES_MESSAGE = xx0xxxxx - serial programming enabled
+HIGH_FUSES_MESSAGE = xxx0xxxx - CKOPT max, datasheet p34
+HIGH_FUSES_MESSAGE = xxxx0xxx - eeprom not erased
+HIGH_FUSES_MESSAGE = xxxxxBZx - boot size, datasheet p280
+HIGH_FUSES_MESSAGE = xxxxxxx0 - reset at boot loader, p272
+WRITE_EXTD_FUSES = hlhl hhll hlhl lhll xxxx xxxx xxxx xxii
+READ_EXTD_FUSES = lhlh llll llll hlll xxxx xxxx oooo oooo
+EXTD_FUSES_MESSAGE = xxxxxx0x - ATmega103 compatability mode 
+EXTD_FUSES_MESSAGE = xxxxxxx0 - WDT always on
+READ_CALIBRATION = llhh hlll xxxx xxxx llll llll oooo oooo
+CALIB_MESSAGE = four calibration bytes (datasheet p39 p288)
+

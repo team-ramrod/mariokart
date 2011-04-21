@@ -1,0 +1,78 @@
+# SP12: A serial programmer for working with Atmel AVR uCs 
+# Copyright (C) 1997-2003 Ken Huntington, Kevin Towers, Pitronics.
+# 
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation; either version 2 
+# of the License, or (at your option) any later version. 
+# 
+# This program is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License 
+# along with this program; if not, write to the Free Software 
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, 
+# MA  02111-1307, USA. 
+# 
+# Pitronics can be reached by email: sbolt@xs4all.nl 
+# Kevin Towers can be reached by email: ktowers@omnexcontrols.com
+# Ken Huntington can be reached by email: kenh@compmore.net 
+# 
+# Runtime configuration file to initialise time constants,
+# parallel port, logging and port mode (sp12 native or Kanda 
+# compatible).
+# Sp12 will make this file when first started; it will appear 
+# in the directory as defined by the environment variable SP12,
+# or in the current directory if this variable is not set.
+# The next time sp12 starts, time constants, port address, logging
+# parameters and port mode will be read from this file.
+# The primary parallel port address will be automatically selected.
+# if you need to use, for instance, the secondary (0x278), then
+# by all means edit this file manually, but don't change the *format*
+# of the NNNN=ddd type statements, only the values. Note that
+# BYTEWRITE is an upper limit; the value actually used is dynamically
+# adjusted when sp12 runs. Check changes.doc for other details.
+
+# NO parallel port at 0x278
+# Parallel port available at 0x378
+# NO parallel port at 0x3BC
+# This port address will be used:
+PORT=0x378
+# Set KANDA=1 to adapt the parallel port pinout
+# to the cable/dongles supplied with the
+# Atmel/Kanda STK200/300 starter kits.
+# When KANDA=0 (default) the pinout conforms
+# to the original SP12 cable and Ken Huntington's
+# dongle.
+# If KANDA is removed or set to 3, sp12 will behave
+# according to the name by which it is called,
+# 'sp12' or 'sp12.kanda'.
+KANDA=0
+# Set the log path/file to log writes and locks.
+# (less than 200 characters)
+LOGPATH=sp12log.txt
+# Set logging=1 to activate logging:
+LOGGING=0
+# Set both logging and query=1 to always query writes:
+QUERY=0
+# Chip erase delay, 120ms ATMega, 20ms others:
+CHIPERASE=120
+# Time constant for 200ms will be:
+POWERON=200
+# Set clockSpdDefault to a suitable value in MHz.
+CLOCKSPDDEFAULT=0.7
+# loopCount is a calibrated number which
+# represents about 1 second, and used to
+# calculate time constants as demanded by
+# clockSpdDefault and the -Mn.n clock speed
+# setting.
+LOOPCOUNT=7.06215e+007
+# Do not change anything below this line.
+# ---------------------------------------
+PORTACCESSTIME=1.33918e-006
+BYTEWRITE=847457
+PAGEWRITE=4519773
+PROGRAMENABLE=40
+RESETPULS=3531073

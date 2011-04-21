@@ -1,0 +1,1 @@
+avrdude -p m8 -P lpt1 -c sp12 -U flash:w:%1.hex:i -E noreset

@@ -1,0 +1,254 @@
+   1               		.file	"a2d.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  16               	.Ltext0:
+  17               	.global	a2dOff
+  19               	a2dOff:
+  20               	.LFB3:
+  21               	.LM1:
+  22               	/* prologue: frame size=0 */
+  23               	/* prologue end (size=0) */
+  24               	.LM2:
+  25 0000 3398      		cbi 38-0x20,3
+  26               	.LM3:
+  27 0002 3798      		cbi 38-0x20,7
+  28               	/* epilogue: frame size=0 */
+  29 0004 0895      		ret
+  30               	/* epilogue end (size=1) */
+  31               	/* function a2dOff size 3 (2) */
+  32               	.LFE3:
+  34               	.global	a2dSetPrescaler
+  36               	a2dSetPrescaler:
+  37               	.LFB4:
+  38               	.LM4:
+  39               	/* prologue: frame size=0 */
+  40               	/* prologue end (size=0) */
+  41               	.LVL0:
+  42               	.LM5:
+  43 0006 96B1      		in r25,38-0x20
+  44 0008 987F      		andi r25,lo8(-8)
+  45 000a 982B      		or r25,r24
+  46 000c 96B9      		out 38-0x20,r25
+  47               	/* epilogue: frame size=0 */
+  48 000e 0895      		ret
+  49               	/* epilogue end (size=1) */
+  50               	/* function a2dSetPrescaler size 5 (4) */
+  51               	.LFE4:
+  53               	.global	a2dSetReference
+  55               	a2dSetReference:
+  56               	.LFB5:
+  57               	.LM6:
+  58               	/* prologue: frame size=0 */
+  59               	/* prologue end (size=0) */
+  60               	.LVL1:
+  61               	.LM7:
+  62 0010 97B1      		in r25,39-0x20
+  63 0012 8295      		swap r24
+  64               	.LVL2:
+  65 0014 880F      		lsl r24
+  66 0016 880F      		lsl r24
+  67 0018 807C      		andi r24,lo8(-64)
+  68 001a 9F73      		andi r25,lo8(63)
+  69 001c 982B      		or r25,r24
+  70 001e 97B9      		out 39-0x20,r25
+  71               	/* epilogue: frame size=0 */
+  72 0020 0895      		ret
+  73               	/* epilogue end (size=1) */
+  74               	/* function a2dSetReference size 9 (8) */
+  75               	.LFE5:
+  77               	.global	a2dInit
+  79               	a2dInit:
+  80               	.LFB2:
+  81               	.LM8:
+  82               	/* prologue: frame size=0 */
+  83               	/* prologue end (size=0) */
+  84               	.LM9:
+  85 0022 379A      		sbi 38-0x20,7
+  86               	.LM10:
+  87 0024 3598      		cbi 38-0x20,5
+  88               	.LM11:
+  89 0026 86E0      		ldi r24,lo8(6)
+  90 0028 00D0      		rcall a2dSetPrescaler
+  91               	.LM12:
+  92 002a 81E0      		ldi r24,lo8(1)
+  93 002c 00D0      		rcall a2dSetReference
+  94               	.LM13:
+  95 002e 3D98      		cbi 39-0x20,5
+  96               	.LM14:
+  97 0030 339A      		sbi 38-0x20,3
+  98               	.LM15:
+  99 0032 1092 0000 		sts a2dCompleteFlag,__zero_reg__
+ 100               	.LM16:
+ 101               	/* #APP */
+ 102 0036 7894      		sei
+ 103               	/* #NOAPP */
+ 104               	/* epilogue: frame size=0 */
+ 105 0038 0895      		ret
+ 106               	/* epilogue end (size=1) */
+ 107               	/* function a2dInit size 13 (12) */
+ 108               	.LFE2:
+ 110               	.global	a2dSetChannel
+ 112               	a2dSetChannel:
+ 113               	.LFB6:
+ 114               	.LM17:
+ 115               	/* prologue: frame size=0 */
+ 116               	/* prologue end (size=0) */
+ 117               	.LVL3:
+ 118               	.LM18:
+ 119 003a 97B1      		in r25,39-0x20
+ 120 003c 8F71      		andi r24,lo8(31)
+ 121               	.LVL4:
+ 122 003e 907E      		andi r25,lo8(-32)
+ 123 0040 892B      		or r24,r25
+ 124 0042 87B9      		out 39-0x20,r24
+ 125               	/* epilogue: frame size=0 */
+ 126 0044 0895      		ret
+ 127               	/* epilogue end (size=1) */
+ 128               	/* function a2dSetChannel size 6 (5) */
+ 129               	.LFE6:
+ 131               	.global	a2dStartConvert
+ 133               	a2dStartConvert:
+ 134               	.LFB7:
+ 135               	.LM19:
+ 136               	/* prologue: frame size=0 */
+ 137               	/* prologue end (size=0) */
+ 138               	.LM20:
+ 139 0046 349A      		sbi 38-0x20,4
+ 140               	.LM21:
+ 141 0048 369A      		sbi 38-0x20,6
+ 142               	/* epilogue: frame size=0 */
+ 143 004a 0895      		ret
+ 144               	/* epilogue end (size=1) */
+ 145               	/* function a2dStartConvert size 3 (2) */
+ 146               	.LFE7:
+ 148               	.global	a2dIsComplete
+ 150               	a2dIsComplete:
+ 151               	.LFB8:
+ 152               	.LM22:
+ 153               	/* prologue: frame size=0 */
+ 154               	/* prologue end (size=0) */
+ 155               	.LM23:
+ 156 004c 86B1      		in r24,38-0x20
+ 157 004e 90E0      		ldi r25,lo8(0)
+ 158               	.LM24:
+ 159 0050 8074      		andi r24,lo8(64)
+ 160 0052 9070      		andi r25,hi8(64)
+ 161               	/* epilogue: frame size=0 */
+ 162 0054 0895      		ret
+ 163               	/* epilogue end (size=1) */
+ 164               	/* function a2dIsComplete size 5 (4) */
+ 165               	.LFE8:
+ 167               	.global	a2dConvert10bit
+ 169               	a2dConvert10bit:
+ 170               	.LFB9:
+ 171               	.LM25:
+ 172               	/* prologue: frame size=0 */
+ 173               	/* prologue end (size=0) */
+ 174               	.LVL5:
+ 175               	.LM26:
+ 176 0056 1092 0000 		sts a2dCompleteFlag,__zero_reg__
+ 177               	.LM27:
+ 178 005a 97B1      		in r25,39-0x20
+ 179 005c 8F71      		andi r24,lo8(31)
+ 180               	.LVL6:
+ 181 005e 907E      		andi r25,lo8(-32)
+ 182 0060 892B      		or r24,r25
+ 183 0062 87B9      		out 39-0x20,r24
+ 184               	.LM28:
+ 185 0064 349A      		sbi 38-0x20,4
+ 186               	.LM29:
+ 187 0066 369A      		sbi 38-0x20,6
+ 188               	.L16:
+ 189               	.LM30:
+ 190 0068 3699      		sbic 38-0x20,6
+ 191 006a 00C0      		rjmp .L16
+ 192               	.LM31:
+ 193 006c 24B1      		in r18,36-0x20
+ 194 006e 85B1      		in r24,37-0x20
+ 195 0070 90E0      		ldi r25,lo8(0)
+ 196 0072 982F      		mov r25,r24
+ 197 0074 8827      		clr r24
+ 198 0076 30E0      		ldi r19,lo8(0)
+ 199               	.LM32:
+ 200 0078 822B      		or r24,r18
+ 201 007a 932B      		or r25,r19
+ 202               	/* epilogue: frame size=0 */
+ 203 007c 0895      		ret
+ 204               	/* epilogue end (size=1) */
+ 205               	/* function a2dConvert10bit size 20 (19) */
+ 206               	.LFE9:
+ 208               	.global	a2dConvert8bit
+ 210               	a2dConvert8bit:
+ 211               	.LFB10:
+ 212               	.LM33:
+ 213               	/* prologue: frame size=0 */
+ 214               	/* prologue end (size=0) */
+ 215               	.LVL7:
+ 216               	.LM34:
+ 217 007e 00D0      		rcall a2dConvert10bit
+ 218               	.LVL8:
+ 219 0080 9695      		lsr r25
+ 220 0082 8795      		ror r24
+ 221 0084 9695      		lsr r25
+ 222 0086 8795      		ror r24
+ 223               	.LM35:
+ 224 0088 90E0      		ldi r25,lo8(0)
+ 225               	/* epilogue: frame size=0 */
+ 226 008a 0895      		ret
+ 227               	/* epilogue end (size=1) */
+ 228               	/* function a2dConvert8bit size 7 (6) */
+ 229               	.LFE10:
+ 231               	.global	__vector_14
+ 233               	__vector_14:
+ 234               	.LFB11:
+ 235               	.LM36:
+ 236               	/* prologue: frame size=0 */
+ 237 008c 1F92      		push __zero_reg__
+ 238 008e 0F92      		push __tmp_reg__
+ 239 0090 0FB6      		in __tmp_reg__,__SREG__
+ 240 0092 0F92      		push __tmp_reg__
+ 241 0094 1124      		clr __zero_reg__
+ 242 0096 8F93      		push r24
+ 243               	/* prologue end (size=6) */
+ 244               	.LM37:
+ 245 0098 8FEF      		ldi r24,lo8(-1)
+ 246 009a 8093 0000 		sts a2dCompleteFlag,r24
+ 247               	/* epilogue: frame size=0 */
+ 248 009e 8F91      		pop r24
+ 249 00a0 0F90      		pop __tmp_reg__
+ 250 00a2 0FBE      		out __SREG__,__tmp_reg__
+ 251 00a4 0F90      		pop __tmp_reg__
+ 252 00a6 1F90      		pop __zero_reg__
+ 253 00a8 1895      		reti
+ 254               	/* epilogue end (size=6) */
+ 255               	/* function __vector_14 size 15 (3) */
+ 256               	.LFE11:
+ 258               		.comm a2dCompleteFlag,1,1
+ 355               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 a2d.c
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:5      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:6      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:19     .text:00000000 a2dOff
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:36     .text:00000006 a2dSetPrescaler
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:55     .text:00000010 a2dSetReference
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:79     .text:00000022 a2dInit
+                            *COM*:00000001 a2dCompleteFlag
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:112    .text:0000003a a2dSetChannel
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:133    .text:00000046 a2dStartConvert
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:150    .text:0000004c a2dIsComplete
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:169    .text:00000056 a2dConvert10bit
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:210    .text:0000007e a2dConvert8bit
+C:\DOCUME~1\Alex\LOCALS~1\Temp/ccLkVoiL.s:233    .text:0000008c __vector_14
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
