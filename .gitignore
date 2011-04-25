@@ -1,4 +1,5 @@
 *.o
+*.PcbDocPreview
 *.SchDocPreview
 /Altium/History/
 /Altium/*/History/
