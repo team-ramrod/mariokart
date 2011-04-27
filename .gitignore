@@ -1,7 +1,9 @@
 *.o
 *.PcbDocPreview
 *.SchDocPreview
+*.SCHDOCPreview
 *.PrjPCBStructure
+*.PcbDoc.htm
 /Altium/*/Project\ Logs\ for\ */
 /Altium/History/
 /Altium/*/History/
