@@ -1,0 +1,242 @@
+%%
+%% This is file `quotchap.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% quotchap.dtx 
+%% 
+%% This file is part of the QUOTCHAP package, a package a package for
+%% creating decorative chapter headings with quotations, a postscript
+%% output device is needed. Copyright (C) 1998 Karsten Tinnefeld.
+%% 
+%% This file is NOT part of the LaTeX2e system, but intended for use with
+%% it.
+%% 
+%% This file is free software; you can redistribute it and/or modify it
+%% under the terms of the GNU Library General Public License as published
+%% by the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%% 
+%% This document is distributed in the hope that it will be useful, but
+%% WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%% General Public License for more details.
+%% 
+%% You should have received a copy of the GNU General Public License
+%% somehow; if not, write to the Free Software Foundation, Inc., 675 Mass
+%% Ave, Cambridge, MA 02139, USA.
+%% 
+%% Error Reports in case of UNCHANGED versions to
+%% 
+%%              Karsten Tinnefeld
+%%              Leostrasse 11
+%%              D-44225 Dortmund
+%%              Germany
+%%       Email: tinnefeld@irb.cs.uni-dortmund.de
+%% 
+%%%%%%%%%%%%%%%
+
+%% HACKED TO PIECES BY JASON ALEXANDER, NOVEMBER 2005
+%% Bug fixes (not complaints) to jason@cosc.canterbury.ac.nz
+
+\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+\ProvidesPackage{honoursThesis}
+  [1998/02/09 v0.9f Decorative Chapter Headings with Quotes]
+\newif\if@usecolor\@usecolortrue
+\DeclareOption{grey}{\@usecolortrue}
+\DeclareOption{nogrey}{\@usecolorfalse}
+\newcommand*{\@newfontcmd}{\@ifundefined{@defaultcnfont}{\newcommand*}{%
+    \PackageWarning{quotchap}{%
+      You have tried to specify more than one font to be\MessageBreak
+      used for the chapter numbers. I ignore the font\MessageBreak
+      `\CurrentOption'}
+    \providecommand*}}
+\DeclareOption{charter}{\@newfontcmd{\@defaultcnfont}{bch}}
+\DeclareOption{palatino}{\@newfontcmd{\@defaultcnfont}{ppl}}
+\DeclareOption{avantgarde}{\@newfontcmd{\@defaultcnfont}{pag}}
+\DeclareOption{bookman}{\@newfontcmd{\@defaultcnfont}{pbk}}
+\DeclareOption{courier}{\@newfontcmd{\@defaultcnfont}{pcr}}
+\DeclareOption{helvetica}{\@newfontcmd{\@defaultcnfont}{phv}}
+\DeclareOption{newcentury}{\@newfontcmd{\@defaultcnfont}{pnc}}
+\DeclareOption{times}{\@newfontcmd{\@defaultcnfont}{ptm}}
+\DeclareOption{utopia}{\@newfontcmd{\@defaultcnfont}{put}}
+\ProcessOptions\relax
+\providecommand*{\@defaultcnfont}{pbk}
+\if@usecolor
+  \IfFileExists{color.sty}{%
+    \RequirePackage{color}
+    \definecolor{chaptergrey}{rgb}{0.6,0.6,0.6}}{%
+    \PackageError{quotchap}{%
+      The color package is apparently unavailable.\MessageBreak
+      Turn off the `grey' option and come back again}{%
+      Since you did not say `nogrey', quotchap defined chapter
+      numbers to appear\MessageBreak grey. You do not need a color
+      printer, since most printing devices can cope\MessageBreak with
+      grey scales, but you need the color package coming with the
+      graphics\MessageBreak bundle available from CTAN.}}
+\else
+  \providecommand*{\color}[1]{}
+\fi
+\AtEndOfPackage{%
+  \newcommand*{\chapnumfont}{%
+    \usefont{T1}{\@defaultcnfont}{b}{n}\fontsize{100}{130}\selectfont%
+    \color{chaptergrey}}
+  \let\size@chapter\huge
+  \providecommand*{\chapterheadstartvskip}{}%JMA \vspace*{2.3\baselineskip}}
+  \providecommand*{\chapterheadendvskip}{\vspace{1.7\baselineskip}}
+  \providecommand*{\sectfont}{\relax}
+  \@ifundefined{@mainmattertrue}{\newif\if@mainmatter\@mainmattertrue}{}%}
+
+\newcommand*{\chapfont}{%
+  \usefont{T1}{\@defaultcnfont}{b}{n}\fontsize{25}{32.5}\selectfont%
+}%  \color{chaptergrey}}
+\let\size@chapter\huge
+\providecommand*{\chapterheadstartvskip}{}%JMA \vspace*{2.3\baselineskip}}
+\providecommand*{\chapterheadendvskip}{\vspace{\baselineskip}}
+\providecommand*{\sectfont}{\relax}
+\@ifundefined{@mainmattertrue}{\newif\if@mainmatter\@mainmattertrue}{}}
+
+%\def\ps@secPage{%
+%  \let\@oddfoot\@empty
+%  \let\@evenfoot\@empty
+%  \def\@evenhead\@empty
+%  \def\@oddhead\@empty
+%}
+
+\def\ps@secPage{\let\@mkboth\markboth
+     \def\@oddfoot{\fontfamily{pag}\fontseries{b}\fontsize{9}{11}\selectfont\parbox{\textwidth}{\hfil\thepage}\hfil}
+     %WGL 25/5/09 from: \def\@evenfoot{}s
+     \def\@evenfoot{\fontfamily{pag}\fontseries{b}\fontsize{9}{11}\selectfont\parbox{\textwidth}{\hfil\thepage}\hfil}
+     %WGL 25/5/09 from: \def\@evenhead{\rm \thepage\hspace{1em}\sl\leftmark\hfil\mbox{}}
+     \def\@evenhead{}
+     %\def\@oddhead{\hbox{}\sl \rightmark \hfil \rm\thepage}
+     \def\@oddhead{}%\mbox{}\hfil\sl\rightmark\hspace{1em}\rm\thepage}
+     }
+
+ %\let\@mkboth\@gobbletwo
+  %\let\sectionmark\@gobble
+  %\let\subsectionmark\@gobble
+
+
+\newenvironment{savequote}[1][10cm]{%
+  \begin{lrbox}{\@quotebox}
+    \begin{minipage}[t]{#1}\footnotesize\slshape
+      \ignorespaces}{%
+      \unskip\end{minipage}\end{lrbox}
+  \global\setbox\@quotebox\copy\@quotebox
+  \global\let\@printcites\@iprintcites
+  \ignorespacesafterend}
+\newcommand{\qauthor}[1]{%
+  \par\smallskip
+  {\raggedleft\upshape #1\qquad\hbox{}\par}\bigskip}
+\newsavebox{\@quotebox}
+\let\@printcites\relax
+
+
+\renewcommand\chapter{%
+  \if@openright\cleardoublepage\else\clearpage\fi
+
+  
+  \thispagestyle{secPage}%
+  %\thispagestyle{plain}
+  %\cfoot[]{}
+  %\cfoot{\fontfamily{pag}\fontseries{b}\fontsize{9}{11}\selectfont\thepage}
+  %\cfoot{}
+
+  \global\@topnum\z@
+  %\@printcites
+  \@afterindentfalse
+  \secdef\@chapter\@schapter}
+
+\renewcommand{\@makechapterhead}[1]{\chapterheadstartvskip%
+  {\size@chapter{\sectfont\raggedright %JMA left
+      {\chapnumfont
+        \ifnum \c@secnumdepth >\m@ne%
+        \if@mainmatter\thechapter%
+        \fi\fi
+        %\hspace{10em}
+        }%\par\nobreak}% JMA COMMENTED
+      {\chapfont\raggedright\advance\leftmargin10em\interlinepenalty\@M ~~#1\vspace{0.3cm}\hrule height 2pt}}%\\\rule{\linewidth}{1mm}\hrule}} %JMA raggedleft ->right remove 
+
+    %\thispagestyle{secPage}%
+    %\cfoot{\fontfamily{pag}\fontseries{b}\fontsize{9}{11}\selectfont\thepage}
+    %\pageref
+%    \cfoot{}
+
+
+    \nobreak\chapterheadendvskip}}
+%\renewcommand{\@makeschapterhead}[1]{%
+%  {\let\c@secnumdepth\m@ne\@makechapterhead{#1}}}
+
+
+
+\renewcommand{\@makeschapterhead}[1]{\chapterheadstartvskip%
+  {\size@chapter{\sectfont\raggedright %JMA left
+      {\chapnumfont
+        \ifnum \c@secnumdepth >\m@ne%
+        \if@mainmatter%\thechapter% % COMMENTED BY JMA
+        \fi\fi
+        %\hspace{10em}
+        }%\par\nobreak}% JMA COMMENTED
+      {\chapfont\raggedright\advance\leftmargin10em\interlinepenalty\@M #1\vspace{0.3cm}\hrule height 2pt}}%\\\rule{\linewidth}{1mm}\hrule}} %JMA raggedleft ->right remove 
+    %\cfoot[foo]{bar}
+    %\thispagestyle{plain}
+    %\cfoot[]{}
+    \thispagestyle{secPage}
+
+    \nobreak\chapterheadendvskip}}
+
+\renewcommand{\section}{\@startsection
+{section}%                   % the name
+{1}%                         % the level
+{0mm}%                       % the indent
+{-\baselineskip}%            % the before skip
+{0.5\baselineskip}%          % the after skip
+{\chapfont\large}} % the style
+
+\renewcommand{\subsection}{\@startsection
+{subsection}%                   % the name
+{1}%                         % the level
+{0mm}%                       % the indent
+{-\baselineskip}%            % the before skip
+{0.5\baselineskip}%          % the after skip
+{\chapfont\normalsize}} % the style
+
+%\renewcommand{\subsubsection}{\@startsection
+%{subsubsection}%                   % the name
+%{1}%                         % the level
+%{0mm}%                       % the indent
+%{-\baselineskip}%            % the before skip
+%{0.5\baselineskip}%          % the after skip
+%{\chapfont\large}} % the style
+
+\renewcommand\subsubsection{\@startsection
+  {subsubsection}{3}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\chapfont\small}}
+
+
+
+\newcommand*{\@iprintcites}{%
+  \vbox to\z@{\copy\@quotebox\vss}
+  \global\let\@printcites\relax}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+\endinput
+%%
+%% End of file `quotchap.sty'.
