@@ -1,0 +1,100 @@
+%newtitle style
+%Imitates the titlepage style of GNU manuals
+\def\fileversion{0.3}
+\def\filedate{2001/11/05}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{newtitle}[2001/11/05\space\fileversion\space\filedate\space
+Title Page Style]
+\RequirePackage{ifthen}
+
+\newboolean{sanserif}
+% Following changed from ture->false by jma 24/10/05
+\setboolean{sanserif}{true}%{false}%{true} 
+
+\newboolean{matt}
+\setboolean{matt}{false}
+
+\newboolean{gnu}
+\setboolean{gnu}{true}
+
+\DeclareOption{sanserif}{%
+  \setboolean{sanserif}{true}}
+\DeclareOption{matt}{%
+  \setboolean{matt}{true}
+  \setboolean{gnu}{false}}
+\DeclareOption{gnu}{%
+  \setboolean{matt}{false}
+  \setboolean{gnu}{true}}
+\ProcessOptions
+
+\providecommand{\HRule}{\rule{\linewidth}{1mm}}
+\providecommand{\thanks}{}
+%\global\let\@jsuper\@empty
+%\global\let\jsuper\relax
+\newcommand{\jsuper}{}
+
+\renewcommand{\maketitle}{%
+  \begin{titlepage}%
+    \ifthenelse{\boolean{sanserif}}{\fontfamily{pag}\fontseries{b}\fontsize{9}{11}\selectfont} %\sffamily}{\rmfamily}
+% Cut and pasted from the report.cls file
+    \let\footnotesize\small
+    \let\footnoterule\relax
+    \let \footnote \thanks
+      
+    \ifthenelse{\boolean{gnu}}{%
+      \setlength{\parskip}{0mm}
+      \setlength{\baselineskip}{0mm}
+      \setlength{\parindent}{0mm}
+      \vspace*{\stretch{.2}}
+%      \vspace*{\stretch{.1}} % CHANGE TO THIS TO MAKE TITLE HIGHER
+      \begin{flushleft}
+        {\LARGE \@title}%      
+      \end{flushleft}
+      \vspace{-2mm}
+      \HRule
+      \begin{flushright}
+        {\normalsize \@date}%
+      \end{flushright}
+      %\vspace*{\stretch{1}}
+      \vspace*{\stretch{1.5}}
+      % +jma flush left-> right
+      \begin{flushright}
+        {\large \begin{tabular}[t]{r} \@author \end{tabular}}% +jma Tabular c->r
+      \end{flushright}
+      \HRule
+%      \@thanks
+    %  \\foo      
+      \vspace{0.2cm}\\\jsuper
+      \vfil\null
+      }%endif
+    {% else
+      \setlength{\parskip}{0mm}
+      \setlength{\parindent}{0mm}
+      \vspace*{\stretch{1}}
+      \centering
+      \noindent\rule{\textwidth}{0.5pt}
+      {\Huge {\bfseries\@title} \par}%
+      \noindent\rule{\textwidth}{1.5pt}%
+      \vskip 0.65\textheight%
+      {\huge
+        \lineskip .75em
+        \begin{tabular}[t]{c}
+          \@author
+        \end{tabular}\par}
+      \vskip 1.5em
+      {\huge \@date \par}
+      \vspace*{\stretch{2}}
+      \@thanks
+      \vfil\null}%end else
+  \end{titlepage}} %end renewcommand
+
+%% Changelog
+%
+% 0.4       Added gnu and matt options            Michael JasonSmith
+%
+% 0.3       Sanserif option added                 Michael JasonSmith
+%
+% 0.2       Fontsize alterations and removal of 
+%           the \and bug                          Andr\' e Renaud
+%
+% 0.1       Initial release                       Michael JasonSmith

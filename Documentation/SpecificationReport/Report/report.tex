@@ -1,0 +1,70 @@
+% PREAMBLE
+\documentclass[a4paper, 12pt, titlepage, openany]{book}
+\usepackage[top=1in,right=2.5cm,left=2.5cm,bottom=1in]{geometry}
+\usepackage{mathptm}
+\usepackage{hyperref}
+\usepackage{epsfig} 
+\usepackage{tipa}
+\usepackage{subfigure}
+\usepackage{footnote}
+\usepackage[gnu]{newtitle} 
+\usepackage{fancyheadings} 
+\usepackage[numbers,square]{natbib}
+\pagestyle{empty}
+\usepackage[grey,times]{honoursThesis}
+\usepackage{listings}
+
+% TITLE PAGE
+\title{Anonymous Go-Kart: Specification Report}
+\date{\today}
+
+\author{
+  {Henry Jenkins, Wim Looman, Simon Richards, Zachary Taylor}\vspace{0.1cm}\\
+    Department of Computer and Electrical Engineering\vspace{0.1cm}\\
+    University of Canterbury, Christchurch, New Zealand}
+
+\begin{document}
+\maketitle
+% I removed the next line to remove blank page after title page - Henry
+\pagenumbering{roman}
+\frontmatter
+\thispagestyle{empty}
+\input{Abstract}
+
+\pagestyle{fancy}
+
+\renewcommand{\chaptermark}[1]
+{\markboth{\uppercase{\thechapter.\ #1}}{}}
+%\renewcommand{\sectionmark}[1]
+%{\markboth{\uppercase{\thesection.\ #1}}{}} % Changed so the section is on both. - Wim
+\setlength{\headrulewidth}{0.5pt} \setlength{\footrulewidth}{0pt}
+
+\newcommand{\helv}{\fontfamily{pag}\fontseries{b}\fontsize{9}{11}\selectfont}
+
+% Changed these so page numbers are always on the right and the headers are
+% always on the left. - Wim
+\lhead[\helv \leftmark]{\helv \leftmark}
+\rhead[\helv \thepage]{\helv \thepage}
+\cfoot[]{}
+
+\newpage
+\tableofcontents
+\newpage
+
+\mainmatter
+    \input{ProjectOverview}
+    \input{Requirements}
+    \input{Approach}
+    \input{Budget}
+    \input{Conclusion}
+    \newpage
+
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{report}
+\addcontentsline{toc}{chapter}{Bibliography}
+
+\appendix
+    \input{Appendix}
+    
+\end{document}
