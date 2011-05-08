@@ -18,6 +18,16 @@ By dividing the project into a series of modules with simple well documented int
 \item[Complex autonomous behaviour] This module would see the integration of reactive path finding using distance sensors and absolute positioning using GPS into the autonomous go-kart's system. These will enable it to operate as a fully-fledged autonomous vehicle able to operate without any form of human interaction or control. When completed the go-kart will be capable of autonomously navigating to a GPS location whilst safely avoiding obstacles along the way.
 \end{description}
 
+\section{Safety}
+
+As was outlined in the goals the kart has the potential to cause serious harm if the system fails to operate correctly. Because of this several systems and process have been placed in our design process to ensure that the go-kart is a safe system. The microcontroller controlling the accelerator will be configured so that it will never send an value to the accelerator that will allow the go-kart to travel at speeds greater then 10 kmph.
+
+The microcontroller controlling the brake will apply the break unless a signal is sent to tell it not to. This will ensure that if the can bus fails or the control system computer stops responding or dies that the brakes will immediately be applied. A similar system will ensure the accelerator is off in this situation. In the event of the brake microcontroller failing to respond the control system will immediately disable the brake.
+
+During testing of code all code will initially be tested with the karts motor either off or the kart placed on blocks so that its wheels do not touch the ground. This will allow us to throughly test all systems and most combinations of inputs without the kart moving or having any potential to lose control and crash. Once this testing is complete during all future testing someone will always ride in the karts passenger seat prepared to hit the emergency motor kill switch if the behaviour of the kart does not follow the expected.
+
+The linear actuator is almost entirely enclosed and moves only small distances, thus it requires no form of guard. The gear motor while slow moving has such a high turning force it has the ability to cause serious harm. Because of this the shaft attaching it to the pinion driving the shaft will be encased to prevent potential harm.
+
 \section{Braking System}
 
 The go-kart's brakes will be controlled via a linear actuator. This will be
@@ -199,9 +209,9 @@ any laptop and the MCUs simple and straight forward.
 
 \section{Simple autonomous behaviour}
 
-Currently we plan to develop a simple program that will allow the kart to autonomously follow a person or other vehicle. This system was chosen as it can be quickly implemented, acts as a demonstration of how the system will operate and can provide a useful real world application. This program would allow the go-kart to operate as a smart trolley allowing a person to transport equipment between two locations. While at first glance this program may seem to have limited real world applications a robot known as "big dog" is currently being developed to perform the same function carrying 100kg of equipment over rough terrain\cite{bigdog}.
+Currently we plan to develop a simple program that will allow the kart to autonomously follow a person or other vehicle. This system was chosen as it can be quickly implemented, acts as a demonstration of how the system will operate and can provide a useful real world application. This program would allow the go-kart to operate as a smart trolley allowing a person to transport equipment between two locations. While at first glance this program may seem to have limited real world applications a robot known as ``big dog'' is currently being developed to perform the same function carrying 100kg of equipment over rough terrain\cite{bigdog}.
 
-A decision as to how the marker will be tracked is still to be made however it has been narrowed down to one of two options. The first option is to use the marker as a ball of known shape size and color and have this tracked by a webcam. This system would be cheap and easily to implement but inaccurate and error prone with the ball always having to be clearly visible.
+A decision as to how the marker will be tracked is still to be made, however it has been narrowed down to one of two options. The first option is to use the marker as a ball of known shape size and color and have this tracked by a webcam. This system would be cheap and easy to implement but inaccurate and error prone with the ball always having to be clearly visible.
 
 The second option is to use a marker that sends out pulses that are picked up by three RF receivers. This option while more difficult and longer to get working would be far more robust and accurate offering superior performance.
 
