@@ -1,5 +1,5 @@
 default: report.pdf
-	if [ -x /usr/bin/open ] ; then /usr/bin/open report.pdf ; fi
+	if [ \"$${OSTYPE}\" != \"$${OSTYPE/darwin/}\" ] ; then /usr/bin/open report.pdf ; fi
 
 report.pdf: $(wildcard *.tex) report.blb
 	pdflatex report
