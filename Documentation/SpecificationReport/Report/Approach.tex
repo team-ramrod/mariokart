@@ -96,6 +96,26 @@ H-bridge controlling the actuator.
 
 \section{High-level logic and control}
 
+For high level control it was decided to design a system where the go-kart can
+be fully controlled by a laptop using a simple USB interface.  There are a few
+reasons behind this decision, the biggest one would have to be the much nicer
+programming environment presented on a standard PC.  A large availability of
+higher level languages and better libraries for any low level stuff that may be
+required means that it will be easier to design and build the control system.
+
+This also makes it much simpler to interface to a set of more complex sensors,
+doing any sort of computer vision system on an embedded system would require a
+lot more effort to design, build and test than doing the same on a standard PC.
+
+To support this simple USB interface a modular design will be employed, a
+general overview of the approach can be seen in Fig. \ref{can-design}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{../../Images/can_diagram.pdf}
+  \caption{Basic go-kart control system overview.\label{can-design}}
+\end{figure}
+
 \subsection{SAM7X}
 
 \subsection{CAN bus}
