@@ -143,8 +143,10 @@ general overview of the approach can be seen in Fig. \ref{can-design}.
 The first decision required for the design of the logic boards was what
 communication protocol should be used between boards, it would require only a
 low data rate but it would have to be able to communicate over at least 3 meters
-and be resistant to noise.  Especially because of the PWM controlled DC motor,
-the environment could potentially be quite noisy.
+and be resistant to noise.  Because the go-kart is driven by a large electric DC
+motor, there is likely to be electromagnetic noise in the vicinity of the
+go-kart.
+%Especially because of the PWM controlled DC motor, the environment could potentially be quite noisy.
 % TODO: Last sentence definitely needs re-wording
 
 Our first thoughts on this was the simple serial buses that we had used
@@ -180,6 +182,19 @@ the 16 slave limitation doesn't matter.
 % TODO: Another paragraph on awesomeness
 
 \subsection{SAM7X}
+To control the various parts of the go-kart we have decided to use the
+AT91SAM7X256\cite{SAM7Xdatasheet} manufactured by Atmel. This MCU is
+based on the ARM7 architecture with 256 Kbytes of flash memory. This chip has
+been in previous University of Canterbury assignment and can be purchased from
+both Digikey and Element 14.
+
+To implement the CAN bus we needed to use a MCU that supported a hardware based
+CAN bus controller. The other choices of MCUs to use, that provided this
+functionality, are the ATmega64C1 or AT90CAN. We chose the SAM7X over these two
+options mostly because we wanted to stick with a familiar architecture. The
+other large consideration that influenced our decision was that we wanted a MCU
+that provided a built in USB device port. This allows interfacing the between
+any laptop and the MCUs simple and straight forward.
 
 \section{Simple autonomous behavior}
 
