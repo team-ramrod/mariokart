@@ -1,19 +1,21 @@
 \chapter{Approach and Preliminary Design}
 
 \section{Approach}
-Soon after receiving this project it was decided that we would break the project up into a series of smaller projects that we would complete in series. This decision was made after we realised that the transformation of the provided go-kart to a fully working autonomous vehicle was a goal that we would likely be unable to achieve in the time allotted
+Soon after receiving this project it was decided that we would break the project up into a series of smaller projects that we would complete in series. This decision was made after we realised that the transformation of the provided go-kart to a fully working autonomous vehicle was a goal that we would be unlikely to achieve in the time allotted.
 
-The idea behind the separation into several smaller projects is that if we tried to do everything at once we would not finish the project and what we would have done would be useless to future groups. This is because most sections of the system would not be operating correctly and those that were would be interfacing with unfinished systems on a low level making them difficult to use. By dividing the project into a series of modules with each one being completed and communicating with the next via a simple well documented interface we ensured that we would have developed a strong base which future teams could easily interface with and build upon with minimal repeating of work. The sub-projects we have divided this project into are outlined below
+If we start all of the sub-systems in parallel then it is likely that by the final deadline we would have many incomplete subsystems putting a steep learning curve in front of any continuation of our work.
+
+By dividing the project into a series of modules with simple well documented interfaces between each we will ensure that we leave a single clean interface with which any future team can build upon with minimal repetition of work. The sub-projects we have divided this project into are outlined below
 \begin{description}
-\item[Drive by wire] This is the conversion of the go-kart from a largely mechanical system to something that can be controlled by a laptop. 
+\item[Drive by wire] This is the conversion of the go-kart from a traditional mechanical system to something that can be controlled by a laptop. 
 
-\item[Sensor interfacing] In this module the sensors the system will use to perceive the karts state and the world around it are chosen. After selection they are attached to the kart and interfaced with the control system. 
+\item[Sensor interfacing] In this module the sensors the system will use to perceive the kart's state and the world around it are chosen. After selection they will be fixed to the kart and interfaced with the control system. 
 
-\item[High level control of systems] The drive by wire module will provide functions that directly relate to the karts systems such as the angle of the steering wheel, braking force and accelerator position. This module would seek to write functions that can be used to move away from having to deal with these low level operations. An example of this would be a function that would use the brake, accelerator and a Hall Effect sensor to allow the user to simply give the speed they wished the kart to travel at.  
+\item[High level control of systems] The drive by wire module will provide functions that directly relate to the kart's systems such as the angle of the steering wheel, braking force and accelerator position. This module abstracts away low level control from the behavioural layer. An example of this abstraction is using the brake, accelerator and the Hall Effect velocity sensor to implement a closed loop controller for the kart's speed.  
 
-\item[Simple autonomous behaviour] this would be the development of a straight forward and quick to implement program for autonomous control of the kart. A sensor on the front of the kart would detect a marker and move to be within a set distance of it. In this way the go-kart could autonomously follow a person or another vehicle
+\item[Simple autonomous behaviour] This stage is the development of an simple to implement program for autonomous control of the kart. For example using radio triangulation or computer vision to track a token so that the go-kart can autonomously follow a person or another vehicle.
 
-\item[Complex autonomous behaviour] this module would see the integration of path finding into the autonomous go-karts system enabling it to operate as a fully-fledged autonomous vehicle able to operate without any form of human interaction or control. When completed it would allow the go-kart to autonomously find its way to a GPS location avoiding obstacles along the way.
+\item[Complex autonomous behaviour] This module would see the integration of reactive path finding using distance sensors and absolute positioning using GPS into the autonomous go-kart's system. These will enable it to operate as a fully-fledged autonomous vehicle able to operate without any form of human interaction or control. When completed the go-kart will autonomously navigate to a GPS location safely avoiding obstacles along the way.
 \end{description}
 
 \section{Braking System}
@@ -157,11 +159,25 @@ industry standard bus-systems used in automotive applications.  Because of their
 design they are very robust standards that will work well in a high noise
 environment.
 
-CAN-bus utilises a high level message-based protocol.  Below this it also
-specifies the transfer layer (link layer in the OSI standard model), this takes
-care of tasks such as fault confinement, error detection, message validation,
-acknowledgement, arbitration, message framing, transfer rate and timing and
-information routing.  The ISO 11898-2 standard defines a high-speed 
+CAN-bus utilises a high level message-based, multi-master protocol with
+automatic priority based arbitration-free transmission.  The original
+specification defined up to the transfer layer (link layer in the OSI standard
+model), which takes care of tasks such as fault confinement, error detection,
+message validation, acknowledgement, arbitration, message framing, transfer rate
+and timing and information routing.  The ISO 11898-2 standard defines high-speed
+MAC and physical layers to allow a full implementation of the bus.  This
+standard utilises a two-wire balanced signalling scheme which allows for high
+common noise rejection and is capable of up to 1 Mbit/s transmission rates, far
+more than we will be requiring.
+
+LIN-bus is a small, slow network system that is commonly used as a cheap
+sub-network of a CAN bus.  It utilises a master-slave architecture without
+collision detection and supports up to 16 slaves.  The communications happen
+over a single wire capable of up to 19.2 kbit/s with a 40 meter bus.  Again this
+would be enough for our limited communications need, and as we only need 5 nodes
+the 16 slave limitation doesn't matter.
+
+% TODO: Another paragraph on awesomeness
 
 \subsection{SAM7X}
 
