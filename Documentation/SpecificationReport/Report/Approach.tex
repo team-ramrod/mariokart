@@ -159,11 +159,25 @@ industry standard bus-systems used in automotive applications.  Because of their
 design they are very robust standards that will work well in a high noise
 environment.
 
-CAN-bus utilises a high level message-based protocol.  Below this it also
-specifies the transfer layer (link layer in the OSI standard model), this takes
-care of tasks such as fault confinement, error detection, message validation,
-acknowledgement, arbitration, message framing, transfer rate and timing and
-information routing.  The ISO 11898-2 standard defines a high-speed 
+CAN-bus utilises a high level message-based, multi-master protocol with
+automatic priority based arbitration-free transmission.  The original
+specification defined up to the transfer layer (link layer in the OSI standard
+model), which takes care of tasks such as fault confinement, error detection,
+message validation, acknowledgement, arbitration, message framing, transfer rate
+and timing and information routing.  The ISO 11898-2 standard defines high-speed
+MAC and physical layers to allow a full implementation of the bus.  This
+standard utilises a two-wire balanced signalling scheme which allows for high
+common noise rejection and is capable of up to 1 Mbit/s transmission rates, far
+more than we will be requiring.
+
+LIN-bus is a small, slow network system that is commonly used as a cheap
+sub-network of a CAN bus.  It utilises a master-slave architecture without
+collision detection and supports up to 16 slaves.  The communications happen
+over a single wire capable of up to 19.2 kbit/s with a 40 meter bus.  Again this
+would be enough for our limited communications need, and as we only need 5 nodes
+the 16 slave limitation doesn't matter.
+
+% TODO: Another paragraph on awesomeness
 
 \subsection{SAM7X}
 
