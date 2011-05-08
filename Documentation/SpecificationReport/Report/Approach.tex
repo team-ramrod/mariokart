@@ -6,7 +6,8 @@ Soon after receiving this project it was decided that we would break the project
 The idea behind the separation into several smaller projects is that if we tried to do everything at once we would not finish the project and what we would have done would be useless to future groups. This is because most sections of the system would not be operating correctly and those that were would be interfacing with unfinished systems on a low level making them difficult to use. By dividing the project into a series of modules with each one being completed and communicating with the next via a simple well documented interface we ensured that we would have developed a strong base which future teams could easily interface with and build upon with minimal repeating of work. The sub-projects we have divided this project into are outlined below
 \begin{description}
 \item[Drive by wire] This is the conversion of the go-kart from a largely mechanical system to something that can be controlled by a laptop. 
-Sensor interfacing- In this module the sensors the system will use to perceive the karts state and the world around it are chosen. After selection they are attached to the kart and interfaced with the control system. 
+
+\item[Sensor interfacing] In this module the sensors the system will use to perceive the karts state and the world around it are chosen. After selection they are attached to the kart and interfaced with the control system. 
 
 \item[High level control of systems] The drive by wire module will provide functions that directly relate to the karts systems such as the angle of the steering wheel, braking force and accelerator position. This module would seek to write functions that can be used to move away from having to deal with these low level operations. An example of this would be a function that would use the brake, accelerator and a Hall Effect sensor to allow the user to simply give the speed they wished the kart to travel at.  
 
@@ -15,7 +16,7 @@ Sensor interfacing- In this module the sensors the system will use to perceive t
 \item[Complex autonomous behaviour] this module would see the integration of path finding into the autonomous go-karts system enabling it to operate as a fully-fledged autonomous vehicle able to operate without any form of human interaction or control. When completed it would allow the go-kart to autonomously find its way to a GPS location avoiding obstacles along the way.
 \end{description}
 
-\section{Brake}
+\section{Braking System}
 
 The go-kart's brakes will be controlled via a linear actuator. This will be
 connected by removing the brake pedal and connecting the actuator directly to
@@ -54,7 +55,7 @@ shipping to New Zealand from America. An actuator of similar specification could
 not be located for less then \$220 in the US or within New Zealand for less then
 \$300.
 
-\section{Steering}
+\section{Steering System}
 
 The steering on the go-kart operates on a rack and pinion system. The steering
 wheel rotates from lock to lock in 270 degrees. At rest on concrete the wheel
@@ -70,7 +71,11 @@ removed column. %Not necessarily but it reads well.
 
 The motor system selected for use in the go-kart is the IG52-04 52mm gear motor.
 It comes with a 1:353 gearbox and a Hall Effect encoder attached to a second
-rear output shaft on the motor. This motor produces 10 Nm of continuous torque
+rear output shaft on the motor. This motor was selected as it combined all the
+ required system into one convient system which required no assembly on our part.
+ Another major reason for its selection was the large difficulty that was
+ encountered in finding any reasonbly priced gearbox that could sustain the
+ continous torque requirements of the system. This motor produces 10 Nm of continuous torque
 which will allow it to easily turn the wheel. Its gearbox output rotates at 10
 RPM allowing it to travel from lock to lock in 4.5 seconds. A concern with using
 this motor is that it has the ability when stalled to produce a peak torque of
