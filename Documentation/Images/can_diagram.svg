@@ -24,6 +24,11 @@
    inkscape:export-ydpi="90">
   <defs
      id="defs4">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Wavy"
+       id="pattern5357"
+       patternTransform="matrix(0.69425978,0,0,3.5933463,128.1631,445.12371)" />
     <linearGradient
        id="linearGradient4748">
       <stop
@@ -933,15 +938,6 @@
        y1="537.71875"
        x2="431.78125"
        y2="632.71875" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4748"
-       id="linearGradient4754"
-       x1="202.76085"
-       y1="407.24405"
-       x2="202.76085"
-       y2="427.03549"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -953,9 +949,9 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7071068"
-     inkscape:cx="181.45072"
-     inkscape:cy="322.06318"
+     inkscape:zoom="1"
+     inkscape:cx="112.54043"
+     inkscape:cy="293.70351"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showborder="true"
@@ -1305,7 +1301,7 @@
          style="font-size:14.28392124px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans"
          id="tspan6475-0-9-9">Steering Control</tspan></text>
     <path
-       style="fill:url(#linearGradient4754);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.42839216999999996;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:url(#pattern5357);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.42839217;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 493.38115,407.28639 -538.682691,0 0,19.74621 538.682691,0 z"
        id="rect3177"
        inkscape:connector-curvature="0"
@@ -1364,7 +1360,7 @@
        sodipodi:linespacing="125%"
        transform="translate(-183.21875,154.5911)"><tspan
          sodipodi:role="line"
-         id="tspan4760"></tspan></text>
+         id="tspan4760" /></text>
     <text
        xml:space="preserve"
        style="font-size:57.13568497px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
