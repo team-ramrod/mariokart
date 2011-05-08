@@ -138,7 +138,33 @@ general overview of the approach can be seen in Fig. \ref{can-design}.
   \caption{Basic go-kart control system overview.\label{can-design}}
 \end{figure}
 
+\subsection{CAN bus}
+
+The first decision required for the design of the logic boards was what
+communication protocol should be used between boards, it would require only a
+low data rate but it would have to be able to communicate over at least 3 meters
+and be resistant to noise.  Especially because of the PWM controlled DC motor,
+the environment could potentially be quite noisy.
+% TODO: Last sentence definitely needs re-wording
+
+Our first thoughts on this was the simple serial buses that we had used
+previously; Universal Asynchronous Receiver/Transmitter (UART), Serial
+Peripheral Interface bus (SPI) and Inter-Integrated Circuit
+(I\textsuperscript{2}C).  Unfortunately these buses are limited in range and can
+be highly susceptible to noise.
+
+Dr. Michael Hayes (personal correspondence, April 2011) suggested
+Controller-Area Network (CAN-bus) or Local Interconnect Network (LIN-bus) as
+industry standard bus-systems used in automotive applications.  Because of their
+design they are very robust standards that will work well in a high noise
+environment.
+
+CAN-bus utilises a high level message-based protocol.  Below this it also
+specifies the transfer layer (link layer in the OSI standard model), this takes
+care of tasks such as fault confinement, error detection, message validation,
+acknowledgement, arbitration, message framing, transfer rate and timing and
+information routing.  The ISO 11898-2 standard defines a high-speed 
+
 \subsection{SAM7X}
 
-\subsection{CAN bus}
 
