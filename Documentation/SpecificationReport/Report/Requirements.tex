@@ -1,27 +1,31 @@
 \chapter{Requirements}
-The project is split into two separate elements, each with their own set of requirements.
-\section{Drive-By-Wire}
-In order to achieve full computer control all of the go-kart's mechanical control systems must be replaced with electromechanical actuators interfaced through a micro-controller network. Additionally, the same network must control the go-kart's electric motor and gather feedback from all systems for full, closed-loop control.
-
-\subsection{Actuation}
-Since the go-kart has an electric motor there are two components requiring actuation, the brake and the steering mechanism.
-
-\subsubsection{Brakes}
-The braking system 
-
-\subsubsection{Steering}
-
-\subsection{Control}
-
-\section{Sensing and Behavioural Control}
-
 \section{Goals}
 Given the continuous nature of this project the only constraint upon our progress is time. The issue here is that we may set goals beyond what we have time to achieve, and consequently fail those goals.
 
-To avoid doing this we have split the project's measurable goals into two categories, those we need to achieve to atleast deliver a platform for future groups (i.e. implementing drive-by-wire); and those we need to run the go-kart at a behavioural level. As the goals in the second category require the completion of those in the first, they have a lower priority for us. We expect to achieve drive-by-wire control within the deadline, however achieving behavioural control may not be a realistic goal due to the time constraints.
+To avoid doing this we have split the project's measurable goals into two categories, those we need to achieve to atleast deliver a platform for future groups (i.e. implementing drive-by-wire); and those we need to run the go-kart at a behavioural level. As the goals in the second category require the completion of those in the first, they have a lower priority for us. We expect to achieve drive-by-wire control within the deadline, however completing the behavioural control aspect may not be a realistic goal due to the time constraints.
 
 \subsection{We Expect to Achieve}
-A fully Drive-by-Wire go-kart controllable over a USB link. Safety constraints, an interface for sensors and low level control of braking, steering and motor power will all be provided by the embedded system. If this is all completed without any progress on the behavioural software then the USB command interface will need to be documented for future groups.
+A fully Drive-by-Wire go-kart controllable over a USB link. Safety constraints, an interface for sensors and low level control of braking, steering and motor power will all be provided by an embedded system. If this is all completed without any progress on the behavioural software then the USB command interface will need to be documented for future groups.
 
 \subsection{We Hope to Achieve}
 An example application proving the go-kart's `autonomous-ness'. This will require a software application running on a laptop, and a set of sensors the laptop can interrogate through the micro-controllers.
+
+\section{Specifics}
+Each set of goals mentioned above covers one of the two components we have split the project into. They are the drive-by-wire (DbW) system and the PC-based behavioural control. The specific requirements of each subsystem are defined below.
+
+\subsection{Drive-By-Wire}
+In order to achieve full computer control all of the go-kart's mechanical control systems must be replaced with electromechanical actuators interfaced through a micro-controller network. Additionally, the same network must control the go-kart's electric motor and gather feedback from all systems for full, closed-loop control.
+
+Since the go-kart has an electric motor there are two components requiring actuation, the brake and the steering mechanism.
+
+\subsubsection{Braking}
+The braking system requires linear actuation to drive the hydraulic  brake. 
+
+\subsubsection{Steering}
+The existing steering system uses a rack and pinion system to steer. Converting this into a DbW system requires a low speed, high torque motor driving the pinion. The absolute position of of the motor needs to be tracked so the motor can be run in a closed loop.
+
+\subsubsection{Control}
+
+
+\subsection{Sensing and Behavioural Control}
+
