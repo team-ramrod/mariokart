@@ -1,5 +1,20 @@
 \chapter{Approach and Preliminary Design}
 
+\section{Approach}
+Soon after receiving this project it was decided that we would break the project up into a series of smaller projects that we would complete in series. This decision was made after we realised that the transformation of the provided go-kart to a fully working autonomous vehicle was a goal that we would likely be unable to achieve in the time allotted
+
+The idea behind the separation into several smaller projects is that if we tried to do everything at once we would not finish the project and what we would have done would be useless to future groups. This is because most sections of the system would not be operating correctly and those that were would be interfacing with unfinished systems on a low level making them difficult to use. By dividing the project into a series of modules with each one being completed and communicating with the next via a simple well documented interface we ensured that we would have developed a strong base which future teams could easily interface with and build upon with minimal repeating of work. The sub-projects we have divided this project into are outlined below
+\begin{description}
+\item[Drive by wire] This is the conversion of the go-kart from a largely mechanical system to something that can be controlled by a laptop. 
+Sensor interfacing- In this module the sensors the system will use to perceive the karts state and the world around it are chosen. After selection they are attached to the kart and interfaced with the control system. 
+
+\item[High level control of systems] The drive by wire module will provide functions that directly relate to the karts systems such as the angle of the steering wheel, braking force and accelerator position. This module would seek to write functions that can be used to move away from having to deal with these low level operations. An example of this would be a function that would use the brake, accelerator and a Hall Effect sensor to allow the user to simply give the speed they wished the kart to travel at.  
+
+\item[Simple autonomous behaviour] this would be the development of a straight forward and quick to implement program for autonomous control of the kart. A sensor on the front of the kart would detect a marker and move to be within a set distance of it. In this way the go-kart could autonomously follow a person or another vehicle
+
+\item[Complex autonomous behaviour] this module would see the integration of path finding into the autonomous go-karts system enabling it to operate as a fully-fledged autonomous vehicle able to operate without any form of human interaction or control. When completed it would allow the go-kart to autonomously find its way to a GPS location avoiding obstacles along the way.
+\end{description}
+
 \section{Brake}
 
 The go-kart's brakes will be controlled via a linear actuator. This will be
