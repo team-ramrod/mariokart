@@ -74,10 +74,10 @@ removed column. %Not necessarily but it reads well.
 The motor system selected for use in the go-kart is the IG52-04 52mm gear motor.
 It comes with a 1:353 gearbox and a Hall Effect encoder attached to a second
 rear output shaft on the motor. This motor was selected as it combined all the
- required system into one convient system which required no assembly on our part.
- Another major reason for its selection was the large difficulty that was
- encountered in finding any reasonbly priced gearbox that could sustain the
- continous torque requirements of the system. This motor produces 10 Nm of continuous torque
+required system into one convenient system which required no assembly on our part.
+Another major reason for its selection was the large difficulty that was
+encountered in finding any reasonably priced gearbox that could sustain the
+continuous torque requirements of the system. This motor produces 10 Nm of continuous torque
 which will allow it to easily turn the wheel. Its gearbox output rotates at 10
 RPM allowing it to travel from lock to lock in 4.5 seconds. A concern with using
 this motor is that it has the ability when stalled to produce a peak torque of
@@ -180,13 +180,12 @@ would be enough for our limited communications need, and as we only need 5 nodes
 the 16 slave limitation doesn't matter.
 
 After careful consideration of the advantages and disadvantages of all the above
-buses the CAN-bus was chosen as the bus to use.  As would already be apparent to
-those of you that read the image above.
+buses the CAN-bus was chosen as the bus to use. 
 
 \subsection{SAM7X}
 To control the various parts of the go-kart we have decided to use the
 AT91SAM7X256\cite{SAM7Xdatasheet} manufactured by Atmel. This MCU is
-based on the ARM7 architecture with 256 Kbytes of flash memory. This chip has
+based on the ARM7 architecture with 256 kilobytes of flash memory. This chip has
 been in previous University of Canterbury assignment and can be purchased from
 both Digikey and Element 14.
 
@@ -198,7 +197,7 @@ other large consideration that influenced our decision was that we wanted a MCU
 that provided a built in USB device port. This allows interfacing the between
 any laptop and the MCUs simple and straight forward.
 
-\section{Simple autonomous behavior}
+\section{Simple autonomous behaviour}
 
 Currently we plan to develop a simple program that will allow the kart to autonomously follow a person or other vehicle. This system was chosen as it can be quickly implemented, acts as a demonstration of how the system will operate and can provide a useful real world application. This program would allow the go-kart to operate as a smart trolley allowing a person to transport equipment between two locations. While at first glance this program may seem to have limited real world applications a robot known as "big dog" is currently being developed to perform the same function carrying 100kg of equipment over rough terrain.
 
