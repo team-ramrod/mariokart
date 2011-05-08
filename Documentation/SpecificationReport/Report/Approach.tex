@@ -143,8 +143,10 @@ general overview of the approach can be seen in Fig. \ref{can-design}.
 The first decision required for the design of the logic boards was what
 communication protocol should be used between boards, it would require only a
 low data rate but it would have to be able to communicate over at least 3 meters
-and be resistant to noise.  Especially because of the PWM controlled DC motor,
-the environment could potentially be quite noisy.
+and be resistant to noise.  Because the go-kart is driven by a large electric DC
+motor, there is likely to be electromagnetic noise in the vicinity of the
+go-kart.
+%Especially because of the PWM controlled DC motor, the environment could potentially be quite noisy.
 % TODO: Last sentence definitely needs re-wording
 
 Our first thoughts on this was the simple serial buses that we had used
@@ -180,5 +182,26 @@ the 16 slave limitation doesn't matter.
 % TODO: Another paragraph on awesomeness
 
 \subsection{SAM7X}
+To control the various parts of the go-kart we have decided to use the
+AT91SAM7X256\cite{SAM7Xdatasheet} manufactured by Atmel. This MCU is
+based on the ARM7 architecture with 256 Kbytes of flash memory. This chip has
+been in previous University of Canterbury assignment and can be purchased from
+both Digikey and Element 14.
+
+To implement the CAN bus we needed to use a MCU that supported a hardware based
+CAN bus controller. The other choices of MCUs to use, that provided this
+functionality, are the ATmega64C1 or AT90CAN. We chose the SAM7X over these two
+options mostly because we wanted to stick with a familiar architecture. The
+other large consideration that influenced our decision was that we wanted a MCU
+that provided a built in USB device port. This allows interfacing the between
+any laptop and the MCUs simple and straight forward.
+
+\section{Simple autonomous behavior}
+
+Currently we plan to develop a simple program that will allow the kart to autonomously follow a person or other vehicle. This system was chosen as it can be quickly implemented, acts as a demonstration of how the system will operate and can provide a useful real world application. This program would allow the go-kart to operate as a smart trolley allowing a person to transport equipment between two locations. While at first glance this program may seem to have limited real world applications a robot known as "big dog" is currently being developed to perform the same function carrying 100kg of equipment over rough terrain.
+
+A decision as to how the marker will be tracked is still to be made however it has been narrowed down to one of two options. The first option is to use the marker as a ball of known shape size and color and have this tracked by a webcam. This system would be cheap and easily to implement but inaccurate and error prone with the ball always having to be clearly visible.
+
+The second option is to use a marker that sends out pulses that are picked up by three RF receivers. This option while more difficult and longer to get working would be far more robust and accurate offering superior performance.
 
 
