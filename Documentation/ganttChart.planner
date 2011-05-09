@@ -23,73 +23,151 @@
     </calendar>
   </calendars>
   <tasks>
-    <task id="1" name="Autonomous Go-Kart" note="" work="2602800" start="20110404T000000Z" end="20110812T000000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="2" name="Assessment: Specification Report" note="" work="0" start="20110509T000000Z" end="20110509T000000Z" work-start="20110509T100000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="1" name="Project Setup" note="" work="75600" start="20110404T000000Z" end="20110410T140000Z" work-start="20110404T100000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="2" name="Autonomous Go-Kart" note="" work="4201200" start="20110410T140000Z" end="20110909T104000Z" work-start="20110411T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="1" type="FS"/>
+      </predecessors>
+      <task id="3" name="Assessment: Specification Report" note="" work="0" start="20110509T000000Z" end="20110509T000000Z" work-start="20110509T100000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
         <constraint type="must-start-on" time="20110509T000000Z"/>
       </task>
-      <task id="3" name="Design phase" note="" work="1026000" start="20110404T000000Z" end="20110607T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <task id="4" name="System Diagrams" note="" work="378000" start="20110404T000000Z" end="20110508T140000Z" work-start="20110404T100000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
-        <task id="5" name="Parts List" note="" work="270000" start="20110508T140000Z" end="20110602T140000Z" work-start="20110509T100000Z" percent-complete="90" priority="0" type="normal" scheduling="fixed-work">
+      <task id="4" name="Design phase" note="" work="1749600" start="20110410T140000Z" end="20110525T131000Z" work-start="20110411T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="5" name="System Diagrams" note="" work="388800" start="20110410T140000Z" end="20110428T140000Z" work-start="20110411T100000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="6" name="Schematic Design" note="" work="151200" start="20110428T140000Z" end="20110505T140000Z" work-start="20110429T100000Z" percent-complete="75" priority="0" type="normal" scheduling="fixed-work">
           <predecessors>
-            <predecessor id="1" predecessor-id="4" type="FS"/>
-          </predecessors>
-        </task>
-        <task id="6" name="Servo Selection" note="" work="162000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
-        <task id="7" name="Servo Mount Design" note="" work="162000" start="20110418T140000Z" end="20110503T140000Z" work-start="20110419T100000Z" percent-complete="10" priority="0" type="normal" scheduling="fixed-work">
-          <predecessors>
-            <predecessor id="1" predecessor-id="6" type="FS"/>
-          </predecessors>
-        </task>
-        <task id="8" name="Costing" note="" work="54000" start="20110602T140000Z" end="20110607T140000Z" work-start="20110603T100000Z" percent-complete="90" priority="0" type="normal" scheduling="fixed-work">
-          <predecessors>
-            <predecessor id="1" predecessor-id="7" type="FS"/>
-            <predecessor id="1" predecessor-id="6" type="FS"/>
             <predecessor id="1" predecessor-id="5" type="FS"/>
           </predecessors>
         </task>
+        <task id="7" name="PCB Design" note="" work="226800" start="20110505T140000Z" end="20110520T140000Z" work-start="20110506T100000Z" percent-complete="10" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="6" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="8" name="Parts List" note="" work="270000" start="20110428T140000Z" end="20110518T104000Z" work-start="20110429T100000Z" percent-complete="50" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="5" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="9" name="Servo Selection" note="" work="378000" start="20110410T140000Z" end="20110428T113000Z" work-start="20110411T100000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="10" name="Servo Circuit Schematics" note="" work="151200" start="20110428T113000Z" end="20110505T113000Z" work-start="20110428T113000Z" percent-complete="50" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="9" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="11" name="Servo Mount Design" note="" work="151200" start="20110428T113000Z" end="20110507T133000Z" work-start="20110428T113000Z" percent-complete="10" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="9" type="FS"/>
+          </predecessors>
+        </task>
+        <task id="12" name="Costing" note="" work="32400" start="20110518T104000Z" end="20110525T131000Z" work-start="20110518T104000Z" percent-complete="90" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="11" type="FS"/>
+            <predecessor id="1" predecessor-id="9" type="FS"/>
+            <predecessor id="1" predecessor-id="8" type="FS"/>
+          </predecessors>
+        </task>
       </task>
-      <task id="9" name="Autonomous Hardware" note="" work="324000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="9" priority="0" type="normal" scheduling="fixed-work">
-        <task id="10" name="Sensors" note="" work="162000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-        <task id="11" name="Control interface" note="" work="162000" start="20110404T000000Z" end="20110418T140000Z" work-start="20110404T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      </task>
-      <task id="12" name="Order Electronics" note="" work="226800" start="20110607T140000Z" end="20110628T140000Z" work-start="20110608T100000Z" percent-complete="10" priority="0" type="normal" scheduling="fixed-work">
+      <task id="13" name="Order Electronics" note="" work="226800" duration="226800" start="20110525T131000Z" end="20110615T131000Z" work-start="20110525T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-duration">
         <predecessors>
-          <predecessor id="1" predecessor-id="8" type="FS"/>
+          <predecessor id="1" predecessor-id="12" type="FS"/>
+          <predecessor id="1" predecessor-id="7" type="FS"/>
         </predecessors>
       </task>
-      <task id="13" name="Order Servos" note="" work="151200" start="20110607T140000Z" end="20110621T140000Z" work-start="20110608T100000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
+      <task id="14" name="Order Servos" note="" work="226800" duration="226800" start="20110525T131000Z" end="20110615T131000Z" work-start="20110525T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-duration">
         <predecessors>
-          <predecessor id="1" predecessor-id="8" type="FS"/>
+          <predecessor id="1" predecessor-id="12" type="FS"/>
         </predecessors>
       </task>
-      <task id="14" name="Build Hardware" note="" work="162000" start="20110621T140000Z" end="20110703T140000Z" work-start="20110622T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="15" name="Build Hardware" note="" work="378000" start="20110615T131000Z" end="20110626T104000Z" work-start="20110615T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
-          <predecessor id="1" predecessor-id="3" type="FS"/>
+          <predecessor id="1" predecessor-id="4" type="FS"/>
         </predecessors>
-        <task id="15" name="Mechanical Hardware" note="" work="108000" start="20110621T140000Z" end="20110701T140000Z" work-start="20110622T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="16" name="Mechanical Hardware" note="" work="226800" start="20110615T131000Z" end="20110626T104000Z" work-start="20110615T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <predecessors>
+            <predecessor id="1" predecessor-id="14" type="FS"/>
+          </predecessors>
+          <task id="17" name="Build Servo Brackets" note="" work="226800" start="20110615T131000Z" end="20110626T104000Z" work-start="20110615T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        </task>
+        <task id="18" name="Electronics Hardware" note="" work="151200" start="20110615T131000Z" end="20110622T131000Z" work-start="20110615T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
           <predecessors>
             <predecessor id="1" predecessor-id="13" type="FS"/>
           </predecessors>
-        </task>
-        <task id="16" name="Electronics Hardware" note="" work="54000" start="20110628T140000Z" end="20110703T140000Z" work-start="20110629T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-          <predecessors>
-            <predecessor id="1" predecessor-id="12" type="FS"/>
-          </predecessors>
+          <task id="19" name="Populate compoents" note="" work="151200" start="20110615T131000Z" end="20110622T131000Z" work-start="20110615T131000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
         </task>
       </task>
-      <task id="17" name="Software Devel" note="" work="712800" start="20110418T140000Z" end="20110602T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="20" name="Autonomous Hardware" note="" work="648000" start="20110626T104000Z" end="20110726T104000Z" work-start="20110626T104000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
-          <predecessor id="1" predecessor-id="9" type="FS"/>
+          <predecessor id="1" predecessor-id="15" type="FS"/>
         </predecessors>
-        <task id="18" name="Automation Software" note="" work="486000" start="20110418T140000Z" end="20110602T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-        <task id="19" name="Control Software" note="" work="226800" start="20110418T140000Z" end="20110509T140000Z" work-start="20110419T100000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="21" name="Sensors" note="" work="324000" start="20110626T104000Z" end="20110726T104000Z" work-start="20110626T104000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="22" name="Control interface" note="" work="324000" start="20110626T104000Z" end="20110726T104000Z" work-start="20110626T104000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
       </task>
-      <task id="20" name="Deadline for new jobs in the workshop" note="" work="0" start="20110812T000000Z" end="20110812T000000Z" work-start="20110812T100000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+      <task id="23" name="Software Devel" note="" work="972000" start="20110726T104000Z" end="20110909T104000Z" work-start="20110726T104000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="20" type="FS"/>
+          <predecessor id="1" predecessor-id="18" type="FS"/>
+        </predecessors>
+        <task id="24" name="Automation Software" note="" work="486000" start="20110726T104000Z" end="20110909T104000Z" work-start="20110726T104000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="25" name="Control Software" note="" work="486000" start="20110726T104000Z" end="20110909T104000Z" work-start="20110726T104000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      </task>
+      <task id="26" name="Deadline for new jobs in the workshop" note="" work="0" start="20110812T000000Z" end="20110812T000000Z" work-start="20110812T100000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
         <constraint type="must-start-on" time="20110812T000000Z"/>
       </task>
     </task>
   </tasks>
   <resource-groups/>
-  <resources/>
-  <allocations/>
+  <resources>
+    <resource id="1" name="Wim" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="2" name="Simon" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="3" name="Zac" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="4" name="Henry" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+  </resources>
+  <allocations>
+    <allocation task-id="20" resource-id="1" units="100"/>
+    <allocation task-id="25" resource-id="1" units="25"/>
+    <allocation task-id="24" resource-id="1" units="25"/>
+    <allocation task-id="19" resource-id="1" units="100"/>
+    <allocation task-id="13" resource-id="1" units="50"/>
+    <allocation task-id="12" resource-id="1" units="10"/>
+    <allocation task-id="8" resource-id="1" units="100"/>
+    <allocation task-id="7" resource-id="1" units="50"/>
+    <allocation task-id="6" resource-id="1" units="100"/>
+    <allocation task-id="5" resource-id="1" units="100"/>
+    <allocation task-id="3" resource-id="1" units="100"/>
+    <allocation task-id="20" resource-id="2" units="100"/>
+    <allocation task-id="25" resource-id="2" units="25"/>
+    <allocation task-id="24" resource-id="2" units="25"/>
+    <allocation task-id="17" resource-id="2" units="100"/>
+    <allocation task-id="14" resource-id="2" units="50"/>
+    <allocation task-id="12" resource-id="2" units="10"/>
+    <allocation task-id="11" resource-id="2" units="100"/>
+    <allocation task-id="10" resource-id="2" units="100"/>
+    <allocation task-id="9" resource-id="2" units="100"/>
+    <allocation task-id="8" resource-id="2" units="10"/>
+    <allocation task-id="7" resource-id="2" units="20"/>
+    <allocation task-id="3" resource-id="2" units="10"/>
+    <allocation task-id="20" resource-id="3" units="100"/>
+    <allocation task-id="25" resource-id="3" units="25"/>
+    <allocation task-id="24" resource-id="3" units="25"/>
+    <allocation task-id="17" resource-id="3" units="100"/>
+    <allocation task-id="14" resource-id="3" units="50"/>
+    <allocation task-id="12" resource-id="3" units="10"/>
+    <allocation task-id="11" resource-id="3" units="50"/>
+    <allocation task-id="10" resource-id="3" units="100"/>
+    <allocation task-id="9" resource-id="3" units="100"/>
+    <allocation task-id="8" resource-id="3" units="10"/>
+    <allocation task-id="7" resource-id="3" units="20"/>
+    <allocation task-id="3" resource-id="3" units="10"/>
+    <allocation task-id="20" resource-id="4" units="100"/>
+    <allocation task-id="25" resource-id="4" units="25"/>
+    <allocation task-id="24" resource-id="4" units="25"/>
+    <allocation task-id="19" resource-id="4" units="100"/>
+    <allocation task-id="13" resource-id="4" units="50"/>
+    <allocation task-id="12" resource-id="4" units="10"/>
+    <allocation task-id="8" resource-id="4" units="10"/>
+    <allocation task-id="7" resource-id="4" units="50"/>
+    <allocation task-id="6" resource-id="4" units="100"/>
+    <allocation task-id="5" resource-id="4" units="100"/>
+    <allocation task-id="3" resource-id="4" units="10"/>
+  </allocations>
 </project>
