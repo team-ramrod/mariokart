@@ -177,21 +177,6 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 
 [Document11]
-DocumentPath=Motor_Board_Connector.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=4
-DoLibraryUpdate=0
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-
-[Document12]
 DocumentPath=Main.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -213,11 +198,11 @@ AutoOpenOutJob=-1
 [Generic_SmartPDFSettings]
 ProjectMode=-1
 ZoomPrecision=50
-AddNetsInformation=-1
+AddNetsInformation=0
 AddNetPins=-1
 AddNetNetLabels=-1
 AddNetPorts=-1
-ExportBOM=-1
+ExportBOM=0
 TemplateFilename=
 TemplateStoreRelative=-1
 PCB_PrintColor=0
