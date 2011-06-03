@@ -538,9 +538,9 @@ Configuration1_Item3=Comment=True|Footprint=True
 Configuration1_Name4=OutputConfigurationParameter1
 Configuration1_Item4=Record=BOMPrintView|ShowNoERC=True|ShowParamSet=True|ShowProbe=True|ShowBlanket=True|ExpandDesignator=True|ExpandNetLabel=False|ExpandPort=False|ExpandSheetNum=False|ExpandDocNum=False
 Configuration1_Name5=SortOrder
-Configuration1_Item5=Designator=Up|Comment=Up|Footprint=Up
+Configuration1_Item5=Supplier Part Number 1=Down
 Configuration1_Name6=VisibleOrder
-Configuration1_Item6=Comment=100|Description=100|Designator=100|Footprint=100|LibRef=100|Manufacture PN=100|Manufacturer=100|Quantity=100|Supplier 1=100|Supplier Part Number 1=100
+Configuration1_Item6=Supplier Part Number 1=100|Description=100|Supplier 1=100|Quantity=100
 OutputType2=ComponentCrossReference
 OutputName2=Component Cross Reference Report
 OutputDocumentPath2=
