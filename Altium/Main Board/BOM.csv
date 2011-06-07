@@ -1,0 +1,60 @@
+==================== ========================================================== ================= == == == =========== =========
+Part Number          Description                                                Supplier          Q  O  R  Cost / Unit Subtotal
+==================== ========================================================== ================= == == == =========== =========
+XC1536CT-ND                                                                     Digikey           1
+WM7667CT-ND                                                                     Digikey           1
+WM7625CT-ND          7-pin PicoBlade Right-angle Header                         Digikey           2
+WM7623CT-ND          5-pin PicoBlade Right-angle Header                         Digikey           4
+WM4202-ND            CONN HEADER 4POS .100 VERT TIN                             Digi-Key          1
+WM4201-ND            CONN HEADER 3POS .100 VERT TIN                             Digi-Key          1
+WM3591-ND            HEADER MALE 10POS VERT W/LOCK                              Digi-Key          1
+U423428                                                                         Active Components 1
+TSP7A4901                                                                       TI Samples        1
+TPS7A6050-Q1                                                                    TI Samples        1
+TPS7A6033-Q1                                                                    TI Samples        1
+RJSSE-5381-02-ND     RJ45 SMT Right Angle x2                                    Digikey           1
+RHM150HTR-ND         RES 150 OHM 1/10W 1% 0603 SMD                              Digi-Key          7
+RHM100HTR-ND         RES 100 OHM 1/10W 1% 0603 SMD                              Digi-Key          8
+RHM6.81KHTR-ND       RES 6k81 OHM 1/10W 1% 0603 SMD                             Digi-Key          1
+RHM1.00KHTR-ND       RES 1.00K OHM 1/10W 1% 0603 SMD                            Digi-Key          6
+P330KHCT-ND                                                                     Digi-Key          2
+P180HTR-ND           RES 180OHM 1/10W 1% 0603 SMD                               Digi-Key          2
+P12MGCT-ND                                                                      Digi-Key          1
+AT91SAM7XC256B-AU-ND ARM7TDMI 32-Bit RISC CPU 256KB Flash and 64KB SRAM         Digi-Key          1
+ADC78H89CIMT-ND      7-Channel 500 KSPS 12-Bit A/D Converter                    Digi-Key          1
+A31727CT-ND                                                                     Digikey           1
+9525297              20V P-channel enhancement mode MOSFET                      Element 14        3
+3801287              DPST SMD Switch                                            Element 14        5
+1379763                                                                         Element 14        1
+718-1071-1-ND        CAP TANT 22UF 35V 10% SMD                                  Digi-Key          2
+587-1446-2-ND        CAP CER 10000PF 100V X7R 0603                              Digi-Key          4
+587-1441-1-ND        CAP CER 4.7UF 10V X5R 0603                                 Digi-Key          1
+556-ATA6660TAPY                                                                 Mouser            1
+516-2248-1-ND        2 character 7 segment display                              Digikey           1
+490-4735-1-ND        CAP 10uF 10% 10V X5R 0805                                  Digi-Key          3
+490-3887-1-ND        CAP CER 47uF 10V X5R 1210                                  Digi-Key          1
+490-1545-1-ND        CAP CER 2.2UF 10V 10% X5R 0603                             Digi-Key          1
+490-1424-2-ND        CAP CER 75PF 50V 5% C0G 0603                               Digi-Key          1
+490-1332-1-ND        CAP CER 16PF 100V 5% C0G 0603                              Digi-Key          3
+478-6206-1-ND        CAP CER .10UF 50V X5R 0603                                 Digi-Key          29
+478-1175-1-ND                                                                   Digi-Key          3
+445-5090-2-ND        CAP CER 1.0UF 50V X7R 0603                                 Digi-Key          1
+311-560GRTR-ND       RES 560 OHM 1/10W 1% 0603 SMD                              Digi-Key          4
+311-470KGRTR-ND      RES 470K OHM 1/10W 5% 0603 SMD                             Digi-Key          1
+311-330HRTR-ND       RES 330 OHM 1/10W 1% 0603 SMD                              Digi-Key          5
+311-220KGRTR-ND      RES 3.3K OHM 1/10W 5% 0603 SMD                             Digi-Key          1
+311-100KHRTR-ND      RES 100K OHM 1/10W 1% 0603 SMD                             Digi-Key          4
+311-47.0KHRTR-ND     RES 47.0K OHM 1/10W 1% 0603 SMD                            Digi-Key          1
+311-30.0KHRTR-ND     RES 30K OHM 1/10W 1% 0603 SMD                              Digi-Key          1
+311-27.0KHRTR-ND     RES 27K OHM 1/10W 1% 0603 SMD                              Digi-Key          1
+311-27.0HRTR-ND      RES 27 OHM 1/10W 1% 0603 SMD                               Digi-Key          2
+311-10.0KHRTR-ND     RES 10.0K OHM 1/10W 1% 0603 SMD                            Digi-Key          6
+311-3.9KGRTR-ND      RES 3.9K OHM 1/10W 5% 0603 SMD                             Digi-Key          1
+311-3.3KGRTR-ND      RES 3.3K OHM 1/10W 5% 0603 SMD                             Digi-Key          1
+311-2.7KGRTR-ND      RES 2.7K OHM 1/10W 5% 0603 SMD                             Digi-Key          1
+311-1.5KGRTR-ND      RES 1.5K OHM 1/10W 5% 0603 SMD                             Digi-Key          1
+296-13223-1-ND       SN74LS47                                                   Digikey           1
+160-1179-2-ND        Green LED 0805                                             Digi-Key          1
+                     Header 2-Pin                                               ECE Store         4
+                     Header 4-Pin                                               ECE Store         1
+==================== ========================================================== ================= == == == =========== =========
