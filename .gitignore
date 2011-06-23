@@ -1,4 +1,4 @@
-*.o
+# Altium stuff
 *.PcbDocPreview
 *.SchDocPreview
 *.SCHDOCPreview
@@ -9,4 +9,9 @@
 /Altium/History/
 /Altium/*/History/
 Thumbs.db
+
+# Source files
 /src/local.mk
+/src/*.hex
+/src/*.out
+/src/*/*.o
