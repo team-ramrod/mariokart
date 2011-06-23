@@ -9,3 +9,4 @@
 /Altium/History/
 /Altium/*/History/
 Thumbs.db
+/src/local.mk
