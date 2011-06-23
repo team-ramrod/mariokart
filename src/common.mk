@@ -8,9 +8,8 @@ MCU = arm7tdmi
 ##  Toolchain Config  ##
 ########################
 CC = arm-elf-gcc
-MMCU = mmcu
 OBJCOPY = arm-elf-objcopy
-CFLAGS = -Wall -$(MMCU)=$(MCU) -Os -std=gnu99 -pedantic
+CFLAGS = -Wall -mcpu=$(MCU) -Os -std=gnu99 -pedantic
 LDFLAGS =
 
 
@@ -29,7 +28,6 @@ ocd-%: build/%.hex
 	blahblahblah
 
 clean:
-	rm -f *.o
 	rm -f */*.o
 	rm -f *.out
 
