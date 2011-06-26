@@ -9,8 +9,8 @@ MCU = arm7tdmi
 ########################
 CC = arm-elf-gcc
 OBJCOPY = arm-elf-objcopy
-CFLAGS = -Wall -mmcu=$(MCU) -Os -std=gnu99 -pedantic
-LDFLAGS =
+CFLAGS += -Wall -mcpu=$(MCU) -Os -iquote. -std=gnu99 -pedantic
+LDFLAGS +=
 
 
 ###############################
@@ -28,11 +28,10 @@ ocd-%: build/%.hex
 	blahblahblah
 
 clean:
-	rm -f *.o
 	rm -f */*.o
 	rm -f *.out
 
-cleanall:
+cleanall: clean
 	rm -f *.hex
 
 .PHONY: all rebuild

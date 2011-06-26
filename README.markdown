@@ -1,8 +1,3 @@
-    <deleteme>
-      Hey guys I though that the README could be some kind of overarching
-      'mission statement' (without sounding too wanky) kind of thing.
-    </deleteme>
-
 MarioKart
 =========
 
