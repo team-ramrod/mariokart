@@ -1,14 +1,14 @@
 #include "led.h"
 
-#define LED_NUM_PINS     (_BV(0) | _BV(1) | _BV(2) | _BV(3))
-#define LED_SELECT_LEFT   _BV(7)
-#define LED_SELECT_RIGHT  _BV(17)
-#define LED_ENABLE_PIN    _BV(12)
+#define LED_NUM_PINS     (AT91C_PIO_PB0 | AT91C_PIO_PB1 | AT91C_PIO_PB2 | AT91C_PIO_PB3)
+#define LED_SELECT_LEFT   AT91C_PIO_PB7
+#define LED_SELECT_RIGHT  AT91C_PIO_PB17
+#define LED_ENABLE_PIN    AT91C_PIO_PB12
 
 static struct {
-    uint32_t value;
-    uint32_t enabled;
-    uint32_t selected;
+    uint32_t value; // The value to be displayed
+    uint32_t enabled; // if the display is actually displaying anything
+    uint32_t selected;  // Display pin number
 } __left_display, __right_display;
 
 void led_init() {
@@ -49,28 +49,28 @@ void led_display_right(uint8_t number) {
 }
 
 void led_show() {
-        static enum { __L_D, __R_D } __current = __L_D;
+    static enum { __L_D, __R_D } __current = __L_D;
 
-        switch (__current) {
-            case __L_D:
-                __current = __R_D;
-                *AT91C_PIOB_CODR = LED_NUM_PINS
-                                 | LED_SELECT_LEFT
-                                 | LED_ENABLE_PIN;
+    switch (__current) {
+        case __L_D:
+            __current = __R_D;
+            *AT91C_PIOB_CODR = LED_NUM_PINS
+                | LED_SELECT_LEFT
+                | LED_ENABLE_PIN;
 
-                *AT91C_PIOB_SODR = __right_display.value
-                                 | __right_display.enabled
-                                 | __right_display.selected;
-                break;
-            case __R_D:
-                __current = __L_D;
-                *AT91C_PIOB_CODR = LED_NUM_PINS
-                                 | LED_SELECT_RIGHT
-                                 | LED_ENABLE_PIN;
+            *AT91C_PIOB_SODR = __right_display.value
+                | __right_display.enabled
+                | __right_display.selected;
+            break;
+        case __R_D:
+            __current = __L_D;
+            *AT91C_PIOB_CODR = LED_NUM_PINS
+                | LED_SELECT_RIGHT
+                | LED_ENABLE_PIN;
 
-                *AT91C_PIOB_SODR = __left_display.value
-                                 | __left_display.enabled
-                                 | __left_display.selected;
-                break;
-        }   
+            *AT91C_PIOB_SODR = __left_display.value
+                | __left_display.enabled
+                | __left_display.selected;
+            break;
+    }
 }
