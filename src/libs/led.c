@@ -55,22 +55,22 @@ void led_show() {
         case __L_D:
             __current = __R_D;
             *AT91C_PIOB_CODR = LED_NUM_PINS
-                | LED_SELECT_LEFT
-                | LED_ENABLE_PIN;
+                             | LED_SELECT_LEFT
+                             | LED_ENABLE_PIN;
 
             *AT91C_PIOB_SODR = __right_display.value
-                | __right_display.enabled
-                | __right_display.selected;
+                             | __right_display.enabled
+                             | __right_display.selected;
             break;
         case __R_D:
             __current = __L_D;
             *AT91C_PIOB_CODR = LED_NUM_PINS
-                | LED_SELECT_RIGHT
-                | LED_ENABLE_PIN;
+                             | LED_SELECT_RIGHT
+                             | LED_ENABLE_PIN;
 
             *AT91C_PIOB_SODR = __left_display.value
-                | __left_display.enabled
-                | __left_display.selected;
+                             | __left_display.enabled
+                             | __left_display.selected;
             break;
     }
 }
