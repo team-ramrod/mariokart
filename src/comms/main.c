@@ -1,4 +1,3 @@
-#include "board.h"
 #include "common.h"
 
 #include "libs/led.h"

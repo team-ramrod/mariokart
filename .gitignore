@@ -13,5 +13,7 @@ Thumbs.db
 # Source files
 /src/local.mk
 /src/*.hex
-/src/*.out
+/src/*.elf
 /src/*/*.o
+/src/.dep
+/src/*.a
