@@ -25,11 +25,11 @@
 //  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 //  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //  ----------------------------------------------------------------------------
-// File Name           : AT91SAM7X256.h
-// Object              : AT91SAM7X256 definitions
-// Generated           : AT91 SW Application Group  07/07/2008 (16:15:32)
+// File Name           : AT91SAM7XC256.h
+// Object              : AT91SAM7XC256 definitions
+// Generated           : AT91 SW Application Group  07/07/2008 (16:14:36)
 //
-// CVS Reference       : /AT91SAM7X256.pl/1.16/Wed Aug 30 14:09:12 2006//
+// CVS Reference       : /AT91SAM7XC256.pl/1.2/Wed Aug 30 14:09:28 2006//
 // CVS Reference       : /SYS_SAM7X.pl/1.3/Wed Feb  2 15:48:15 2005//
 // CVS Reference       : /MC_SAM7X.pl/1.2/Fri May 20 14:22:29 2005//
 // CVS Reference       : /PMC_SAM7X.pl/1.4/Tue Feb  8 14:00:19 2005//
@@ -52,10 +52,12 @@
 // CVS Reference       : /CAN_6019B.pl/1.1/Mon Jan 31 13:54:30 2005//
 // CVS Reference       : /EMACB_6119A.pl/1.6/Wed Jul 13 15:25:00 2005//
 // CVS Reference       : /ADC_6051C.pl/1.1/Mon Jan 31 13:12:40 2005//
+// CVS Reference       : /AES_6149A.pl/1.12/Wed Nov  2 14:17:53 2005//
+// CVS Reference       : /DES3_6150A.pl/1.1/Mon Jan 17 13:30:33 2005//
 //  ----------------------------------------------------------------------------
 
-#ifndef AT91SAM7X256_H
-#define AT91SAM7X256_H
+#ifndef AT91SAM7XC256_H
+#define AT91SAM7XC256_H
 
 #ifndef __ASSEMBLY__
 typedef volatile unsigned int AT91_REG;// Hardware register definition
@@ -2105,7 +2107,188 @@ typedef struct _AT91S_ADC {
 // -------- ADC_CDR7 : (ADC Offset: 0x4c) ADC Channel Data Register 7 --------
 
 // *****************************************************************************
-//               REGISTER ADDRESS DEFINITION FOR AT91SAM7X256
+//              SOFTWARE API DEFINITION  FOR Advanced  Encryption Standard
+// *****************************************************************************
+#ifndef __ASSEMBLY__
+typedef struct _AT91S_AES {
+	AT91_REG	 AES_CR; 	// Control Register
+	AT91_REG	 AES_MR; 	// Mode Register
+	AT91_REG	 Reserved0[2]; 	//
+	AT91_REG	 AES_IER; 	// Interrupt Enable Register
+	AT91_REG	 AES_IDR; 	// Interrupt Disable Register
+	AT91_REG	 AES_IMR; 	// Interrupt Mask Register
+	AT91_REG	 AES_ISR; 	// Interrupt Status Register
+	AT91_REG	 AES_KEYWxR[4]; 	// Key Word x Register
+	AT91_REG	 Reserved1[4]; 	//
+	AT91_REG	 AES_IDATAxR[4]; 	// Input Data x Register
+	AT91_REG	 AES_ODATAxR[4]; 	// Output Data x Register
+	AT91_REG	 AES_IVxR[4]; 	// Initialization Vector x Register
+	AT91_REG	 Reserved2[35]; 	//
+	AT91_REG	 AES_VR; 	// AES Version Register
+	AT91_REG	 AES_RPR; 	// Receive Pointer Register
+	AT91_REG	 AES_RCR; 	// Receive Counter Register
+	AT91_REG	 AES_TPR; 	// Transmit Pointer Register
+	AT91_REG	 AES_TCR; 	// Transmit Counter Register
+	AT91_REG	 AES_RNPR; 	// Receive Next Pointer Register
+	AT91_REG	 AES_RNCR; 	// Receive Next Counter Register
+	AT91_REG	 AES_TNPR; 	// Transmit Next Pointer Register
+	AT91_REG	 AES_TNCR; 	// Transmit Next Counter Register
+	AT91_REG	 AES_PTCR; 	// PDC Transfer Control Register
+	AT91_REG	 AES_PTSR; 	// PDC Transfer Status Register
+} AT91S_AES, *AT91PS_AES;
+#else
+#define AES_CR          (AT91_CAST(AT91_REG *) 	0x00000000) // (AES_CR) Control Register
+#define AES_MR          (AT91_CAST(AT91_REG *) 	0x00000004) // (AES_MR) Mode Register
+#define AES_IER         (AT91_CAST(AT91_REG *) 	0x00000010) // (AES_IER) Interrupt Enable Register
+#define AES_IDR         (AT91_CAST(AT91_REG *) 	0x00000014) // (AES_IDR) Interrupt Disable Register
+#define AES_IMR         (AT91_CAST(AT91_REG *) 	0x00000018) // (AES_IMR) Interrupt Mask Register
+#define AES_ISR         (AT91_CAST(AT91_REG *) 	0x0000001C) // (AES_ISR) Interrupt Status Register
+#define AES_KEYWxR      (AT91_CAST(AT91_REG *) 	0x00000020) // (AES_KEYWxR) Key Word x Register
+#define AES_IDATAxR     (AT91_CAST(AT91_REG *) 	0x00000040) // (AES_IDATAxR) Input Data x Register
+#define AES_ODATAxR     (AT91_CAST(AT91_REG *) 	0x00000050) // (AES_ODATAxR) Output Data x Register
+#define AES_IVxR        (AT91_CAST(AT91_REG *) 	0x00000060) // (AES_IVxR) Initialization Vector x Register
+#define AES_VR          (AT91_CAST(AT91_REG *) 	0x000000FC) // (AES_VR) AES Version Register
+
+#endif
+// -------- AES_CR : (AES Offset: 0x0) Control Register --------
+#define AT91C_AES_START       (0x1 <<  0) // (AES) Starts Processing
+#define AT91C_AES_SWRST       (0x1 <<  8) // (AES) Software Reset
+#define AT91C_AES_LOADSEED    (0x1 << 16) // (AES) Random Number Generator Seed Loading
+// -------- AES_MR : (AES Offset: 0x4) Mode Register --------
+#define AT91C_AES_CIPHER      (0x1 <<  0) // (AES) Processing Mode
+#define AT91C_AES_PROCDLY     (0xF <<  4) // (AES) Processing Delay
+#define AT91C_AES_SMOD        (0x3 <<  8) // (AES) Start Mode
+#define 	AT91C_AES_SMOD_MANUAL               (0x0 <<  8) // (AES) Manual Mode: The START bit in register AES_CR must be set to begin encryption or decryption.
+#define 	AT91C_AES_SMOD_AUTO                 (0x1 <<  8) // (AES) Auto Mode: no action in AES_CR is necessary (cf datasheet).
+#define 	AT91C_AES_SMOD_PDC                  (0x2 <<  8) // (AES) PDC Mode (cf datasheet).
+#define AT91C_AES_OPMOD       (0x7 << 12) // (AES) Operation Mode
+#define 	AT91C_AES_OPMOD_ECB                  (0x0 << 12) // (AES) ECB Electronic CodeBook mode.
+#define 	AT91C_AES_OPMOD_CBC                  (0x1 << 12) // (AES) CBC Cipher Block Chaining mode.
+#define 	AT91C_AES_OPMOD_OFB                  (0x2 << 12) // (AES) OFB Output Feedback mode.
+#define 	AT91C_AES_OPMOD_CFB                  (0x3 << 12) // (AES) CFB Cipher Feedback mode.
+#define 	AT91C_AES_OPMOD_CTR                  (0x4 << 12) // (AES) CTR Counter mode.
+#define AT91C_AES_LOD         (0x1 << 15) // (AES) Last Output Data Mode
+#define AT91C_AES_CFBS        (0x7 << 16) // (AES) Cipher Feedback Data Size
+#define 	AT91C_AES_CFBS_128_BIT              (0x0 << 16) // (AES) 128-bit.
+#define 	AT91C_AES_CFBS_64_BIT               (0x1 << 16) // (AES) 64-bit.
+#define 	AT91C_AES_CFBS_32_BIT               (0x2 << 16) // (AES) 32-bit.
+#define 	AT91C_AES_CFBS_16_BIT               (0x3 << 16) // (AES) 16-bit.
+#define 	AT91C_AES_CFBS_8_BIT                (0x4 << 16) // (AES) 8-bit.
+#define AT91C_AES_CKEY        (0xF << 20) // (AES) Countermeasure Key
+#define AT91C_AES_CTYPE       (0x1F << 24) // (AES) Countermeasure Type
+#define 	AT91C_AES_CTYPE_TYPE1_EN             (0x1 << 24) // (AES) Countermeasure type 1 is enabled.
+#define 	AT91C_AES_CTYPE_TYPE2_EN             (0x2 << 24) // (AES) Countermeasure type 2 is enabled.
+#define 	AT91C_AES_CTYPE_TYPE3_EN             (0x4 << 24) // (AES) Countermeasure type 3 is enabled.
+#define 	AT91C_AES_CTYPE_TYPE4_EN             (0x8 << 24) // (AES) Countermeasure type 4 is enabled.
+#define 	AT91C_AES_CTYPE_TYPE5_EN             (0x10 << 24) // (AES) Countermeasure type 5 is enabled.
+// -------- AES_IER : (AES Offset: 0x10) Interrupt Enable Register --------
+#define AT91C_AES_DATRDY      (0x1 <<  0) // (AES) DATRDY
+#define AT91C_AES_ENDRX       (0x1 <<  1) // (AES) PDC Read Buffer End
+#define AT91C_AES_ENDTX       (0x1 <<  2) // (AES) PDC Write Buffer End
+#define AT91C_AES_RXBUFF      (0x1 <<  3) // (AES) PDC Read Buffer Full
+#define AT91C_AES_TXBUFE      (0x1 <<  4) // (AES) PDC Write Buffer Empty
+#define AT91C_AES_URAD        (0x1 <<  8) // (AES) Unspecified Register Access Detection
+// -------- AES_IDR : (AES Offset: 0x14) Interrupt Disable Register --------
+// -------- AES_IMR : (AES Offset: 0x18) Interrupt Mask Register --------
+// -------- AES_ISR : (AES Offset: 0x1c) Interrupt Status Register --------
+#define AT91C_AES_URAT        (0x7 << 12) // (AES) Unspecified Register Access Type Status
+#define 	AT91C_AES_URAT_IN_DAT_WRITE_DATPROC (0x0 << 12) // (AES) Input data register written during the data processing in PDC mode.
+#define 	AT91C_AES_URAT_OUT_DAT_READ_DATPROC (0x1 << 12) // (AES) Output data register read during the data processing.
+#define 	AT91C_AES_URAT_MODEREG_WRITE_DATPROC (0x2 << 12) // (AES) Mode register written during the data processing.
+#define 	AT91C_AES_URAT_OUT_DAT_READ_SUBKEY  (0x3 << 12) // (AES) Output data register read during the sub-keys generation.
+#define 	AT91C_AES_URAT_MODEREG_WRITE_SUBKEY (0x4 << 12) // (AES) Mode register written during the sub-keys generation.
+#define 	AT91C_AES_URAT_WO_REG_READ          (0x5 << 12) // (AES) Write-only register read access.
+
+// *****************************************************************************
+//              SOFTWARE API DEFINITION  FOR Triple Data Encryption Standard
+// *****************************************************************************
+#ifndef __ASSEMBLY__
+typedef struct _AT91S_TDES {
+	AT91_REG	 TDES_CR; 	// Control Register
+	AT91_REG	 TDES_MR; 	// Mode Register
+	AT91_REG	 Reserved0[2]; 	//
+	AT91_REG	 TDES_IER; 	// Interrupt Enable Register
+	AT91_REG	 TDES_IDR; 	// Interrupt Disable Register
+	AT91_REG	 TDES_IMR; 	// Interrupt Mask Register
+	AT91_REG	 TDES_ISR; 	// Interrupt Status Register
+	AT91_REG	 TDES_KEY1WxR[2]; 	// Key 1 Word x Register
+	AT91_REG	 TDES_KEY2WxR[2]; 	// Key 2 Word x Register
+	AT91_REG	 TDES_KEY3WxR[2]; 	// Key 3 Word x Register
+	AT91_REG	 Reserved1[2]; 	//
+	AT91_REG	 TDES_IDATAxR[2]; 	// Input Data x Register
+	AT91_REG	 Reserved2[2]; 	//
+	AT91_REG	 TDES_ODATAxR[2]; 	// Output Data x Register
+	AT91_REG	 Reserved3[2]; 	//
+	AT91_REG	 TDES_IVxR[2]; 	// Initialization Vector x Register
+	AT91_REG	 Reserved4[37]; 	//
+	AT91_REG	 TDES_VR; 	// TDES Version Register
+	AT91_REG	 TDES_RPR; 	// Receive Pointer Register
+	AT91_REG	 TDES_RCR; 	// Receive Counter Register
+	AT91_REG	 TDES_TPR; 	// Transmit Pointer Register
+	AT91_REG	 TDES_TCR; 	// Transmit Counter Register
+	AT91_REG	 TDES_RNPR; 	// Receive Next Pointer Register
+	AT91_REG	 TDES_RNCR; 	// Receive Next Counter Register
+	AT91_REG	 TDES_TNPR; 	// Transmit Next Pointer Register
+	AT91_REG	 TDES_TNCR; 	// Transmit Next Counter Register
+	AT91_REG	 TDES_PTCR; 	// PDC Transfer Control Register
+	AT91_REG	 TDES_PTSR; 	// PDC Transfer Status Register
+} AT91S_TDES, *AT91PS_TDES;
+#else
+#define TDES_CR         (AT91_CAST(AT91_REG *) 	0x00000000) // (TDES_CR) Control Register
+#define TDES_MR         (AT91_CAST(AT91_REG *) 	0x00000004) // (TDES_MR) Mode Register
+#define TDES_IER        (AT91_CAST(AT91_REG *) 	0x00000010) // (TDES_IER) Interrupt Enable Register
+#define TDES_IDR        (AT91_CAST(AT91_REG *) 	0x00000014) // (TDES_IDR) Interrupt Disable Register
+#define TDES_IMR        (AT91_CAST(AT91_REG *) 	0x00000018) // (TDES_IMR) Interrupt Mask Register
+#define TDES_ISR        (AT91_CAST(AT91_REG *) 	0x0000001C) // (TDES_ISR) Interrupt Status Register
+#define TDES_KEY1WxR    (AT91_CAST(AT91_REG *) 	0x00000020) // (TDES_KEY1WxR) Key 1 Word x Register
+#define TDES_KEY2WxR    (AT91_CAST(AT91_REG *) 	0x00000028) // (TDES_KEY2WxR) Key 2 Word x Register
+#define TDES_KEY3WxR    (AT91_CAST(AT91_REG *) 	0x00000030) // (TDES_KEY3WxR) Key 3 Word x Register
+#define TDES_IDATAxR    (AT91_CAST(AT91_REG *) 	0x00000040) // (TDES_IDATAxR) Input Data x Register
+#define TDES_ODATAxR    (AT91_CAST(AT91_REG *) 	0x00000050) // (TDES_ODATAxR) Output Data x Register
+#define TDES_IVxR       (AT91_CAST(AT91_REG *) 	0x00000060) // (TDES_IVxR) Initialization Vector x Register
+#define TDES_VR         (AT91_CAST(AT91_REG *) 	0x000000FC) // (TDES_VR) TDES Version Register
+
+#endif
+// -------- TDES_CR : (TDES Offset: 0x0) Control Register --------
+#define AT91C_TDES_START      (0x1 <<  0) // (TDES) Starts Processing
+#define AT91C_TDES_SWRST      (0x1 <<  8) // (TDES) Software Reset
+// -------- TDES_MR : (TDES Offset: 0x4) Mode Register --------
+#define AT91C_TDES_CIPHER     (0x1 <<  0) // (TDES) Processing Mode
+#define AT91C_TDES_TDESMOD    (0x1 <<  1) // (TDES) Single or Triple DES Mode
+#define AT91C_TDES_KEYMOD     (0x1 <<  4) // (TDES) Key Mode
+#define AT91C_TDES_SMOD       (0x3 <<  8) // (TDES) Start Mode
+#define 	AT91C_TDES_SMOD_MANUAL               (0x0 <<  8) // (TDES) Manual Mode: The START bit in register TDES_CR must be set to begin encryption or decryption.
+#define 	AT91C_TDES_SMOD_AUTO                 (0x1 <<  8) // (TDES) Auto Mode: no action in TDES_CR is necessary (cf datasheet).
+#define 	AT91C_TDES_SMOD_PDC                  (0x2 <<  8) // (TDES) PDC Mode (cf datasheet).
+#define AT91C_TDES_OPMOD      (0x3 << 12) // (TDES) Operation Mode
+#define 	AT91C_TDES_OPMOD_ECB                  (0x0 << 12) // (TDES) ECB Electronic CodeBook mode.
+#define 	AT91C_TDES_OPMOD_CBC                  (0x1 << 12) // (TDES) CBC Cipher Block Chaining mode.
+#define 	AT91C_TDES_OPMOD_OFB                  (0x2 << 12) // (TDES) OFB Output Feedback mode.
+#define 	AT91C_TDES_OPMOD_CFB                  (0x3 << 12) // (TDES) CFB Cipher Feedback mode.
+#define AT91C_TDES_LOD        (0x1 << 15) // (TDES) Last Output Data Mode
+#define AT91C_TDES_CFBS       (0x3 << 16) // (TDES) Cipher Feedback Data Size
+#define 	AT91C_TDES_CFBS_64_BIT               (0x0 << 16) // (TDES) 64-bit.
+#define 	AT91C_TDES_CFBS_32_BIT               (0x1 << 16) // (TDES) 32-bit.
+#define 	AT91C_TDES_CFBS_16_BIT               (0x2 << 16) // (TDES) 16-bit.
+#define 	AT91C_TDES_CFBS_8_BIT                (0x3 << 16) // (TDES) 8-bit.
+// -------- TDES_IER : (TDES Offset: 0x10) Interrupt Enable Register --------
+#define AT91C_TDES_DATRDY     (0x1 <<  0) // (TDES) DATRDY
+#define AT91C_TDES_ENDRX      (0x1 <<  1) // (TDES) PDC Read Buffer End
+#define AT91C_TDES_ENDTX      (0x1 <<  2) // (TDES) PDC Write Buffer End
+#define AT91C_TDES_RXBUFF     (0x1 <<  3) // (TDES) PDC Read Buffer Full
+#define AT91C_TDES_TXBUFE     (0x1 <<  4) // (TDES) PDC Write Buffer Empty
+#define AT91C_TDES_URAD       (0x1 <<  8) // (TDES) Unspecified Register Access Detection
+// -------- TDES_IDR : (TDES Offset: 0x14) Interrupt Disable Register --------
+// -------- TDES_IMR : (TDES Offset: 0x18) Interrupt Mask Register --------
+// -------- TDES_ISR : (TDES Offset: 0x1c) Interrupt Status Register --------
+#define AT91C_TDES_URAT       (0x3 << 12) // (TDES) Unspecified Register Access Type Status
+#define 	AT91C_TDES_URAT_IN_DAT_WRITE_DATPROC (0x0 << 12) // (TDES) Input data register written during the data processing in PDC mode.
+#define 	AT91C_TDES_URAT_OUT_DAT_READ_DATPROC (0x1 << 12) // (TDES) Output data register read during the data processing.
+#define 	AT91C_TDES_URAT_MODEREG_WRITE_DATPROC (0x2 << 12) // (TDES) Mode register written during the data processing.
+#define 	AT91C_TDES_URAT_WO_REG_READ          (0x3 << 12) // (TDES) Write-only register read access.
+
+// *****************************************************************************
+//               REGISTER ADDRESS DEFINITION FOR AT91SAM7XC256
 // *****************************************************************************
 // ========== Register definition for SYS peripheral ==========
 // ========== Register definition for AIC peripheral ==========
@@ -2641,9 +2824,57 @@ typedef struct _AT91S_ADC {
 #define AT91C_ADC_CHSR  (AT91_CAST(AT91_REG *) 	0xFFFD8018) // (ADC) ADC Channel Status Register
 #define AT91C_ADC_MR    (AT91_CAST(AT91_REG *) 	0xFFFD8004) // (ADC) ADC Mode Register
 #define AT91C_ADC_IMR   (AT91_CAST(AT91_REG *) 	0xFFFD802C) // (ADC) ADC Interrupt Mask Register
+// ========== Register definition for PDC_AES peripheral ==========
+#define AT91C_AES_TPR   (AT91_CAST(AT91_REG *) 	0xFFFA4108) // (PDC_AES) Transmit Pointer Register
+#define AT91C_AES_PTCR  (AT91_CAST(AT91_REG *) 	0xFFFA4120) // (PDC_AES) PDC Transfer Control Register
+#define AT91C_AES_RNPR  (AT91_CAST(AT91_REG *) 	0xFFFA4110) // (PDC_AES) Receive Next Pointer Register
+#define AT91C_AES_TNCR  (AT91_CAST(AT91_REG *) 	0xFFFA411C) // (PDC_AES) Transmit Next Counter Register
+#define AT91C_AES_TCR   (AT91_CAST(AT91_REG *) 	0xFFFA410C) // (PDC_AES) Transmit Counter Register
+#define AT91C_AES_RCR   (AT91_CAST(AT91_REG *) 	0xFFFA4104) // (PDC_AES) Receive Counter Register
+#define AT91C_AES_RNCR  (AT91_CAST(AT91_REG *) 	0xFFFA4114) // (PDC_AES) Receive Next Counter Register
+#define AT91C_AES_TNPR  (AT91_CAST(AT91_REG *) 	0xFFFA4118) // (PDC_AES) Transmit Next Pointer Register
+#define AT91C_AES_RPR   (AT91_CAST(AT91_REG *) 	0xFFFA4100) // (PDC_AES) Receive Pointer Register
+#define AT91C_AES_PTSR  (AT91_CAST(AT91_REG *) 	0xFFFA4124) // (PDC_AES) PDC Transfer Status Register
+// ========== Register definition for AES peripheral ==========
+#define AT91C_AES_IVxR  (AT91_CAST(AT91_REG *) 	0xFFFA4060) // (AES) Initialization Vector x Register
+#define AT91C_AES_MR    (AT91_CAST(AT91_REG *) 	0xFFFA4004) // (AES) Mode Register
+#define AT91C_AES_VR    (AT91_CAST(AT91_REG *) 	0xFFFA40FC) // (AES) AES Version Register
+#define AT91C_AES_ODATAxR (AT91_CAST(AT91_REG *) 	0xFFFA4050) // (AES) Output Data x Register
+#define AT91C_AES_IDATAxR (AT91_CAST(AT91_REG *) 	0xFFFA4040) // (AES) Input Data x Register
+#define AT91C_AES_CR    (AT91_CAST(AT91_REG *) 	0xFFFA4000) // (AES) Control Register
+#define AT91C_AES_IDR   (AT91_CAST(AT91_REG *) 	0xFFFA4014) // (AES) Interrupt Disable Register
+#define AT91C_AES_IMR   (AT91_CAST(AT91_REG *) 	0xFFFA4018) // (AES) Interrupt Mask Register
+#define AT91C_AES_IER   (AT91_CAST(AT91_REG *) 	0xFFFA4010) // (AES) Interrupt Enable Register
+#define AT91C_AES_KEYWxR (AT91_CAST(AT91_REG *) 	0xFFFA4020) // (AES) Key Word x Register
+#define AT91C_AES_ISR   (AT91_CAST(AT91_REG *) 	0xFFFA401C) // (AES) Interrupt Status Register
+// ========== Register definition for PDC_TDES peripheral ==========
+#define AT91C_TDES_RNCR (AT91_CAST(AT91_REG *) 	0xFFFA8114) // (PDC_TDES) Receive Next Counter Register
+#define AT91C_TDES_TCR  (AT91_CAST(AT91_REG *) 	0xFFFA810C) // (PDC_TDES) Transmit Counter Register
+#define AT91C_TDES_RCR  (AT91_CAST(AT91_REG *) 	0xFFFA8104) // (PDC_TDES) Receive Counter Register
+#define AT91C_TDES_TNPR (AT91_CAST(AT91_REG *) 	0xFFFA8118) // (PDC_TDES) Transmit Next Pointer Register
+#define AT91C_TDES_RNPR (AT91_CAST(AT91_REG *) 	0xFFFA8110) // (PDC_TDES) Receive Next Pointer Register
+#define AT91C_TDES_RPR  (AT91_CAST(AT91_REG *) 	0xFFFA8100) // (PDC_TDES) Receive Pointer Register
+#define AT91C_TDES_TNCR (AT91_CAST(AT91_REG *) 	0xFFFA811C) // (PDC_TDES) Transmit Next Counter Register
+#define AT91C_TDES_TPR  (AT91_CAST(AT91_REG *) 	0xFFFA8108) // (PDC_TDES) Transmit Pointer Register
+#define AT91C_TDES_PTSR (AT91_CAST(AT91_REG *) 	0xFFFA8124) // (PDC_TDES) PDC Transfer Status Register
+#define AT91C_TDES_PTCR (AT91_CAST(AT91_REG *) 	0xFFFA8120) // (PDC_TDES) PDC Transfer Control Register
+// ========== Register definition for TDES peripheral ==========
+#define AT91C_TDES_KEY2WxR (AT91_CAST(AT91_REG *) 	0xFFFA8028) // (TDES) Key 2 Word x Register
+#define AT91C_TDES_KEY3WxR (AT91_CAST(AT91_REG *) 	0xFFFA8030) // (TDES) Key 3 Word x Register
+#define AT91C_TDES_IDR  (AT91_CAST(AT91_REG *) 	0xFFFA8014) // (TDES) Interrupt Disable Register
+#define AT91C_TDES_VR   (AT91_CAST(AT91_REG *) 	0xFFFA80FC) // (TDES) TDES Version Register
+#define AT91C_TDES_IVxR (AT91_CAST(AT91_REG *) 	0xFFFA8060) // (TDES) Initialization Vector x Register
+#define AT91C_TDES_ODATAxR (AT91_CAST(AT91_REG *) 	0xFFFA8050) // (TDES) Output Data x Register
+#define AT91C_TDES_IMR  (AT91_CAST(AT91_REG *) 	0xFFFA8018) // (TDES) Interrupt Mask Register
+#define AT91C_TDES_MR   (AT91_CAST(AT91_REG *) 	0xFFFA8004) // (TDES) Mode Register
+#define AT91C_TDES_CR   (AT91_CAST(AT91_REG *) 	0xFFFA8000) // (TDES) Control Register
+#define AT91C_TDES_IER  (AT91_CAST(AT91_REG *) 	0xFFFA8010) // (TDES) Interrupt Enable Register
+#define AT91C_TDES_ISR  (AT91_CAST(AT91_REG *) 	0xFFFA801C) // (TDES) Interrupt Status Register
+#define AT91C_TDES_IDATAxR (AT91_CAST(AT91_REG *) 	0xFFFA8040) // (TDES) Input Data x Register
+#define AT91C_TDES_KEY1WxR (AT91_CAST(AT91_REG *) 	0xFFFA8020) // (TDES) Key 1 Word x Register
 
 // *****************************************************************************
-//               PIO DEFINITIONS FOR AT91SAM7X256
+//               PIO DEFINITIONS FOR AT91SAM7XC256
 // *****************************************************************************
 #define AT91C_PIO_PA0        (1 <<  0) // Pin Controlled by PA0
 #define AT91C_PA0_RXD0     (AT91C_PIO_PA0) //  USART 0 Receive Data
@@ -2810,7 +3041,7 @@ typedef struct _AT91S_ADC {
 #define AT91C_PB9_EMDIO    (AT91C_PIO_PB9) //  Ethernet MAC Management Data Input/Output
 
 // *****************************************************************************
-//               PERIPHERAL ID DEFINITIONS FOR AT91SAM7X256
+//               PERIPHERAL ID DEFINITIONS FOR AT91SAM7XC256
 // *****************************************************************************
 #define AT91C_ID_FIQ    ( 0) // Advanced Interrupt Controller (FIQ)
 #define AT91C_ID_SYS    ( 1) // System Peripheral
@@ -2830,8 +3061,8 @@ typedef struct _AT91S_ADC {
 #define AT91C_ID_CAN    (15) // Control Area Network Controller
 #define AT91C_ID_EMAC   (16) // Ethernet MAC
 #define AT91C_ID_ADC    (17) // Analog-to-Digital Converter
-#define AT91C_ID_18_Reserved (18) // Reserved
-#define AT91C_ID_19_Reserved (19) // Reserved
+#define AT91C_ID_AES    (18) // Advanced Encryption Standard 128-bit
+#define AT91C_ID_TDES   (19) // Triple Data Encryption Standard
 #define AT91C_ID_20_Reserved (20) // Reserved
 #define AT91C_ID_21_Reserved (21) // Reserved
 #define AT91C_ID_22_Reserved (22) // Reserved
@@ -2844,10 +3075,10 @@ typedef struct _AT91S_ADC {
 #define AT91C_ID_29_Reserved (29) // Reserved
 #define AT91C_ID_IRQ0   (30) // Advanced Interrupt Controller (IRQ0)
 #define AT91C_ID_IRQ1   (31) // Advanced Interrupt Controller (IRQ1)
-#define AT91C_ALL_INT   (0xC003FFFF) // ALL VALID INTERRUPTS
+#define AT91C_ALL_INT   (0xC00FFFFF) // ALL VALID INTERRUPTS
 
 // *****************************************************************************
-//               BASE ADDRESS DEFINITIONS FOR AT91SAM7X256
+//               BASE ADDRESS DEFINITIONS FOR AT91SAM7XC256
 // *****************************************************************************
 #define AT91C_BASE_SYS       (AT91_CAST(AT91PS_SYS) 	0xFFFFF000) // (SYS) Base Address
 #define AT91C_BASE_AIC       (AT91_CAST(AT91PS_AIC) 	0xFFFFF000) // (AIC) Base Address
@@ -2896,9 +3127,13 @@ typedef struct _AT91S_ADC {
 #define AT91C_BASE_EMAC      (AT91_CAST(AT91PS_EMAC) 	0xFFFDC000) // (EMAC) Base Address
 #define AT91C_BASE_PDC_ADC   (AT91_CAST(AT91PS_PDC) 	0xFFFD8100) // (PDC_ADC) Base Address
 #define AT91C_BASE_ADC       (AT91_CAST(AT91PS_ADC) 	0xFFFD8000) // (ADC) Base Address
+#define AT91C_BASE_PDC_AES   (AT91_CAST(AT91PS_PDC) 	0xFFFA4100) // (PDC_AES) Base Address
+#define AT91C_BASE_AES       (AT91_CAST(AT91PS_AES) 	0xFFFA4000) // (AES) Base Address
+#define AT91C_BASE_PDC_TDES  (AT91_CAST(AT91PS_PDC) 	0xFFFA8100) // (PDC_TDES) Base Address
+#define AT91C_BASE_TDES      (AT91_CAST(AT91PS_TDES) 	0xFFFA8000) // (TDES) Base Address
 
 // *****************************************************************************
-//               MEMORY MAPPING DEFINITIONS FOR AT91SAM7X256
+//               MEMORY MAPPING DEFINITIONS FOR AT91SAM7XC256
 // *****************************************************************************
 // ISRAM
 #define AT91C_ISRAM	 (0x00200000) // Internal SRAM base address
