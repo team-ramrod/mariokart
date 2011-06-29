@@ -26,6 +26,16 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
+/*
+ * Modified by Henry Jenkins 2011-06-30
+ * Copyright (c) 2011, University of Canterbury
+ *
+ * Released under same terms as above.
+ *
+ * If defines were placed around the can transceiver rs code to disable it when
+ * rs is not used.
+ *
+ */
 
 //------------------------------------------------------------------------------
 //         Headers
@@ -64,7 +74,9 @@ static const Pin pins_can_transceiver_txd[] = {PINS_CAN_TRANSCEIVER_TXD};
 #if defined (PINS_CAN_TRANSCEIVER_RXD)
 static const Pin pins_can_transceiver_rxd[] = {PINS_CAN_TRANSCEIVER_RXD};
 #endif
+#if defined (IN_CAN_TRANSCEIVER_RS)
 static const Pin pin_can_transceiver_rs   = PIN_CAN_TRANSCEIVER_RS;
+#endif
 #if defined (PIN_CAN_TRANSCEIVER_RXEN)
 static const Pin pin_can_transceiver_rxen = PIN_CAN_TRANSCEIVER_RXEN;
 #endif
@@ -831,9 +843,11 @@ void CAN_disable( void )
     // Enable Low Power mode
     AT91C_BASE_CAN0->CAN_MR |= AT91C_CAN_LPM;
 
+#if defined (IN_CAN_TRANSCEIVER_RS)
     // Disable CANs Transceivers
     // Enter standby mode
     PIO_Set(&pin_can_transceiver_rs);
+#endif
 #if defined (PIN_CAN_TRANSCEIVER_RXEN)
     // Enable ultra Low Power mode
     PIO_Clear(&pin_can_transceiver_rxen);
@@ -967,8 +981,10 @@ unsigned char CAN_Init( unsigned int baudrate,
     // CAN Receive Serial Data
     PIO_Configure(pins_can_transceiver_rxd, PIO_LISTSIZE(pins_can_transceiver_rxd));
 #endif
+#if defined (IN_CAN_TRANSCEIVER_RS)
     // CAN RS
     PIO_Configure(&pin_can_transceiver_rs, PIO_LISTSIZE(pin_can_transceiver_rs));
+#endif
 #if defined (PIN_CAN_TRANSCEIVER_RXEN)
     // CAN RXEN
     PIO_Configure(&pin_can_transceiver_rxen, PIO_LISTSIZE(pin_can_transceiver_rxen));
@@ -994,8 +1010,10 @@ unsigned char CAN_Init( unsigned int baudrate,
     // Disable ultra Low Power mode
     PIO_Set(&pin_can_transceiver_rxen);
 #endif
+#if defined (IN_CAN_TRANSCEIVER_RS)
     // Normal Mode (versus Standby mode)
     PIO_Clear(&pin_can_transceiver_rs);
+#endif
 
     // Configure the AIC for CAN interrupts
     IRQ_ConfigureIT(AT91C_ID_CAN0, 0x7, CAN0_Handler);
