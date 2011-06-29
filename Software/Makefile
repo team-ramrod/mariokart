@@ -40,6 +40,7 @@ CFLAGS += -D$(CHIP)
 CFLAGS += -Ilib
 CFLAGS += -Ilib/peripherals
 CFLAGS += -Ilib/boards/$(BOARD)
+CFLAGS += -iquotesrc
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF .dep/$(@F).d
