@@ -39,7 +39,9 @@ CFLAGS += -D$(CHIP)
 
 CFLAGS += -Ilib
 CFLAGS += -Ilib/peripherals
+CFLAGS += -Ilib/drivers
 CFLAGS += -Ilib/boards/$(BOARD)
+CFLAGS += -iquotesrc
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF .dep/$(@F).d
@@ -49,6 +51,7 @@ LDFLAGS += -lmario
 
 
 LIBS += $(wildcard lib/peripherals/**/*.c)
+LIBS += $(wildcard lib/drivers/**/*.c)
 OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
 
 ###############
@@ -82,7 +85,7 @@ $(OBJECTS_FOLDER)/%.o: %.c
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
-	$(AR) $(ARFLAGS) $?
+	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
 
 
