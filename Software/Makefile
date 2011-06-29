@@ -23,8 +23,6 @@ OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
 
 VPATH += $(OUTPUT_FOLDER)
 VPATH += $(OBJECTS_FOLDER)
-VPATH += $(OBJECTS_FOLDER)/src
-VPATH += $(OBJECTS_FOLDER)/lib
 
 # Define any computer specific PREFIX etc. in here
 -include ../local.mk
@@ -51,7 +49,7 @@ LDFLAGS += -lmario
 
 
 LIBS += $(wildcard lib/peripherals/**/*.c)
-OBJS = $(addprefix $(OBJECT_FOLDER),$(LIBS:.c=.o))
+OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
 
 ###############
 ##  Targets  ##
@@ -77,7 +75,7 @@ $(OBJECT_FOLDER) $(OUTPUT_FOLDER):
 	mkdir -p $@
 
 
-$(OUTPUT_FOLDER)/%.elf: %/main.o mariolib.a
+$(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o libs
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 
@@ -85,7 +83,7 @@ $(OBJECTS_FOLDER)/%.o: %.c $(OBJECTS_FOLDER)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
-$(OUTPUT_FOLDER)/libmario.a: libmario.a($(OBJS))
+$(OUTPUT_FOLDER)/libmario.a: $(OUTPUT_FOLDER)/libmario.a($(OBJS))
 	$(RANLIB) $@
 
 
@@ -94,7 +92,7 @@ clean:
 	rm -rf .dep/*
 
 
-.PRECIOUS: %.o %.hex %.elf
+.PRECIOUS: $(OBJECTS_FOLDER)/%.o %.hex $(OUTPUT_FOLDER)/%.elf
 .PHONY: all rebuild clean
 
 # Include the dependency files, should be the last of the makefile
