@@ -82,7 +82,7 @@ $(OBJECTS_FOLDER)/%.o: %.c
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
-	$(AR) $(ARFLAGS) $?
+	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
 
 
