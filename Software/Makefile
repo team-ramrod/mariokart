@@ -39,6 +39,7 @@ CFLAGS += -D$(CHIP)
 
 CFLAGS += -Ilib
 CFLAGS += -Ilib/peripherals
+CFLAGS += -Ilib/drivers
 CFLAGS += -Ilib/boards/$(BOARD)
 CFLAGS += -iquotesrc
 
@@ -50,6 +51,7 @@ LDFLAGS += -lmario
 
 
 LIBS += $(wildcard lib/peripherals/**/*.c)
+LIBS += $(wildcard lib/drivers/**/*.c)
 OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
 
 ###############
