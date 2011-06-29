@@ -4,7 +4,7 @@
 
 MCU = arm7tdmi
 CHIP = at91sam7xc256
-BOARD = at91sam7xc-ek
+BOARD = mariokartv1
 
 
 ########################
