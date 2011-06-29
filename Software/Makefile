@@ -5,13 +5,24 @@
 MCU = arm7tdmi
 CHIP = at91sam7xc256
 BOARD = mariokartv1
+MEMORY = sram
+
+# Trace level used for compilation
+# (can be overriden by adding TRACE_LEVEL=#number to the command-line)
+# TRACE_LEVEL_DEBUG      5
+# TRACE_LEVEL_INFO       4
+# TRACE_LEVEL_WARNING    3
+# TRACE_LEVEL_ERROR      2
+# TRACE_LEVEL_FATAL      1
+# TRACE_LEVEL_NO_TRACE   0
+TRACE_LEVEL = 4
 
 
 ########################
 ##  Toolchain Config  ##
 ########################
 
-PREFIX = arm-elf-
+PREFIX = arm-eabi-
 
 CC = $(PREFIX)gcc
 AR = $(PREFIX)ar
@@ -32,27 +43,58 @@ VPATH += $(OBJECTS_FOLDER)
 ##  Flags  ##
 #############
 
-CFLAGS += -Wall -std=gnu99 -pedantic
+INCLUDES =  -Ilib/boards/$(BOARD)
+INCLUDES += -Ilib/peripherals
+INCLUDES += -Ilib/components
+INCLUDES += -Ilib/drivers
+INCLUDES += -Ilib
+INCLUDES += -iquotesrc
+
+INCLUDES += -Ilib/usb/common/cdc
+INCLUDES += -Ilib/usb/common/core
+INCLUDES += -Ilib/usb/device/cdc-serial
+INCLUDES += -Ilib/usb/device/core
+
+CFLAGS =  -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
-
-CFLAGS += -Ilib
-CFLAGS += -Ilib/peripherals
-CFLAGS += -Ilib/drivers
-CFLAGS += -Ilib/boards/$(BOARD)
-CFLAGS += -iquotesrc
+CFLAGS += -D$(MEMORY)
+CFLAGS += -DTRACE_LEVEL=$(TRACE_LEVEL)
+CFLAGS += $(INCLUDES)
 
 # Generate dependency information
-CFLAGS += -MMD -MP -MF .dep/$(@F).d
+CFLAGS += -MD -MP -MF .dep/$(subst /,-,$@).d
 
+ASFLAGS =  -Os
+ASFLAGS += -D$(CHIP)
+ASFLAGS += -D$(MEMORY)
+ASFLAGS += -D__ASSEMBLY__
+ASFLAGS += $(INCLUDES)
+
+LINK_SCRIPT = -T"lib/boards/$(BOARD)/$(CHIP)/$(MEMORY).lds"
+
+LDFLAGS =  -nostartfiles -Wl,--gc-sections
 LDFLAGS += -Lbuild
 LDFLAGS += -lmario
 
+C_FILES =  $(wildcard lib/utility/*.c)
+C_FILES += $(wildcard lib/drivers/*/*.c)
+C_FILES += $(wildcard lib/peripherals/*/*.c)
 
-LIBS += $(wildcard lib/peripherals/**/*.c)
-LIBS += $(wildcard lib/drivers/**/*.c)
-OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
+C_FILES += $(wildcard lib/usb/common/cdc/*.c)
+C_FILES += $(wildcard lib/usb/common/core/*.c)
+C_FILES += $(wildcard lib/usb/device/cdc-serial/*.c)
+C_FILES += $(wildcard lib/usb/device/core/*.c)
+
+C_FILES += lib/boards/$(BOARD)/board_memories.c
+C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
+
+ASM_FILES = lib/boards/$(BOARD)/board_cstartup.S
+
+OBJS =  $(addprefix $(OBJECTS_FOLDER)/,$(C_FILES:.c=.o))
+OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))
+
 
 ###############
 ##  Targets  ##
@@ -61,27 +103,33 @@ OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
 all: libs hexes
 
 
-libs: $(OUTPUT_FOLDER)/libmario.a
+LIB = $(OUTPUT_FOLDER)/libmario.a
+libs: $(LIB)
 
 
-hexes: $(patsubst src/%/main.c,$(OUTPUT_FOLDER)/%.hex,$(wildcard src/*/main.c))
+hexes: $(patsubst src/%/main.c,$(OUTPUT_FOLDER)/%.bin,$(wildcard src/*/main.c))
 
 
 rebuild: clean all
 
 
-%.hex: %.elf
-	$(OBJCOPY) -O ihex $< $@
+%.bin: %.elf
+	$(OBJCOPY) -O binary $< $@
 
 
-$(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o libs
+$(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o $(LIB)
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+	$(CC) $(CFLAGS) $(LINK_SCRIPT) -o $@ $< $(LDFLAGS)
 
 
 $(OBJECTS_FOLDER)/%.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
+
+
+$(OBJECTS_FOLDER)/%.o: %.S
+	mkdir -p $(dir $@)
+	$(CC) $(ASFLAGS) -o $@ -c $<
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
