@@ -1,28 +1,17 @@
-##################################
-##  Microcontroller Properties  ##
-##################################
-MCU = arm7tdmi
+include ../common.mk
+# Define any computer specific TOOL_PREFIX etc. in here
+-include ../local.mk
 
-########################
-##  Toolchain Config  ##
-########################
-CC = arm-elf-gcc
-AR = arm-elf-ar
-RANLIB = arm-elf-ranlib
-OBJCOPY = arm-elf-objcopy
-CFLAGS += -Wall -mcpu=$(MCU) -Os -iquote. -std=gnu99 -pedantic
-LDFLAGS +=
-LIBS := $(patsubst %.c,%.o,$(wildcard libs/*.c))
+LIB_DIR  = ../lib
+LIB_NAME = mario
+LIB = $(LIB_DIR)/lib$(LIB_NAME).a
 
-# Generate dependency information
-CFLAGS += -MMD -MP -MF .dep/$(@F).d
+LDFLAGS += -L$(LIB_DIR)
+LDFLAGS += -l$(LIB)
 
-# Define any computer specific CC etc. in here.
--include local.mk
+CFLAGS += -I$(LIB_DIR)/peripherals
+CFLAGS += -I$(LIB_DIR)/boards/$(BOARD)
 
-###############################
-##  Internal Implementation  ##
-###############################
 all: $(patsubst %/main.c,%.hex,$(wildcard */main.c))
 
 rebuild: clean all
@@ -30,10 +19,11 @@ rebuild: clean all
 %.hex: %.elf
 	$(OBJCOPY) -O ihex $< $@
 
-libs.a: libs.a($(LIBS))
+$(LIB):
+	$(MAKE) -C $(LIB_DIR)
 
-%.elf: %/main.o libs.a
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^
+%.elf: %/main.o $(LIB)
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 ocd-%: build/%.hex
 	blahblahblah
@@ -47,8 +37,7 @@ clean:
 
 .PRECIOUS: %.o %.hex %.elf
 
-.PHONY: all rebuild
-.PHONY: clean cleanall
+.PHONY: all rebuild clean
 
 # Include the dependency files, should be the last of the makefile
 -include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
