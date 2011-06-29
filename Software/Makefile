@@ -25,7 +25,7 @@ VPATH += $(OUTPUT_FOLDER)
 VPATH += $(OBJECTS_FOLDER)
 
 # Define any computer specific PREFIX etc. in here
--include ../local.mk
+-include local.mk
 
 
 #############
