@@ -32,7 +32,7 @@ VPATH += $(OBJECTS_FOLDER)
 ##  Flags  ##
 #############
 
-CFLAGS += -Wall -std=gnu99 -pedantic -Werror
+CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
@@ -44,15 +44,15 @@ CFLAGS += -Ilib/boards/$(BOARD)
 CFLAGS += -iquotesrc
 
 # Generate dependency information
-CFLAGS += -MMD -MP -MF .dep/$(@F).d
+CFLAGS += -MD -MP -MF .dep/$(subst /,-,$@).d
 
 LDFLAGS += -Lbuild
 LDFLAGS += -lmario
 
-
 LIBS += $(wildcard lib/peripherals/**/*.c)
 LIBS += $(wildcard lib/drivers/**/*.c)
 OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
+
 
 ###############
 ##  Targets  ##
@@ -61,7 +61,8 @@ OBJS = $(addprefix $(OBJECTS_FOLDER)/,$(LIBS:.c=.o))
 all: libs hexes
 
 
-libs: $(OUTPUT_FOLDER)/libmario.a
+LIB = $(OUTPUT_FOLDER)/libmario.a
+libs: $(LIB)
 
 
 hexes: $(patsubst src/%/main.c,$(OUTPUT_FOLDER)/%.hex,$(wildcard src/*/main.c))
@@ -74,7 +75,7 @@ rebuild: clean all
 	$(OBJCOPY) -O ihex $< $@
 
 
-$(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o libs
+$(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o $(LIB)
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
