@@ -14,5 +14,24 @@ CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
 
+CFLAGS += -I../lib
+CFLAGS += -I../lib/peripherals
+CFLAGS += -I../lib/boards/$(BOARD)
+
+LDFLAGS += -L../build
+LDFLAGS += -lmario
+
+rebuild: clean all
+
+OBJDIR = ../build/objs/$(OUTDIR)
+OUTPUT = ../build
+
+VPATH += $(OUTPUT)
+VPATH += $(OBJDIR)
+
+$(OBJDIR)/%.o: %.c $(OBJDIR)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+
 # Generate dependency information
 CFLAGS += -MMD -MP -MF .dep/$(@F).d

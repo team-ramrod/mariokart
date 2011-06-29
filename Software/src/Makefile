@@ -1,39 +1,26 @@
+OUTDIR = src
+
+all: $(patsubst %/main.c,%.hex,$(wildcard */main.c))
+
 include ../common.mk
 # Define any computer specific TOOL_PREFIX etc. in here
 -include ../local.mk
 
-LIB_DIR  = ../lib
-LIB_NAME = mario
-LIB = $(LIB_DIR)/lib$(LIB_NAME).a
-
-LDFLAGS += -L$(LIB_DIR)
-LDFLAGS += -l$(LIB)
-
-CFLAGS += -I$(LIB_DIR)/peripherals
-CFLAGS += -I$(LIB_DIR)/boards/$(BOARD)
-
-all: $(patsubst %/main.c,%.hex,$(wildcard */main.c))
-
-rebuild: clean all
-
 %.hex: %.elf
 	$(OBJCOPY) -O ihex $< $@
 
-$(LIB):
-	$(MAKE) -C $(LIB_DIR)
+mariolib.a:
+	$(MAKE) -C ../lib
 
-%.elf: %/main.o $(LIB)
+%.elf: $(OBJ_DIR)/%/main.o mariolib.a
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 ocd-%: build/%.hex
 	blahblahblah
 
 clean:
-	rm -f */*.o
-	rm -f *.elf
-	rm -f *.hex
-	rm -f .deps/*
-	rm -f *.a
+	rm -rf $(OBJ_DIR)/*
+	rm -rf .dep/*
 
 .PRECIOUS: %.o %.hex %.elf
 

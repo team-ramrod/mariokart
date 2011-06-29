@@ -1,18 +1,19 @@
+OUTDIR = lib
+
+all: libmario.a
+
 include ../common.mk
 # Define any computer specific TOOL_PREFIX etc. in here
 -include ../local.mk
 
 include boards/$(BOARD)/board.mak
 
-CFLAGS += -Iperipherals
-CFLAGS += -Iboards/$(BOARD)
-CFLAGS += -I.
-
-OBJS += $(wildcard peripherals/**/*.c)
-
-all: libmario.a
+OBJS += $(addprefix $(OBJDIR)/,$(wildcard peripherals/**/*.c))
 
 rebuild: clean all
+
+$(OBJDIR) $(OUTPUT):
+	mkdir -p $@
 
 libmario.a: libmario.a($(OBJS:.c=.o))
 	$(RANLIB) libmario.a
