@@ -71,19 +71,18 @@ rebuild: clean all
 	$(OBJCOPY) -O ihex $< $@
 
 
-$(OBJECT_FOLDER) $(OUTPUT_FOLDER):
-	mkdir -p $@
-
-
 $(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o libs
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 
-$(OBJECTS_FOLDER)/%.o: %.c $(OBJECTS_FOLDER)
+$(OBJECTS_FOLDER)/%.o: %.c
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
-$(OUTPUT_FOLDER)/libmario.a: $(OUTPUT_FOLDER)/libmario.a($(OBJS))
+$(OUTPUT_FOLDER)/libmario.a: $(OBJS)
+	$(AR) $(ARFLAGS) $?
 	$(RANLIB) $@
 
 
