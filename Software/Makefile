@@ -32,7 +32,7 @@ VPATH += $(OBJECTS_FOLDER)
 ##  Flags  ##
 #############
 
-CFLAGS += -Wall -std=gnu99 -pedantic
+CFLAGS += -Wall -std=gnu99 -pedantic -Werror
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
