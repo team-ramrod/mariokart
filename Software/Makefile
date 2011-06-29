@@ -50,6 +50,11 @@ INCLUDES += -Ilib/drivers
 INCLUDES += -Ilib
 INCLUDES += -iquotesrc
 
+INCLUDES += -Ilib/usb/common/cdc
+INCLUDES += -Ilib/usb/common/core
+INCLUDES += -Ilib/usb/device/cdc-serial
+INCLUDES += -Ilib/usb/device/core
+
 CFLAGS =  -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
@@ -76,6 +81,12 @@ LDFLAGS += -lmario
 C_FILES =  $(wildcard lib/utility/*.c)
 C_FILES += $(wildcard lib/drivers/*/*.c)
 C_FILES += $(wildcard lib/peripherals/*/*.c)
+
+C_FILES += $(wildcard lib/usb/common/cdc/*.c)
+C_FILES += $(wildcard lib/usb/common/core/*.c)
+C_FILES += $(wildcard lib/usb/device/cdc-serial/*.c)
+C_FILES += $(wildcard lib/usb/device/core/*.c)
+
 C_FILES += lib/boards/$(BOARD)/board_memories.c
 C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
 
