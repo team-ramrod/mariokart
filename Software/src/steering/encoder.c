@@ -1,3 +1,4 @@
+#include "encoder.h"
 #include "../../lib/peripherals/pio/pio.h"
 #include "../../lib/peripherals/pio/pio_it.h"
 
@@ -5,14 +6,10 @@
 #define ENCODER_DOWN   AT91C_PIO_PB24
 
 /// Pio pins to configure.
-static const Pin pins[] = { ENCODER_UP , ENCODER_DOWN};
-
-#define PULSES_PER_REV 4356  // NOTE PROBABLY WRONG
+static const Pin pins[] = { ENCODER_UP , ENCODER_DOWN, LIM_SW_UP, LIM_SW_DOWN};
 
 //priority of interrupt
 #define ENCODER_PRIORITY 5
-
-int16_t pulse_position = 0;
 
 //updates position value if turning clockwise
 void ISR_UP ( void )
@@ -29,6 +26,9 @@ void ISR_DOWN ( void )
 //Sets up pins for encoder 
 void init_encoder(void){
 
+    //initilise pulse counter
+    pulse_position = 0;
+    
     //sets pins as inputs
     PIO_Configure(pins, PIO_LISTSIZE(pins));
 
