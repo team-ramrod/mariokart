@@ -1,12 +1,16 @@
-#include "../common.h"
+#include "../../lib/peripherals/pio/pio.h"
+#include "../../lib/peripherals/pwmc/pwmc.h"
 
 #define DRIVER_PWM_CLOCKWISE   AT91C_PIO_PB19
 #define DRIVER_CHANNEL_CLOCKWISE   0
 
+#define BOARD_MCK 32000000
+
 #define DRIVER_PWM_ANTICLOCKWISE   AT91C_PIO_PB20
 #define DRIVER_CHANNEL_ANTICLOCKWISE   1
 
-#define DRIVER_PWM_PINS   (DRIVER_PWM_CLOCKWISE | DRIVER_PWM_ANTICLOCKWISE)
+/// Pio pins to configure.
+static const Pin pins[] = { DRIVER_PWM_CLOCKWISE, DRIVER_PWM_ANTICLOCKWISE };
 
 #define P_GAIN 1
 #define I_GAIN 0.1
@@ -15,6 +19,20 @@
 #define PWM_PERIOD 0x0999
 #define SPEED_DIVISIONS 100
 
+/// Wait time in us
+void UTIL_Loop(unsigned int loop)
+{
+    while(loop--);
+}
+
+
+void UTIL_WaitTimeInUs(unsigned int mck, unsigned int time_ms)
+{
+    register unsigned int i = 0;
+    i = (mck / 1000000) * time_ms;
+    i = i / 3;
+    UTIL_Loop(i);
+}
 
 int16_t pid(int16_t desired, int16_t current) {
     
@@ -36,35 +54,37 @@ int16_t pid(int16_t desired, int16_t current) {
 
 }
 
-//Sets up PWM output (note PWM channels are left disabled by function)
+//Sets up PWM output
 void init_driver(void) {
-    //disables PWM channels
-    AT91C_BASE_PWMC->PWMC_DIS = 1 << DRIVER_CHANNEL_CLOCKWISE;
-     AT91C_BASE_PWMC->PWMC_DIS = 1 << DRIVER_CHANNEL_ANTICLOCKWISE;
-    
-    //sets PWM pins as outputs
-    AT91C_BASE_PIOB->PIO_OER  |= DRIVER_PWM_PINS; 
-    AT91C_BASE_PIOB->PIO_PER  |= DRIVER_PWM_PINS;
-    
-    //sets pins to output PWM
-    AT91C_BASE_PIOB->PIO_ASR  |= DRIVER_PWM_PINS; 
-    
-    //sets prescaler to divide by 1 giving a frequency of 31.25 KHz
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_CLOCKWISE].PWMC_CMR = 0x00;
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_ANTICLOCKWISE].PWMC_CMR = 0x00;
-    
+
+    PIO_Configure(pins, PIO_LISTSIZE(pins));
+
+    //sets up a pwm wave on channel 0
+    PWMC_ConfigureChannel(DRIVER_CHANNEL_CLOCKWISE,
+    //sets prescaler to divide by 1
+            1,
+    //sets wave to a low polarity
+            0,
+    //sets the wave to be left aligned
+            0);
+
+    //sets up a pwm wave on channel 1
+    PWMC_ConfigureChannel(DRIVER_CHANNEL_ANTICLOCKWISE,
+    //sets prescaler to divide by 1
+            1,
+    //sets wave to a low polarity
+            0,
+    //sets the wave to be left aligned
+            0);
+       
     //sets PWM period of the output.
     //8 kHz at 32 MHz clock = period of 4096 - 1 = 0x0999.
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_CLOCKWISE].PWMC_CMR = PWM_PERIOD;
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_ANTICLOCKWISE].PWMC_CMR = PWM_PERIOD;
-    
-    //sets up to allow the duty cycle to be modified while running
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_CLOCKWISE].PWMC_CMR = 0x0;
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_ANTICLOCKWISE].PWMC_CMR = 0x0;
+    PWMC_SetPeriod(DRIVER_CHANNEL_CLOCKWISE, PWM_PERIOD);
+    PWMC_SetPeriod(DRIVER_CHANNEL_ANTICLOCKWISE, PWM_PERIOD);
     
     //sets the duty cycle to 0
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_CLOCKWISE].PWMC_CDTYR = 0x0000;
-    AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_ANTICLOCKWISE].PWMC_CDTYR = 0x0000;
+    PWMC_SetDutyCycle(DRIVER_CHANNEL_CLOCKWISE, 0x0000);
+    PWMC_SetDutyCycle(DRIVER_CHANNEL_ANTICLOCKWISE, 0x0000);
 }
 
 //takes in a number between SPEED_DIVISIONS and -SPEED_DIVISIONS and uses it
@@ -90,35 +110,37 @@ void drive_motor(int8_t speed){
     //if changing directions switch PWM pins
     if((prev_speed > 0) && (speed =< 0)){
         //disables PWM channel
-        AT91C_BASE_PWMC->PWMC_DIS |= 1 << DRIVER_CHANNEL_CLOCKWISE;
+        PWMC_DisableChannel(DRIVER_CHANNEL_CLOCKWISE);
         
         //sets the duty cycle to 0
-        AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_CLOCKWISE].PWMC_CDTYR = 0x0000;
+        PWMC_SetDutyCycle(DRIVER_CHANNEL_CLOCKWISE, 0x0000);
         
         //pauses
+        UTIL_WaitTimeInUs(BOARD_MCK, 20);
         
         //enables the other channel
-        AT91C_BASE_PWMC->PWMC_ENA = 1 << DRIVER_CHANNEL_ANTICLOCKWISE;     
+        PWMC_EnableChannel(DRIVER_CHANNEL_ANTICLOCKWISE);
     }
     else if((prev_speed =< 0) && (speed > 0)){
         //disables PWM channels
-        AT91C_BASE_PWMC->PWMC_DIS |= 1 << DRIVER_CHANNEL_ANTICLOCKWISE;
+        PWMC_DisableChannel(DRIVER_CHANNEL_ANTICLOCKWISE);
         
         //sets the duty cycle to 0
-        AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_ANTICLOCKWISE].PWMC_CDTYR = 0x0000;
+        PWMC_SetDutyCycle(DRIVER_CHANNEL_ANTICLOCKWISE, 0x0000);
         
         //pauses
+        UTIL_WaitTimeInUs(BOARD_MCK, 20);
         
         //enables the other channel
-        AT91C_BASE_PWMC->PWMC_ENA = 1 << DRIVER_CHANNEL_CLOCKWISE;    
+        PWMC_EnableChannel(DRIVER_CHANNEL_CLOCKWISE);
     }
     
     //sets the duty cycle
     if(speed > 0){
-        AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_CLOCKWISE].PWMC_CUPDR = new_duty;
+        PWMC_SetDutyCycle(DRIVER_CHANNEL_CLOCKWISE, new_duty);
     }
     else{
-        AT91C_BASE_PWMC->PWMC_CH[DRIVER_CHANNEL_ANTICLOCKWISE].PWMC_CUPDR = new_duty;
+        PWMC_SetDutyCycle(DRIVER_CHANNEL_ANTICLOCKWISE, new_duty);
     }
     
     prev_speed = speed;
