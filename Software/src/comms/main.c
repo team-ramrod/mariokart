@@ -1,5 +1,3 @@
-#include "common.h"
-
 #include <drivers/char_display/char_display.h>
 
 int main(int argc, char *argv[]) {
