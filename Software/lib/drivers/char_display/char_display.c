@@ -1,76 +1,109 @@
 #include "char_display.h"
 
-#define LED_NUM_PINS     (AT91C_PIO_PB0 | AT91C_PIO_PB1 | AT91C_PIO_PB2 | AT91C_PIO_PB3)
-#define LED_SELECT_LEFT   AT91C_PIO_PB7
-#define LED_SELECT_RIGHT  AT91C_PIO_PB17
-#define LED_ENABLE_PIN    AT91C_PIO_PB12
+#include <board.h>
+#include <pio/pio.h>
 
-static struct {
-    uint32_t value; // The value to be displayed
-    uint32_t enabled; // if the display is actually displaying anything
-    uint32_t selected;  // Display pin number
-} __left_display, __right_display;
+#define _BV(x) (1 << x)
+
+#ifdef PIN_CHAR_DISPLAY_VALUE
+static const Pin pinCharDisplayValue = PIN_CHAR_DISPLAY_VALUE;
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_A
+static const Pin pinCharDisplayValueA = PIN_CHAR_DISPLAY_VALUE_A;
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_B
+static const Pin pinCharDisplayValueB = PIN_CHAR_DISPLAY_VALUE_B;
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_C
+static const Pin pinCharDisplayValueC = PIN_CHAR_DISPLAY_VALUE_C;
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_D
+static const Pin pinCharDisplayValueD = PIN_CHAR_DISPLAY_VALUE_D;
+#endif
+#ifdef PIN_CHAR_DISPLAY_ENABLE
+static const Pin pinCharDisplayEnable = PIN_CHAR_DISPLAY_ENABLE;
+#endif
+#ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
+static const Pin pinCharDisplaySelectLeft = PIN_CHAR_DISPLAY_SELECT_LEFT;
+#endif
+#ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
+static const Pin pinCharDisplaySelectRight = PIN_CHAR_DISPLAY_SELECT_RIGHT;
+#endif
+#ifdef PINS_CHAR_DISPLAY
+static const Pin pinsCharDisplay[] = { PINS_CHAR_DISPLAY };
+static const unsigned int numCharDisplayPins = PIO_LISTSIZE(pinsCharDisplay);
+#endif
+
+static unsigned int char_display_values[] = { 0x10, 0x10 };
+
+typedef enum {
+    CHAR_DISPLAY_LEFT  = 0,
+    CHAR_DISPLAY_RIGHT = 1
+} char_display_side;
+
+static void char_display_clear() {
+#ifdef PIN_CHAR_DISPLAY_VALUE
+    PIO_Clear(&pinCharDisplayValue);
+#endif
+#ifdef PIN_CHAR_DISPLAY_ENABLE
+    PIO_Clear(&pinCharDisplayEnable);
+#endif
+#ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
+    PIO_Clear(&pinCharDisplaySelectLeft);
+#endif
+#ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
+    PIO_Clear(&pinCharDisplaySelectRight);
+#endif
+}
+
+static void char_display_show(char_display_side side) {
+#ifdef PIN_CHAR_DISPLAY_VALUE_A
+    if (char_display_values[side] & _BV(0)) PIO_Set(&pinCharDisplayValueA);
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_B
+    if (char_display_values[side] & _BV(1)) PIO_Set(&pinCharDisplayValueB);
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_C
+    if (char_display_values[side] & _BV(2)) PIO_Set(&pinCharDisplayValueC);
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE_D
+    if (char_display_values[side] & _BV(3)) PIO_Set(&pinCharDisplayValueD);
+#endif
+#ifdef PIN_CHAR_DISPLAY_ENABLE
+    if (char_display_values[side] < 0x10) PIO_Set(&pinCharDisplayEnable);
+#endif
+#ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
+    if (side == CHAR_DISPLAY_LEFT) PIO_Set(&pinCharDisplaySelectLeft);
+#endif
+#ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
+    if (side == CHAR_DISPLAY_RIGHT) PIO_Set(&pinCharDisplaySelectRight);
+#endif
+}
 
 void char_display_init() {
-    // Set the LED pins as outputs.
-    *AT91C_PIOB_OER = LED_NUM_PINS
-                    | LED_ENABLE_PIN
-                    | LED_SELECT_LEFT
-                    | LED_SELECT_RIGHT;
-
-    // Set the default values for the structs.
-    __left_display.value     = 0x00;
-    __left_display.enabled   = 0x00;
-    __left_display.selected  = LED_SELECT_LEFT;
-
-    __right_display.value    = 0x00;
-    __right_display.enabled  = 0x00;
-    __right_display.selected = LED_SELECT_RIGHT;
+#ifdef PINS_CHAR_DISPLAY
+    PIO_Configure(pinsCharDisplay, numCharDisplayPins);
+#else
+#endif
 }
 
-void char_display_left(uint8_t number) {
-    if (number < 0x10) {
-        __left_display.value   = number;
-        __left_display.enabled = LED_ENABLE_PIN;
-    } else {
-        __left_display.value   = 0x00;
-        __left_display.enabled = 0x00;
-    }
+void char_display_left(unsigned int number) {
+    char_display_values[CHAR_DISPLAY_LEFT] = number;
 }
 
-void char_display_right(uint8_t number) {
-    if (number < 0x10) {
-        __right_display.value   = number;
-        __right_display.enabled = LED_ENABLE_PIN;
-    } else {
-        __right_display.value   = 0x00;
-        __right_display.enabled = 0x00;
-    }
+void char_display_right(unsigned int number) {
+    char_display_values[CHAR_DISPLAY_RIGHT] = number;
 }
 
-void char_display_show() {
-    static enum { __L_D, __R_D } __current = __L_D;
+void char_display_number(unsigned int number) {
+    char_display_left(number % 10);
+    char_display_right((number / 10) < 1 ? 0x10 : number / 10);
+}
 
-    switch (__current) {
-        case __L_D:
-            __current = __R_D;
-            *AT91C_PIOB_CODR = LED_NUM_PINS
-                             | LED_SELECT_LEFT
-                             | LED_ENABLE_PIN;
+void char_display_tick() {
+    static char_display_side current = CHAR_DISPLAY_LEFT;
 
-            *AT91C_PIOB_SODR = __right_display.value
-                             | __right_display.enabled
-                             | __right_display.selected;
-            break;
-        case __R_D:
-            __current = __L_D;
-            *AT91C_PIOB_CODR = LED_NUM_PINS
-                             | LED_SELECT_RIGHT
-                             | LED_ENABLE_PIN;
-
-            *AT91C_PIOB_SODR = __left_display.value
-                             | __left_display.enabled
-                             | __left_display.selected;
-            break;
-    }
+    char_display_clear();
+    char_display_show(current);
+    current = (current == CHAR_DISPLAY_LEFT ? CHAR_DISPLAY_RIGHT : CHAR_DISPLAY_LEFT);
 }

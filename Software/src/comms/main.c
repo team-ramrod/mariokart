@@ -3,8 +3,8 @@
 int main(int argc, char *argv[]) {
     char_display_init();
 
-    uint16_t num = 0x00;
-    uint32_t count = 0x01;
+    unsigned int num = 0x00;
+    unsigned int count = 0x01;
 
     for (;;) {
         char_display_number(num);
@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
         count = 0x01;
         while (count != 0x00) {
             count++;
-            char_display_show();
+            char_display_tick();
         }
     }
 
