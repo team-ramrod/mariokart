@@ -80,6 +80,7 @@ LDFLAGS += -lmario
 
 C_FILES =  $(wildcard lib/utility/*.c)
 C_FILES += $(wildcard lib/drivers/*/*.c)
+C_FILES += $(wildcard lib/components/*.c)
 C_FILES += $(wildcard lib/peripherals/*/*.c)
 
 C_FILES += $(wildcard lib/usb/common/cdc/*.c)

@@ -1,4 +1,4 @@
-#include <drivers/char_display/char_display.h>
+#include <components/char_display.h>
 
 int main(int argc, char *argv[]) {
     char_display_init();
