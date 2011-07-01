@@ -42,7 +42,7 @@
  *
  * Released under same terms as above.
  *
- * Fixed warning in function ‘CAN_Handler’.
+ * Fixed warnings in functions ‘CAN_Handler’ and ‘CAN_InitMailboxRegisters’.
  *
  */
 
@@ -318,16 +318,13 @@ static void CAN1_Handler(void)
 //------------------------------------------------------------------------------
 void CAN_InitMailboxRegisters( CanTransfer *pTransfer )
 {
-    AT91PS_CAN    base_can;
     AT91PS_CAN_MB CAN_Mailbox;
 
     if( pTransfer->can_number == 0 ) {
-        base_can = AT91C_BASE_CAN0;
         CAN_Mailbox = AT91C_BASE_CAN0_MB0;
     }
 #ifdef AT91C_BASE_CAN1
     else {
-        base_can = AT91C_BASE_CAN1;
         CAN_Mailbox = AT91C_BASE_CAN1_MB0;
     }
 #endif
