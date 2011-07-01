@@ -26,6 +26,19 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
+/*
+ * Modified by Wim Looman 2011-07-02
+ * Copyright (c) 2011, University of Canterbury
+ *
+ * Released under same terms as above.
+ *
+ * Fixed warnings with _Media struct.
+ *
+ * NOTE!!!!!!!!!!!!!!!!!!!!!:
+ *      This is a completely untested change.  I know nothing about how this
+ *      code works and it is highly likely that this has broken something.
+ *
+ */
 
 //------------------------------------------------------------------------------
 /// \unit
@@ -136,7 +149,7 @@ struct _Media {
   unsigned int   size;        //!< Size of media in number of blocks
   MEDTransfer    transfer;    //!< Current transfer operation
   void           *interface;  //!< Pointer to the physical interface used
-  unsigned char  bReserved:4,
+  unsigned int  bReserved:4,
                  mappedRD:1,  //!< Mapped to memory space to read
                  mappedWR:1,  //!< Mapped to memory space to write
                  protected:1, //!< Protected media?
