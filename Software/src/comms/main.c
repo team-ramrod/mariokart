@@ -1,20 +1,13 @@
-#include <components/char_display.h>
+#include <pio/pio.h>
+#include <pio/pio_it.h>
+#include <pmc/pmc.h>
+#include <utility/trace.h>
+#include <usb/device/cdc-serial/CDCDSerialDriver.h>
+#include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
+
+#include "usb.c"
+#include "power.c"
 
 int main(int argc, char *argv[]) {
-    char_display_init();
-
-    unsigned int num = 0x00;
-    unsigned int count = 0x01;
-
-    for (;;) {
-        char_display_number(num);
-        num = (num + 1) % 100;
-        count = 0x01;
-        while (count != 0x00) {
-            count++;
-            char_display_tick();
-        }
-    }
-
     return 0;
 }

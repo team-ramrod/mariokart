@@ -48,6 +48,28 @@
 // Track and hold Acquisition Time min (in ns)
 #define ADC_TRACK_HOLD_TIME_MIN   600
 
+/**
+ * Constants describing several characteristics (controller type, D+ pull-up
+ * type, etc.) of the USB device controller of the chip/board.
+ *
+ * These need to be verified, they are mostly a copy of the ones from the usb
+ * example project.
+ */
+
+// Chip has a UDP controller.
+#define BOARD_USB_UDP
+
+// Indicates the D+ pull-up is always connected.
+#define BOARD_USB_PULLUP_ALWAYSON
+
+// Number of endpoints in the USB controller.
+#define BOARD_USB_NUMENDPOINTS                  6
+
+// Returns the maximum packet size of the given endpoint.
+#define BOARD_USB_ENDPOINTS_MAXPACKETSIZE(i)    ((((i) == 4) || ((i) == 5)) ? 256 : (((i) == 0) ? 8 : 64))
+
+// Returns the number of FIFO banks for the given endpoint.
+#define BOARD_USB_ENDPOINTS_BANKS(i)            ((((i) == 0) || ((i) == 3)) ? 1 : 2)
 
 // USB attributes configuration descriptor (bus or self powered, remote wakeup)
 #define BOARD_USB_BMATTRIBUTES                  USBConfigurationDescriptor_BUSPOWERED_NORWAKEUP
@@ -78,6 +100,9 @@
 #define PIN_CHAR_DISPLAY_SELECT_RIGHT {AT91C_PIO_PB17, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_0, PIO_DEFAULT}
 
 #define PINS_CHAR_DISPLAY PIN_CHAR_DISPLAY_VALUE,PIN_CHAR_DISPLAY_SELECT_LEFT,PIN_CHAR_DISPLAY_SELECT_RIGHT
+
+// USB VBus monitoring pin definition.
+#define PIN_USB_VBUS {AT91C_PIO_PB9, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH}
 
 // Push button #0 definition.
 #define PIN_PUSHBUTTON_0    {AT91C_PIO_PB17, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH | PIO_PULLUP}
@@ -195,6 +220,7 @@
 // Pins ADC
 #define PINS_ADC PIN_ADC0_ADC0, PIN_ADC0_ADC1, PIN_ADC0_ADC2, PIN_ADC0_ADC3
 */
+
 
 // CAN Status LED #0 pin definition.
 #define PIN_CAN_LED_0  {AT91C_PIO_PB10, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_0, PIO_DEFAULT}
