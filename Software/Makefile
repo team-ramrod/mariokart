@@ -48,7 +48,6 @@ INCLUDES += -Ilib/peripherals
 INCLUDES += -Ilib/components
 INCLUDES += -Ilib/drivers
 INCLUDES += -Ilib
-INCLUDES += -iquotesrc
 
 INCLUDES += -Ilib/usb/common/cdc
 INCLUDES += -Ilib/usb/common/core
