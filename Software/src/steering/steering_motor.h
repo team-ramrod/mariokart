@@ -24,7 +24,7 @@ void drive_motor(int8_t speed);
 #define D_GAIN 0.1
 
 //PID controller with gains defined above
-int16_t pid(int16_t desired, int16_t current)
+int16_t pid(int16_t desired, int16_t current);
 
 #endif	/* STEERING_MOTOR_H */
 
