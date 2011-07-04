@@ -90,6 +90,9 @@ C_FILES += $(wildcard lib/usb/device/core/*.c)
 C_FILES += lib/boards/$(BOARD)/board_memories.c
 C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
 
+#steering files (I dont know much about makefiles so this probably needs changing)
+C_FILES += $(wildcard src/steering/*.c)
+
 ASM_FILES = lib/boards/$(BOARD)/board_cstartup.S
 
 OBJS =  $(addprefix $(OBJECTS_FOLDER)/,$(C_FILES:.c=.o))

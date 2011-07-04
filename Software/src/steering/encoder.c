@@ -1,12 +1,10 @@
 #include "encoder.h"
-#include "../../lib/peripherals/pio/pio.h"
-#include "../../lib/peripherals/pio/pio_it.h"
-
-#define ENCODER_UP   AT91C_PIO_PB23
-#define ENCODER_DOWN   AT91C_PIO_PB24
+#include <peripherals/pio/pio.h>
+#include <peripherals/pio/pio_it.h>
+#include <boards/mariokartv1/board.h>
 
 /// Pio pins to configure.
-static const Pin pins[] = { ENCODER_UP , ENCODER_DOWN, LIM_SW_UP, LIM_SW_DOWN};
+static const Pin pins[] = {ENCODER_CLOCKWISE , ENCODER_ANTICLOCKWISE, LIM_SW_UP, LIM_SW_DOWN};
 
 //priority of interrupt
 #define ENCODER_PRIORITY 5
@@ -26,6 +24,9 @@ void ISR_DOWN ( void )
 //Sets up pins for encoder 
 void init_encoder(void){
 
+    const Pin pin_encoder_cw = ENCODER_CLOCKWISE;
+    const Pin pin_encoder_acw = ENCODER_ANTICLOCKWISE;
+
     //initilise pulse counter
     pulse_position = 0;
     
@@ -34,8 +35,8 @@ void init_encoder(void){
 
     // Initialize interrupts
     PIO_InitializeInterrupts(ENCODER_PRIORITY);
-    PIO_ConfigureIt(ENCODER_UP, (void (*)(const Pin *)) ISR_UP);
-    PIO_ConfigureIt(ENCODER_DOWN, (void (*)(const Pin *)) ISR_DOWN);
-    PIO_EnableIt(ENCODER_UP);
-    PIO_EnableIt(ENCODER_DOWN);
+    PIO_ConfigureIt(&pin_encoder_cw, (void (*)(const Pin *)) ISR_UP);
+    PIO_ConfigureIt(&pin_encoder_acw, (void (*)(const Pin *)) ISR_DOWN);
+    PIO_EnableIt(&pin_encoder_cw);
+    PIO_EnableIt(&pin_encoder_acw);
 }
