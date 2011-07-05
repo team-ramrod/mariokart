@@ -1,4 +1,5 @@
 #include "steering_motor.h"
+#include <boards/mariokartv1/board.h>
 #include <peripherals/pio/pio.h>
 #include <peripherals/pio/pio_it.h>
 #include <peripherals/pwmc/pwmc.h>
@@ -22,8 +23,8 @@ const Pin pin_driver_reset2 = PIN_DRIVER_RESET2;
 /// Pio pins to configure.
 static const Pin pins[] = {DRIVER_PWM_CLOCKWISE,
     DRIVER_PWM_ANTICLOCKWISE,
-    PIN_OTW,
-    PIN_FAULT,
+    PIN_DRIVER_OTW,
+    PIN_DRIVER_FAULT,
     PIN_DRIVER_RESET1,
     PIN_DRIVER_RESET2};
 
