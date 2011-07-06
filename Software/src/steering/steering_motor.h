@@ -17,14 +17,14 @@ void init_driver(void);
 //50 = half speed clockwise
 //0 = stopped
 //-100 = full speed anticlockwise etc
-void drive_motor(int8_t speed);
+void drive_motor(int speed);
 
 #define P_GAIN 1
 #define I_GAIN 0.1
 #define D_GAIN 0.1
 
 //PID controller with gains defined above
-int16_t pid(int16_t desired, int16_t current);
+int pid(int desired, int current);
 
 #endif	/* STEERING_MOTOR_H */
 

@@ -1,3 +1,4 @@
+
 /**
  * Board.h
  *
@@ -43,7 +44,7 @@
 #define ADC_MAX_CK_10BIT         5000000
 // ADC clock frequency, at 8-bit resolution (in Hz)
 #define ADC_MAX_CK_8BIT          8000000
-// Startup time max, return from Idle mode (in µs)
+// Startup time max, return from Idle mode (in ï¿½s)
 #define ADC_STARTUP_TIME_MAX       20
 // Track and hold Acquisition Time min (in ns)
 #define ADC_TRACK_HOLD_TIME_MIN   600
@@ -100,9 +101,6 @@
 #define PIN_CHAR_DISPLAY_SELECT_RIGHT {AT91C_PIO_PB17, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_0, PIO_DEFAULT}
 
 #define PINS_CHAR_DISPLAY PIN_CHAR_DISPLAY_VALUE,PIN_CHAR_DISPLAY_SELECT_LEFT,PIN_CHAR_DISPLAY_SELECT_RIGHT
-
-// USB VBus monitoring pin definition.
-#define PIN_USB_VBUS {AT91C_PIO_PB9, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH}
 
 // Push button #0 definition.
 #define PIN_PUSHBUTTON_0    {AT91C_PIO_PB17, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH | PIO_PULLUP}
@@ -177,11 +175,31 @@
 // SPI1 chip select 2 pin definition.
 #define PIN_SPI1_NPCS2  {1 << 26, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}
 
-/* TODO: Re-define these to be used for motor-driver etc...
+//encoder pin definitions
+#define ENCODER_CLOCKWISE   {1 << 23, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_PULLUP}
+#define ENCODER_ANTICLOCKWISE   {1 << 24, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_PULLUP}
+
+//limit switch pins (note pins probably wrong
+#define LIM_SW_UP {1 << 4, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH | PIO_PULLUP}
+#define LIM_SW_DOWN {1 << 27, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH | PIO_PULLUP}
+
+//motor driver pins
+
 // PWMC PWM0 pin definition.
 #define PIN_PWMC_PWM0  {1 << 19, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT}
 // PWMC PWM1 pin definition.
 #define PIN_PWMC_PWM1  {1 << 20, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT}
+// Over temp warning
+#define PIN_DRIVER_OTW {1 << 13, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH | PIO_PULLUP}
+// Motor driver error line
+#define PIN_DRIVER_FAULT {1 << 6, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEGLITCH | PIO_PULLUP}
+// driver reset pin 1
+#define PIN_DRIVER_RESET1 {1 << 29, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_1, PIO_PULLUP}
+// driver reset pin 2
+#define PIN_DRIVER_RESET2 {1 << 5, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_1, PIO_PULLUP}
+
+/* TODO: Re-define these to be used for motor-driver etc...
+
 // PWMC PWM2 pin definition.
 #define PIN_PWMC_PWM2  {1 << 21, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_DEFAULT}
 // PWMC PWM3 pin definition.
@@ -221,7 +239,6 @@
 #define PINS_ADC PIN_ADC0_ADC0, PIN_ADC0_ADC1, PIN_ADC0_ADC2, PIN_ADC0_ADC3
 */
 
-
 // CAN Status LED #0 pin definition.
 #define PIN_CAN_LED_0  {AT91C_PIO_PB10, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_0, PIO_DEFAULT}
 // CAN Status LED #1 pin definition.
@@ -237,3 +254,4 @@
 
 #endif //#ifndef BOARD_H
 
+>>>>>>> master
