@@ -64,12 +64,28 @@ void DRIVER_ERROR(void) {
         //pauses
         UTIL_WaitTimeInUs(BOARD_MCK, 20);
 
+        //release reset buttons
+        PIO_Set(&pin_driver_reset1);
+        PIO_Set(&pin_driver_reset2);
 
-        /*TO DO*/
-    }        //Overcurrent shut-down or GVDD undervoltage protection occurred
+    }
+
+    //Overcurrent shut-down or GVDD undervoltage protection occurred
     else if ((PIO_Get(&pin_driver_otw) == 1) && (PIO_Get(&pin_driver_fault) == 0)) {
-        /*TO DO*/
-    }        //Overtemperature warning
+
+        //attemmpt to solve problem by reseting driver
+        PIO_Clear(&pin_driver_reset1);
+        PIO_Clear(&pin_driver_reset2);
+
+        //pauses
+        UTIL_WaitTimeInUs(BOARD_MCK, 20);
+
+        //release reset buttons
+        PIO_Set(&pin_driver_reset1);
+        PIO_Set(&pin_driver_reset2);
+    }
+
+    //Overtemperature warning
     else if ((PIO_Get(&pin_driver_otw) == 0) && (PIO_Get(&pin_driver_fault) == 1)) {
         /*TO DO*/
     }
@@ -100,6 +116,10 @@ int pid(int desired, int current) {
 void init_driver(void) {
 
     PIO_Configure(pins, PIO_LISTSIZE(pins));
+
+    //activate motor driver
+    PIO_Set(&pin_driver_reset1);
+    PIO_Set(&pin_driver_reset2);
 
     // Initialize interrupts
     PIO_InitializeInterrupts(DRIVER_ERROR_PRIORITY);

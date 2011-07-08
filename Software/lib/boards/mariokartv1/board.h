@@ -152,6 +152,9 @@
 // SPI1 chip select 2 pin definition.
 #define PIN_SPI1_NPCS2  {1 << 26, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}
 
+//potientiometer pin definitions
+#define PIN_POT {1 << 7, AT91C_BASE_ADC, AT91C_ID_ADC, PIO_PERIPH_A, PIO_DEFAULT}
+
 //encoder pin definitions
 #define ENCODER_CLOCKWISE   {1 << 23, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_PULLUP}
 #define ENCODER_ANTICLOCKWISE   {1 << 24, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_PULLUP}

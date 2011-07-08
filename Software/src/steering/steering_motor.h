@@ -1,10 +1,3 @@
-/* 
- * File:   steering_motor.h
- * Author: z
- *
- * Created on July 1, 2011, 9:02 PM
- */
-
 #ifndef STEERING_MOTOR_H
 #define	STEERING_MOTOR_H
 
