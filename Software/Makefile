@@ -92,6 +92,8 @@ C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
 
 #steering files (I dont know much about makefiles so this probably needs changing)
 C_FILES += $(wildcard src/steering/*.c)
+#brake files will tidy this up soon
+C_FILES += $(wildcard src/brake/*.c)
 
 ASM_FILES = lib/boards/$(BOARD)/board_cstartup.S
 
