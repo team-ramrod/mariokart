@@ -107,6 +107,9 @@ OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))
 
 all: libs hexes
 
+program-%: %.bin
+	arm-eabi-gdb -batch -x program.gdb build/%.elf
+
 
 LIB = $(OUTPUT_FOLDER)/libmario.a
 libs: $(LIB)
