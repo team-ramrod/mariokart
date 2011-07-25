@@ -24,12 +24,13 @@ TRACE_LEVEL = 4
 
 PREFIX = arm-eabi-
 
-CC = $(PREFIX)gcc
-AR = $(PREFIX)ar
-RANLIB = $(PREFIX)ranlib
+CC      = $(PREFIX)gcc
+AR      = $(PREFIX)ar
+GDB     = $(PREFIX)gdb
+RANLIB  = $(PREFIX)ranlib
 OBJCOPY = $(PREFIX)objcopy
 
-OUTPUT_FOLDER = build
+OUTPUT_FOLDER  = build
 OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
 
 VPATH += $(OUTPUT_FOLDER)
@@ -107,9 +108,6 @@ OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))
 
 all: libs hexes
 
-program-%: %.bin
-	arm-eabi-gdb -batch -x program.gdb build/%.elf
-
 
 LIB = $(OUTPUT_FOLDER)/libmario.a
 libs: $(LIB)
@@ -143,6 +141,10 @@ $(OBJECTS_FOLDER)/%.o: %.S
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
+
+
+program-%: $(OUTPUT_FOLDER)/%.bin
+	$(GDB) -batch -x program.gdb $<
 
 
 clean:
