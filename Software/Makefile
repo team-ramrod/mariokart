@@ -55,7 +55,7 @@ INCLUDES += -Ilib/usb/common/core
 INCLUDES += -Ilib/usb/device/cdc-serial
 INCLUDES += -Ilib/usb/device/core
 
-CFLAGS =  -Wall -std=gnu99 -pedantic
+CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
@@ -66,7 +66,7 @@ CFLAGS += $(INCLUDES)
 # Generate dependency information
 CFLAGS += -MD -MP -MF .dep/$(subst /,-,$@).d
 
-ASFLAGS =  -Os
+ASFLAGS += -Os
 ASFLAGS += -D$(CHIP)
 ASFLAGS += -D$(MEMORY)
 ASFLAGS += -D__ASSEMBLY__
@@ -74,7 +74,7 @@ ASFLAGS += $(INCLUDES)
 
 LINK_SCRIPT = -T"lib/boards/$(BOARD)/$(CHIP)/$(MEMORY).lds"
 
-LDFLAGS =  -nostartfiles -Wl,--gc-sections
+LDFLAGS += -nostartfiles -Wl,--gc-sections
 LDFLAGS += -Lbuild
 LDFLAGS += -lmario
 
