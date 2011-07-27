@@ -1,6 +1,7 @@
 #include <components/char_display.h>
 
 int main(int argc, char *argv[]) {
+    blahdly blah blah breakage
     char_display_init();
 
     unsigned int num = 0x00;
