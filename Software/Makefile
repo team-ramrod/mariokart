@@ -30,6 +30,8 @@ GDB     = $(PREFIX)gdb
 RANLIB  = $(PREFIX)ranlib
 OBJCOPY = $(PREFIX)objcopy
 
+OPENOCD = openocd
+
 OUTPUT_FOLDER  = build
 OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
 
@@ -55,7 +57,7 @@ INCLUDES += -Ilib/usb/common/core
 INCLUDES += -Ilib/usb/device/cdc-serial
 INCLUDES += -Ilib/usb/device/core
 
-CFLAGS =  -Wall -std=gnu99 -pedantic
+CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
@@ -66,7 +68,7 @@ CFLAGS += $(INCLUDES)
 # Generate dependency information
 CFLAGS += -MD -MP -MF .dep/$(subst /,-,$@).d
 
-ASFLAGS =  -Os
+ASFLAGS += -Os
 ASFLAGS += -D$(CHIP)
 ASFLAGS += -D$(MEMORY)
 ASFLAGS += -D__ASSEMBLY__
@@ -74,7 +76,7 @@ ASFLAGS += $(INCLUDES)
 
 LINK_SCRIPT = -T"lib/boards/$(BOARD)/$(CHIP)/$(MEMORY).lds"
 
-LDFLAGS =  -nostartfiles -Wl,--gc-sections
+LDFLAGS += -nostartfiles -Wl,--gc-sections
 LDFLAGS += -Lbuild
 LDFLAGS += -lmario
 
@@ -143,8 +145,11 @@ $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 	$(RANLIB) $@
 
 
-program-%: $(OUTPUT_FOLDER)/%.bin
-	$(GDB) -batch -x program.gdb $<
+ocd:
+	$(OPENOCD) -f openocd.cfg
+
+program-%: $(OUTPUT_FOLDER)/%.elf
+	$(GDB) -x program.gdb $<
 
 
 clean:
