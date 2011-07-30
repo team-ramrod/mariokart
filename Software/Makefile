@@ -30,6 +30,8 @@ GDB     = $(PREFIX)gdb
 RANLIB  = $(PREFIX)ranlib
 OBJCOPY = $(PREFIX)objcopy
 
+OPENOCD = openocd
+
 OUTPUT_FOLDER  = build
 OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
 
@@ -143,8 +145,11 @@ $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 	$(RANLIB) $@
 
 
-program-%: $(OUTPUT_FOLDER)/%.bin
-	$(GDB) -batch -x program.gdb $<
+ocd:
+	$(OPENOCD) -f openocd.cfg
+
+program-%: $(OUTPUT_FOLDER)/%.elf
+	$(GDB) -x program.gdb $<
 
 
 clean:
