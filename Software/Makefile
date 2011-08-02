@@ -149,7 +149,7 @@ ocd:
 	$(OPENOCD) -f openocd.cfg
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	echo "\n\n======================================\n  Programming is not yet implemented  \n======================================"
+	echo "\n\n======================================\n  Programming is not yet implemented  \n\n  Use \`make debug-$*\` then  \n  enter \`continue\` in GDB  \n======================================"
 
 debug-%: $(OUTPUT_FOLDER)/%.elf
 	$(GDB) -x debug.gdb $<
