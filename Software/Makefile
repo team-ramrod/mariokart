@@ -146,12 +146,13 @@ $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 
 
 ocd:
-	$(OPENOCD) -f openocd.cfg
+	touch /tmp/ocd-running ; $(OPENOCD) -f openocd.cfg ; rm /tmp/ocd-running
 
 program-%: $(OUTPUT_FOLDER)/%.elf
 	echo "\n\n======================================\n  Programming is not yet implemented  \n\n  Use \`make debug-$*\` then  \n  enter \`continue\` in GDB  \n======================================"
 
 debug-%: $(OUTPUT_FOLDER)/%.elf
+	if [ ! -e /tmp/ocd-running ] ; then ( echo 'OpenOCD not running'; false ) fi
 	$(GDB) -x debug.gdb $<
 
 
