@@ -149,7 +149,10 @@ ocd:
 	$(OPENOCD) -f openocd.cfg
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	$(GDB) -x program.gdb $<
+	echo "\n\n======================================\n  Programming is not yet implemented  \n======================================"
+
+debug-%: $(OUTPUT_FOLDER)/%.elf
+	$(GDB) -x debug.gdb $<
 
 
 clean:
