@@ -35,6 +35,8 @@ OPENOCD = openocd
 OUTPUT_FOLDER  = build
 OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
 
+OCD_CHECK_FILE = /tmp/mariokart-ocd.running
+
 VPATH += $(OUTPUT_FOLDER)
 VPATH += $(OBJECTS_FOLDER)
 
@@ -146,13 +148,13 @@ $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 
 
 ocd:
-	touch /tmp/ocd-running ; $(OPENOCD) -f openocd.cfg ; rm /tmp/ocd-running
+	touch $(OCD_CHECK_FILE) ; $(OPENOCD) -f openocd.cfg ; rm $(OCD_CHECK_FILE)
 
 program-%: $(OUTPUT_FOLDER)/%.elf
 	echo "\n\n======================================\n  Programming is not yet implemented  \n\n  Use \`make debug-$*\` then  \n  enter \`continue\` in GDB  \n======================================"
 
 debug-%: $(OUTPUT_FOLDER)/%.elf
-	if [ ! -e /tmp/ocd-running ] ; then ( echo 'OpenOCD not running'; false ) fi
+	if [ ! -e $(OCD_CHECK_FILE) ] ; then ( echo 'OpenOCD not running'; false ) fi
 	$(GDB) -x debug.gdb $<
 
 
