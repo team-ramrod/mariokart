@@ -13,6 +13,10 @@
 #include <aic/aic.h>
 #include <tc/tc.h>
 #include <utility/led.h>
+#include <utility/trace.h>
+//#include <dbgu/dbgu.h>
+
+#include <stdio.h>
 
 //------------------------------------------------------------------------------
 //         Local definitions
@@ -99,6 +103,7 @@ void ISR_Tc0(void)
 
     // Toggle LED state
     LED_Toggle(1);
+    printf("Toggling LED 1\n");
 }
 
 //------------------------------------------------------------------------------
@@ -156,6 +161,17 @@ void Wait(unsigned long delay)
 //------------------------------------------------------------------------------
 int main(void)
 {
+    //configure UART GND pin
+    const Pin pinUsartGnd[] = {PIN_USART0_GND};
+    PIO_Configure(pinUsartGnd, PIO_LISTSIZE(pinUsartGnd)); \
+    PIO_Clear(&pinUsartGnd[0]);
+
+    // DBGU configuration
+    TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);
+    printf("-- Getting Started Project %s --\n\r", SOFTPACK_VERSION);
+    printf("-- %s\n\r", BOARD_NAME);
+    printf("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
+
     // Configuration
     ConfigurePit();
     ConfigureTc();
@@ -171,6 +187,7 @@ int main(void)
         if (pLedStates[0]) {
 
             LED_Toggle(0);
+            printf("Toggling LED 0\n");
         }
 
         // Wait for 500ms
