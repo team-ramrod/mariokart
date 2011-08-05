@@ -253,5 +253,3 @@
 #define PINS_CAN_TRANSCEIVER_RXD  {1<<19, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 
 #endif //#ifndef BOARD_H
-
->>>>>>> master
