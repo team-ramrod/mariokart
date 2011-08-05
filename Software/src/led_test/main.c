@@ -103,7 +103,7 @@ void ISR_Tc0(void)
 
     // Toggle LED state
     LED_Toggle(1);
-    printf("Toggling LED 1\n");
+    TRACE_INFO("Toggling LED 1\n");
 }
 
 //------------------------------------------------------------------------------
@@ -168,9 +168,9 @@ int main(void)
 
     // DBGU configuration
     TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);
-    printf("-- Getting Started Project %s --\n\r", SOFTPACK_VERSION);
-    printf("-- %s\n\r", BOARD_NAME);
-    printf("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
+    TRACE_INFO("-- Getting Started Project %s --\n\r", SOFTPACK_VERSION);
+    TRACE_INFO("-- %s\n\r", BOARD_NAME);
+    TRACE_INFO("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
 
     // Configuration
     ConfigurePit();
@@ -187,7 +187,7 @@ int main(void)
         if (pLedStates[0]) {
 
             LED_Toggle(0);
-            printf("Toggling LED 0\n");
+            TRACE_INFO("Toggling LED 0\n");
         }
 
         // Wait for 500ms
