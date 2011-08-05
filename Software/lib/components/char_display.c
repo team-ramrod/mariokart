@@ -58,25 +58,32 @@ static void char_display_clear() {
 
 static void char_display_show(char_display_side side) {
 #ifdef PIN_CHAR_DISPLAY_VALUE_A
-    if (char_display_values[side] & _BV(0)) PIO_Set(&pinCharDisplayValueA);
+    if (char_display_values[side] & _BV(0))
+        PIO_Set(&pinCharDisplayValueA);
 #endif
 #ifdef PIN_CHAR_DISPLAY_VALUE_B
-    if (char_display_values[side] & _BV(1)) PIO_Set(&pinCharDisplayValueB);
+    if (char_display_values[side] & _BV(1))
+        PIO_Set(&pinCharDisplayValueB);
 #endif
 #ifdef PIN_CHAR_DISPLAY_VALUE_C
-    if (char_display_values[side] & _BV(2)) PIO_Set(&pinCharDisplayValueC);
+    if (char_display_values[side] & _BV(2))
+        PIO_Set(&pinCharDisplayValueC);
 #endif
 #ifdef PIN_CHAR_DISPLAY_VALUE_D
-    if (char_display_values[side] & _BV(3)) PIO_Set(&pinCharDisplayValueD);
+    if (char_display_values[side] & _BV(3))
+        PIO_Set(&pinCharDisplayValueD);
 #endif
 #ifdef PIN_CHAR_DISPLAY_ENABLE
-    if (char_display_values[side] < 0x10) PIO_Set(&pinCharDisplayEnable);
+    if (char_display_values[side] < 0x10)
+        PIO_Set(&pinCharDisplayEnable);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
-    if (side == CHAR_DISPLAY_LEFT) PIO_Set(&pinCharDisplaySelectLeft);
+    if (side == CHAR_DISPLAY_LEFT)
+        PIO_Set(&pinCharDisplaySelectLeft);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
-    if (side == CHAR_DISPLAY_RIGHT) PIO_Set(&pinCharDisplaySelectRight);
+    if (side == CHAR_DISPLAY_RIGHT)
+        PIO_Set(&pinCharDisplaySelectRight);
 #endif
 }
 
@@ -102,8 +109,11 @@ void char_display_number(unsigned int number) {
 
 void char_display_tick() {
     static char_display_side current = CHAR_DISPLAY_LEFT;
+    char_display_side next;
 
+    next = (current == CHAR_DISPLAY_LEFT) ? CHAR_DISPLAY_RIGHT
+                                          : CHAR_DISPLAY_LEFT;
     char_display_clear();
     char_display_show(current);
-    current = (current == CHAR_DISPLAY_LEFT ? CHAR_DISPLAY_RIGHT : CHAR_DISPLAY_LEFT);
+    current = next;
 }

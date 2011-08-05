@@ -16,8 +16,7 @@ Control the electric motor, servo driven steering wheel and actuated brake
 pedal via embedded arm microprocessors. The separate micros are connected via a
 CAN and also leave room for an arbitrary number of analog and digital sensors.
 
-Behavioural-level software runs on a laptop connected to
-this network via USB.
+Behavioural-level software runs on a laptop connected to this network via USB.
 
 Future Work
 -----------
