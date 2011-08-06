@@ -164,11 +164,11 @@ void init_driver(void) {
 void drive_motor(int speed) {
     static int prev_speed = 0;
 
-    //ensuring speed is within limits (/2 as full speed current limits power supplys)
-    if (speed > SPEED_DIVISIONS/2) {
-        speed = SPEED_DIVISIONS/2;
-    } else if (speed < -SPEED_DIVISIONS/2) {
-        speed = -SPEED_DIVISIONS/2;
+    //ensuring speed is within limits (/4 as full speed current limits power supplys)
+    if (speed > SPEED_DIVISIONS/4) {
+        speed = SPEED_DIVISIONS/4;
+    } else if (speed < -SPEED_DIVISIONS/4) {
+        speed = -SPEED_DIVISIONS/4;
     }
 
     //finding new duty cycle

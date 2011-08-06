@@ -17,7 +17,7 @@ void set_steering(int angle){
         angle = min_angle;
     }
     //convert angle to pulses and account for any offset
-    int pulses = (angle * PULSES_PER_REV)/360 + (max_angle + min_angle);
+    pulses = ((angle + max_angle + min_angle) * PULSES_PER_REV)/360 ;
 }
 
 //calibrates steering position
@@ -34,7 +34,7 @@ void cal_steering(void){
 
     drive_motor(0);
 
-    min_angle = pulse_position;
+    min_angle = 360 * pulse_position / PULSES_PER_REV;
 
     //drive steering clockwise until limit hit
     drive_motor(50);
@@ -44,7 +44,7 @@ void cal_steering(void){
 
     drive_motor(0);
 
-    max_angle = pulse_position;
+    max_angle = 360 * pulse_position / PULSES_PER_REV;
 }
 
 int main(int argc, char *argv[]) {
@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
 
     //cal_steering();
     char_display_init();
-    int min_angle = -270;
-    int max_angle = 270;
+    min_angle = -270;
+    max_angle = 270;
     set_steering(200);
 
     char_display_number(33);
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     //infinite loop running PID controller
     while(1){
 
-        speed = pid(20000, pulse_position);
+        speed = pid(pulses, pulse_position);
 
         drive_motor(speed);
     }

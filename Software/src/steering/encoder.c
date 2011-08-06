@@ -9,12 +9,18 @@ static const Pin pins[] = {ENCODER_CLOCKWISE , ENCODER_ANTICLOCKWISE, LIM_SW_UP,
 //priority of interrupt
 #define ENCODER_PRIORITY AT91C_AIC_PRIOR_LOWEST
 
+const Pin pin_encoder_cw = ENCODER_CLOCKWISE;
+const Pin pin_encoder_acw = ENCODER_ANTICLOCKWISE;
+
 //updates position value if turning clockwise
 void ISR_UP ( void )
 {
     char_display_number(11);
     char_display_tick();
-    pulse_position++;
+
+    if(!PIO_Get(&pin_encoder_cw)){
+        pulse_position++;
+    }
 }
 
 //updates position value if turning anticlockwise
@@ -22,15 +28,13 @@ void ISR_DOWN ( void )
 {
     char_display_number(22);
     char_display_tick();
-    pulse_position--;
+    if(!PIO_Get(&pin_encoder_acw)){
+        pulse_position--;
+    }
 }
 
 //Sets up pins for encoder 
 void init_encoder(void){
-
-    //must be static or interrupts will not work
-    static const Pin pin_encoder_cw = ENCODER_CLOCKWISE;
-    static const Pin pin_encoder_acw = ENCODER_ANTICLOCKWISE;
 
     //initilise pulse counter
     pulse_position = 0;
