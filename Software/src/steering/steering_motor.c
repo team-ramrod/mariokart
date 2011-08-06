@@ -3,6 +3,8 @@
 #include <peripherals/pio/pio.h>
 #include <peripherals/pio/pio_it.h>
 #include <peripherals/pwmc/pwmc.h>
+#include <peripherals/aic/aic.h>
+#include <stdlib.h>
 
 #define DRIVER_PWM_CLOCKWISE   PIN_PWMC_PWM0
 #define DRIVER_CHANNEL_CLOCKWISE   0
@@ -28,12 +30,8 @@ static const Pin pins[] = {DRIVER_PWM_CLOCKWISE,
     PIN_DRIVER_RESET1,
     PIN_DRIVER_RESET2};
 
-#define P_GAIN 1
-#define I_GAIN 0.1
-#define D_GAIN 0.1
-
 #define PWM_PERIOD 0x0999
-#define SPEED_DIVISIONS 100
+#define SPEED_DIVISIONS 99
 
 /// Wait time in us
 
@@ -122,11 +120,11 @@ void init_driver(void) {
     PIO_Set(&pin_driver_reset2);
 
     // Initialize interrupts
-    PIO_InitializeInterrupts(DRIVER_ERROR_PRIORITY);
-    PIO_ConfigureIt(&pin_driver_otw, (void (*)(const Pin *)) DRIVER_ERROR);
-    PIO_ConfigureIt(&pin_driver_fault, (void (*)(const Pin *)) DRIVER_ERROR);
-    PIO_EnableIt(&pin_driver_otw);
-    PIO_EnableIt(&pin_driver_fault);
+    //PIO_InitializeInterrupts(DRIVER_ERROR_PRIORITY);
+    //PIO_ConfigureIt(&pin_driver_otw, (void (*)(const Pin *)) DRIVER_ERROR);
+    //PIO_ConfigureIt(&pin_driver_fault, (void (*)(const Pin *)) DRIVER_ERROR);
+    //PIO_EnableIt(&pin_driver_otw);
+    //PIO_EnableIt(&pin_driver_fault);
 
     //sets up a pwm wave on channel 0
     PWMC_ConfigureChannel(DRIVER_CHANNEL_CLOCKWISE,
@@ -166,18 +164,19 @@ void init_driver(void) {
 void drive_motor(int speed) {
     static int prev_speed = 0;
 
-    //ensuring speed is within limits
-    if (speed > SPEED_DIVISIONS) {
-        speed = SPEED_DIVISIONS;
-    } else if (speed < -SPEED_DIVISIONS) {
-        speed = -SPEED_DIVISIONS;
+    //ensuring speed is within limits (/2 as full speed current limits power supplys)
+    if (speed > SPEED_DIVISIONS/2) {
+        speed = SPEED_DIVISIONS/2;
+    } else if (speed < -SPEED_DIVISIONS/2) {
+        speed = -SPEED_DIVISIONS/2;
     }
 
     //finding new duty cycle
     int new_duty = abs((speed * PWM_PERIOD) / SPEED_DIVISIONS);
 
+    new_duty = abs((SPEED_DIVISIONS * PWM_PERIOD) / SPEED_DIVISIONS) - new_duty + 10;
     //if changing directions switch PWM pins
-    if ((prev_speed > 0) && (speed <= 0)) {
+    if ((prev_speed >= 0) && (speed <= 0)) {
         //disables PWM channel
         PWMC_DisableChannel(DRIVER_CHANNEL_CLOCKWISE);
 

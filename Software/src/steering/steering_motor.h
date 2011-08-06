@@ -13,8 +13,8 @@ void init_driver(void);
 void drive_motor(int speed);
 
 #define P_GAIN 1
-#define I_GAIN 0.1
-#define D_GAIN 0.1
+#define I_GAIN 0.0
+#define D_GAIN 0.0
 
 //PID controller with gains defined above
 int pid(int desired, int current);

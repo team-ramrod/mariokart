@@ -1,6 +1,7 @@
 #include "encoder.h"
 #include "steering_motor.h"
 #include <peripherals/pio/pio.h>
+#include <char_display.h>
 
 int min_angle;
 int max_angle;
@@ -54,11 +55,18 @@ int main(int argc, char *argv[]) {
     init_encoder();
     init_driver();
 
-    cal_steering();
+    //cal_steering();
+    char_display_init();
+    int min_angle = -270;
+    int max_angle = 270;
+    set_steering(200);
 
+    char_display_number(33);
+    char_display_tick();
     //infinite loop running PID controller
     while(1){
-        speed = pid(pulses, pulse_position);
+
+        speed = pid(20000, pulse_position);
 
         drive_motor(speed);
     }
