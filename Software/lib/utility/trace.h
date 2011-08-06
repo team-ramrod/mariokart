@@ -75,8 +75,8 @@
 
 // Select the trace interface
 // (add usart.o file in makefile if Usart interface is selected)
-#define TRACE_DBGU 1
-//#define TRACE_USART_0 1
+//#define TRACE_DBGU 1
+#define TRACE_USART_0 1
 //#define TRACE_USART_1 1
 //#define TRACE_USART_2 1
 
@@ -139,6 +139,8 @@
     }
 #elif defined(TRACE_USART_0)
     #define TRACE_CONFIGURE(mode, baudrate, mck) { \
+        const Pin pinUsartGND[] = {PIN_USART0_GND}; \
+        PIO_Configure(pinUsartGND, PIO_LISTSIZE(pinUsartGND)); \
         const Pin pinsUsart[] = {PIN_USART0_TXD, PIN_USART0_RXD}; \
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US0;\
         AT91C_BASE_US0->US_IDR = 0xFFFFFFFF;\
@@ -149,6 +151,8 @@
     }
 #elif defined(TRACE_USART_1)
     #define TRACE_CONFIGURE(mode, baudrate, mck) { \
+        const Pin pinUsartGND[] = {PIN_USART1_GND}; \
+        PIO_Configure(pinUsartGND, PIO_LISTSIZE(pinUsartGND)); \
         const Pin pinsUsart[] = {PIN_USART1_TXD, PIN_USART1_RXD}; \
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US1;\
         AT91C_BASE_US1->US_IDR = 0xFFFFFFFF;\
@@ -159,6 +163,8 @@
     }
 #elif defined(TRACE_USART_2)
     #define TRACE_CONFIGURE(mode, baudrate, mck) { \
+        const Pin pinUsartGND[] = {PIN_USART2_GND}; \
+        PIO_Configure(pinUsartGND, PIO_LISTSIZE(pinUsartGND)); \
         const Pin pinsUsart[] = {PIN_USART2_TXD, PIN_USART2_RXD}; \
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US2;\
         AT91C_BASE_US2->US_IDR = 0xFFFFFFFF;\
@@ -185,6 +191,8 @@
     }
 #elif defined(TRACE_USART_0)
     #define TRACE_CONFIGURE_ISP(mode, baudrate, mck) { \
+        const Pin pinUsartGND[] = {PIN_USART0_GND}; \
+        PIO_Configure(pinUsartGND, PIO_LISTSIZE(pinUsartGND)); \
         const Pin pinsUsart[] = {PIN_USART0_TXD, PIN_USART0_RXD}; \
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US0;\
         AT91C_BASE_US0->US_IDR = 0xFFFFFFFF;\
@@ -195,6 +203,8 @@
     }
 #elif defined(TRACE_USART_1)
     #define TRACE_CONFIGURE_ISP(mode, baudrate, mck) { \
+        const Pin pinUsartGND[] = {PIN_USART1_GND}; \
+        PIO_Configure(pinUsartGND, PIO_LISTSIZE(pinUsartGND)); \
         const Pin pinsUsart[] = {PIN_USART1_TXD, PIN_USART1_RXD}; \
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US1;\
         AT91C_BASE_US1->US_IDR = 0xFFFFFFFF;\
@@ -205,6 +215,8 @@
     }
 #elif defined(TRACE_USART_2)
     #define TRACE_CONFIGURE_ISP(mode, baudrate, mck) { \
+        const Pin pinUsartGND[] = {PIN_USART2_GND}; \
+        PIO_Configure(pinUsartGND, PIO_LISTSIZE(pinUsartGND)); \
         const Pin pinsUsart[] = {PIN_USART2_TXD, PIN_USART2_RXD}; \
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US2;\
         AT91C_BASE_US2->US_IDR = 0xFFFFFFFF;\
