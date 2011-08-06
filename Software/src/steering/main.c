@@ -1,5 +1,5 @@
 #include "encoder.h"
-#include "steering_motor.h"
+#include "actuator_driver.h"
 #include <peripherals/pio/pio.h>
 #include <char_display.h>
 
@@ -27,22 +27,22 @@ void cal_steering(void){
     const Pin pin_lim_down = LIM_SW_DOWN;
 
     //drive steering anticlockwise until limit hit
-    drive_motor(-50);
+    act_driver_drive(-50);
     while(!PIO_Get(&pin_lim_down)){
         continue;
     }
 
-    drive_motor(0);
+    act_driver_drive(0);
 
     min_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
 
     //drive steering clockwise until limit hit
-    drive_motor(50);
+    act_driver_drive(50);
     while(!PIO_Get(&pin_lim_up)){
         continue;
     }
 
-    drive_motor(0);
+    act_driver_drive(0);
 
     max_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
 }
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     pulses = 0;
 
     encoder_init();
-    init_driver();
+    act_driver_init();
 
     //cal_steering();
     char_display_init();
@@ -66,9 +66,9 @@ int main(int argc, char *argv[]) {
     //infinite loop running PID controller
     while(1){
 
-        speed = pid(pulses, encoder_position_output);
+        speed = act_driver_pid(pulses, encoder_position_output);
 
-        drive_motor(speed);
+        act_driver_drive(100);
     }
     
     return 0;

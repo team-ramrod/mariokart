@@ -1,5 +1,4 @@
 #include "potentiometer.h"
-#include "brake_act.h"
 #include <peripherals/pio/pio.h>
 
 #define ACT_MAX_LENGTH 101.6 //mm
@@ -34,15 +33,15 @@ int main(int argc, char *argv[]) {
     adc_dist = 0;
 
     init_pot();
-    init_driver();
+    //init_driver();
 
     cal_adc();
 
     //infinite loop running PID controller
     while(1){
-        speed = pid(adc_dist, current_adc_value);
+        //speed = pid(adc_dist, current_adc_value);
 
-        drive_motor(speed);
+        //drive_motor(speed);
     }
     
     return 0;
