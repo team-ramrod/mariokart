@@ -103,7 +103,7 @@ void ISR_Tc0(void)
 
     // Toggle LED state
     LED_Toggle(1);
-    TRACE_INFO("Toggling LED 1\n");
+    TRACE_INFO("Toggling LED 1\n\r");
 }
 
 //------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ int main(void)
         if (pLedStates[0]) {
 
             LED_Toggle(0);
-            TRACE_INFO("Toggling LED 0\n");
+            TRACE_INFO("Toggling LED 0\n\r");
         }
 
         // Wait for 500ms
