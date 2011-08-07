@@ -161,7 +161,7 @@ program-%: $(OUTPUT_FOLDER)/%.elf
 		"  Programming is not yet implemented  " "\n"\
 		"                                      " "\n"\
 		"  Use \`make debug-$*\` to start GDB  " "\n"\
-		"  then enter \`continue\` to in GDB.  " "\n"\
+		"  then enter \`continue\` in GDB.     " "\n"\
 		"======================================" "\n"
 
 
