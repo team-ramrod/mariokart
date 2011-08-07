@@ -7,9 +7,6 @@
 const Pin pin_encoder_cw = ENCODER_CLOCKWISE;
 const Pin pin_encoder_acw = ENCODER_ANTICLOCKWISE;
 
-//priority of interrupt
-#define ENCODER_PRIORITY AT91C_AIC_PRIOR_LOWEST
-
 //updates position value if turning clockwise
 void ENCODER_ISR_UP ( void )
 {
@@ -39,7 +36,6 @@ void encoder_init(void){
     PIO_Configure(&pin_encoder_acw, 1);
 
     // Initialize interrupts
-    PIO_InitializeInterrupts(ENCODER_PRIORITY);
     PIO_ConfigureIt(&pin_encoder_cw, (void (*)(const Pin *)) ENCODER_ISR_UP);
     PIO_ConfigureIt(&pin_encoder_acw, (void (*)(const Pin *)) ENCODER_ISR_DOWN);
     PIO_EnableIt(&pin_encoder_cw);

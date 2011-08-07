@@ -18,9 +18,6 @@
 //number of speeds the actuator can be driven at
 #define ACT_SPEED_DIVISIONS 100
 
-//priority 0 as can result in brake failure
-#define ACT_DRIVER_ERROR_PRIORITY 0
-
 //Specify pin locations
 const Pin act_driver_otw = ACT_DRIVER_OTW;
 const Pin act_driver_fault = ACT_DRIVER_FAULT;
@@ -121,11 +118,10 @@ void act_driver_init(void) {
     PIO_Set(&act_driver_reset2);
 
     // Initialize interrupts
-    //PIO_InitializeInterrupts(ACT_DRIVER_ERROR_PRIORITY);
-    //PIO_ConfigureIt(&act_driver_otw, (void (*)(const Pin *)) ACT_DRIVER_ERROR);
-    //PIO_ConfigureIt(&act_driver_fault, (void (*)(const Pin *)) ACT_DRIVER_ERROR);
-    //PIO_EnableIt(&act_driver_otw);
-    //PIO_EnableIt(&act_driver_fault);
+    PIO_ConfigureIt(&act_driver_otw, (void (*)(const Pin *)) ACT_DRIVER_ERROR);
+    PIO_ConfigureIt(&act_driver_fault, (void (*)(const Pin *)) ACT_DRIVER_ERROR);
+    PIO_EnableIt(&act_driver_otw);
+    PIO_EnableIt(&act_driver_fault);
 
     //sets up a pwm wave on channel 0
     PWMC_ConfigureChannel(ACT_DRIVER_CHANNEL_CLOCKWISE,

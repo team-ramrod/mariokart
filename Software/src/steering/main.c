@@ -52,23 +52,28 @@ int main(int argc, char *argv[]) {
     int speed;
     pulses = 0;
 
+    //enables interrupts (note resets all configured interrupts)
+    PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
+
+    //initilize steering
     encoder_init();
     act_driver_init();
-
-    //cal_steering();
     char_display_init();
+
+    //calibrate steering (commented out till limit switches in place)
+    //cal_steering();
+ 
+    //replaces what calibrating does (these 2 lines should not be in final code)
     min_angle = -270;
     max_angle = 270;
+
+    //sets positon to turn wheel to (used until can bus in place)
     set_steering(200);
 
-    char_display_number(33);
-    char_display_tick();
     //infinite loop running PID controller
     while(1){
-
         speed = act_driver_pid(pulses, encoder_position_output);
-
-        act_driver_drive(100);
+        act_driver_drive(speed);
     }
     
     return 0;
