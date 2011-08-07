@@ -8,7 +8,7 @@
 #include <utility/led.h>
 #include <usb/device/cdc-serial/CDCDSerialDriver.h>
 #include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
-#include <pmc/pmc.h>
+#include <board_powermode.h>
 
 //------------------------------------------------------------------------------
 //      Definitions
@@ -49,10 +49,6 @@ static unsigned char usbBuffer[DATABUFFERSIZE];
 //------------------------------------------------------------------------------
 //         VBus monitoring (optional)
 //------------------------------------------------------------------------------
-#if defined(PIN_USB_VBUS)
-
-#define VBUS_CONFIGURE()  VBus_Configure()
-
 /// VBus pin instance.
 static const Pin pinVbus = PIN_USB_VBUS;
 
@@ -98,236 +94,6 @@ static void VBus_Configure( void )
         USBD_Disconnect();
     }           
 }
-
-#else
-    #define VBUS_CONFIGURE()    USBD_Connect()
-#endif //#if defined(PIN_USB_VBUS)
-
-#if defined (CP15_PRESENT)
-//------------------------------------------------------------------------------
-/// Put the CPU in 32kHz, disable PLL, main oscillator
-/// Put voltage regulator in standby mode
-//------------------------------------------------------------------------------
-void LowPowerMode(void)
-{
-    PMC_CPUInIdleMode();
-}
-//------------------------------------------------------------------------------
-/// Put voltage regulator in normal mode
-/// Return the CPU to normal speed 48MHz, enable PLL, main oscillator
-//------------------------------------------------------------------------------
-void NormalPowerMode(void)
-{
-}
-
-#elif defined(at91sam7a3)
-//------------------------------------------------------------------------------
-/// Put the CPU in 32kHz, disable PLL, main oscillator
-//------------------------------------------------------------------------------
-void LowPowerMode(void)
-{
-    // MCK=48MHz to MCK=32kHz
-    // MCK = SLCK/2 : change source first from 48 000 000 to 18. / 2 = 9M
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=SLCK : then change prescaler
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_CSS_SLOW_CLK;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // disable PLL
-    AT91C_BASE_PMC->PMC_PLLR = 0;
-    // Disable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = 0;
-
-    PMC_DisableProcessorClock();
-}
-//------------------------------------------------------------------------------
-/// Return the CPU to normal speed 48MHz, enable PLL, main oscillator
-//------------------------------------------------------------------------------
-void NormalPowerMode(void)
-{
-    // MCK=32kHz to MCK=48MHz
-    // enable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = (( (AT91C_CKGR_OSCOUNT & (0x06 <<8)) | AT91C_CKGR_MOSCEN ));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS ) );
-
-    // enable PLL@96MHz
-    AT91C_BASE_PMC->PMC_PLLR = ((AT91C_CKGR_DIV & 0x0E) |
-         (AT91C_CKGR_PLLCOUNT & (28<<8)) |
-         (AT91C_CKGR_MUL & (0x48<<16)));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK ) );
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    AT91C_BASE_CKGR->CKGR_PLLR |= AT91C_CKGR_USBDIV_1 ;
-    // MCK=SLCK/2 : change prescaler first
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=PLLCK/2 : then change source
-    AT91C_BASE_PMC->PMC_MCKR |= AT91C_PMC_CSS_PLL_CLK  ;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-}
-
-#elif defined (at91sam7se)
-//------------------------------------------------------------------------------
-/// Put the CPU in 32kHz, disable PLL, main oscillator
-/// Put voltage regulator in standby mode
-//------------------------------------------------------------------------------
-void LowPowerMode(void)
-{
-    // MCK=48MHz to MCK=32kHz
-    // MCK = SLCK/2 : change source first from 48 000 000 to 18. / 2 = 9M
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=SLCK : then change prescaler
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_CSS_SLOW_CLK;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // disable PLL
-    AT91C_BASE_PMC->PMC_PLLR = 0;
-    // Disable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = 0;
-
-    // Voltage regulator in standby mode : Enable VREG Low Power Mode
-    AT91C_BASE_VREG->VREG_MR |= AT91C_VREG_PSTDBY;
-
-    PMC_DisableProcessorClock();
-}
-//------------------------------------------------------------------------------
-/// Put voltage regulator in normal mode
-/// Return the CPU to normal speed 48MHz, enable PLL, main oscillator
-//------------------------------------------------------------------------------
-void NormalPowerMode(void)
-{
-    // Voltage regulator in normal mode : Disable VREG Low Power Mode
-    AT91C_BASE_VREG->VREG_MR &= ~AT91C_VREG_PSTDBY;
-
-    // MCK=32kHz to MCK=48MHz
-    // enable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = (( (AT91C_CKGR_OSCOUNT & (0x06 <<8)) | AT91C_CKGR_MOSCEN ));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS ) );
-
-    // enable PLL@96MHz
-    AT91C_BASE_PMC->PMC_PLLR = ((AT91C_CKGR_DIV & 0x0E) |
-         (AT91C_CKGR_PLLCOUNT & (28<<8)) |
-         (AT91C_CKGR_MUL & (0x48<<16)));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK ) );
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    AT91C_BASE_CKGR->CKGR_PLLR |= AT91C_CKGR_USBDIV_1 ;
-    // MCK=SLCK/2 : change prescaler first
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=PLLCK/2 : then change source
-    AT91C_BASE_PMC->PMC_MCKR |= AT91C_PMC_CSS_PLL_CLK  ;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-}
-
-#elif defined (at91sam7s)
-//------------------------------------------------------------------------------
-/// Put the CPU in 32kHz, disable PLL, main oscillator
-/// Put voltage regulator in standby mode
-//------------------------------------------------------------------------------
-void LowPowerMode(void)
-{
-    // MCK=48MHz to MCK=32kHz
-    // MCK = SLCK/2 : change source first from 48 000 000 to 18. / 2 = 9M
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=SLCK : then change prescaler
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_CSS_SLOW_CLK;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // disable PLL
-    AT91C_BASE_PMC->PMC_PLLR = 0;
-    // Disable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = 0;
-
-    // Voltage regulator in standby mode : Enable VREG Low Power Mode
-    AT91C_BASE_VREG->VREG_MR |= AT91C_VREG_PSTDBY;
-
-    PMC_DisableProcessorClock();
-}
-
-//------------------------------------------------------------------------------
-/// Put voltage regulator in normal mode
-/// Return the CPU to normal speed 48MHz, enable PLL, main oscillator
-//------------------------------------------------------------------------------
-void NormalPowerMode(void)
-{
-    // Voltage regulator in normal mode : Disable VREG Low Power Mode
-    AT91C_BASE_VREG->VREG_MR &= ~AT91C_VREG_PSTDBY;
-
-    // MCK=32kHz to MCK=48MHz
-    // enable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = (( (AT91C_CKGR_OSCOUNT & (0x06 <<8)) | AT91C_CKGR_MOSCEN ));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS ) );
-
-    // enable PLL@96MHz
-    AT91C_BASE_PMC->PMC_PLLR = ((AT91C_CKGR_DIV & 0x0E) |
-         (AT91C_CKGR_PLLCOUNT & (28<<8)) |
-         (AT91C_CKGR_MUL & (0x48<<16)));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK ) );
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    AT91C_BASE_CKGR->CKGR_PLLR |= AT91C_CKGR_USBDIV_1 ;
-    // MCK=SLCK/2 : change prescaler first
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=PLLCK/2 : then change source
-    AT91C_BASE_PMC->PMC_MCKR |= AT91C_PMC_CSS_PLL_CLK  ;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-
-}
-
-#elif defined (at91sam7x) || defined (at91sam7xc)
-//------------------------------------------------------------------------------
-/// Put the CPU in 32kHz, disable PLL, main oscillator
-/// Put voltage regulator in standby mode
-//------------------------------------------------------------------------------
-void LowPowerMode(void)
-{
-    // MCK=48MHz to MCK=32kHz
-    // MCK = SLCK/2 : change source first from 48 000 000 to 18. / 2 = 9M
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=SLCK : then change prescaler
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_CSS_SLOW_CLK;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // disable PLL
-    AT91C_BASE_PMC->PMC_PLLR = 0;
-    // Disable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = 0;
-
-    // Voltage regulator in standby mode : Enable VREG Low Power Mode
-    AT91C_BASE_VREG->VREG_MR |= AT91C_VREG_PSTDBY;
-
-    PMC_DisableProcessorClock();
-}
-
-//------------------------------------------------------------------------------
-/// Put voltage regulator in normal mode
-/// Return the CPU to normal speed 48MHz, enable PLL, main oscillator
-//------------------------------------------------------------------------------
-void NormalPowerMode(void)
-{
-    // Voltage regulator in normal mode : Disable VREG Low Power Mode
-    AT91C_BASE_VREG->VREG_MR &= ~AT91C_VREG_PSTDBY;
-
-    // MCK=32kHz to MCK=48MHz
-    // enable Main Oscillator
-    AT91C_BASE_PMC->PMC_MOR = (( (AT91C_CKGR_OSCOUNT & (0x06 <<8)) | AT91C_CKGR_MOSCEN ));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS ) );
-
-    // enable PLL@96MHz
-    AT91C_BASE_PMC->PMC_PLLR = ((AT91C_CKGR_DIV & 0x0E) |
-         (AT91C_CKGR_PLLCOUNT & (28<<8)) |
-         (AT91C_CKGR_MUL & (0x48<<16)));
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK ) );
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    AT91C_BASE_CKGR->CKGR_PLLR |= AT91C_CKGR_USBDIV_1 ;
-    // MCK=SLCK/2 : change prescaler first
-    AT91C_BASE_PMC->PMC_MCKR = AT91C_PMC_PRES_CLK_2;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-    // MCK=PLLCK/2 : then change source
-    AT91C_BASE_PMC->PMC_MCKR |= AT91C_PMC_CSS_PLL_CLK  ;
-    while( !( AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY ) );
-}
-
-#endif
 
 //------------------------------------------------------------------------------
 //         Internal functions
@@ -538,7 +304,7 @@ int main()
     CDCDSerialDriver_Initialize();
 
     // connect if needed
-    VBUS_CONFIGURE();
+    VBus_Configure();
 
     // Driver loop
     while (1) {

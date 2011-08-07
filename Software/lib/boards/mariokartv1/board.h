@@ -74,6 +74,9 @@
 // USB attributes configuration descriptor (bus or self powered, remote wakeup)
 #define BOARD_USB_BMATTRIBUTES                  USBConfigurationDescriptor_BUSPOWERED_NORWAKEUP
 
+// USB pin for usb connector detection
+#define PIN_USB_VBUS                            {1 << 9, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEFAULT}
+
 /*
  * This pages lists all the pio definitions contained in board.h. The constants
  * are named using the following convention: PIN_* for a constant which defines

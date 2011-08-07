@@ -94,6 +94,7 @@ C_FILES += $(wildcard lib/usb/device/core/*.c)
 
 C_FILES += lib/boards/$(BOARD)/board_memories.c
 C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
+C_FILES += lib/boards/$(BOARD)/board_powermode.c
 
 #steering files (I dont know much about makefiles so this probably needs changing)
 C_FILES += $(wildcard src/steering/*.c)
