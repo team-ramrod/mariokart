@@ -128,17 +128,17 @@ rebuild: clean all
 
 
 $(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o $(LIB)
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(LINK_SCRIPT) -o $@ $< $(LDFLAGS)
 
 
 $(OBJECTS_FOLDER)/%.o: %.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
 $(OBJECTS_FOLDER)/%.o: %.S
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(ASFLAGS) -o $@ -c $<
 
 
@@ -147,15 +147,39 @@ $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 	$(RANLIB) $@
 
 
+# Temporarily creates a file to allow the debug task to
+# check that OpenOCD has been started before starting GDB.
 ocd:
-	touch $(OCD_CHECK_FILE) ; $(OPENOCD) -f openocd.cfg ; rm $(OCD_CHECK_FILE)
+	@touch $(OCD_CHECK_FILE);\
+		$(OPENOCD) -f openocd.cfg;\
+		rm $(OCD_CHECK_FILE)
+
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	echo "\n\n======================================\n  Programming is not yet implemented  \n\n  Use \`make debug-$*\` then  \n  enter \`continue\` in GDB  \n======================================"
+	@echo "\n"\
+		"======================================" "\n"\
+		"  Programming is not yet implemented  " "\n"\
+		"                                      " "\n"\
+		"  Use \`make debug-$*\` to start GDB  " "\n"\
+		"  then enter \`continue\` to in GDB.  " "\n"\
+		"======================================" "\n"
 
+
+# Uses the check file to ensure that OpenOCD has
+# been started before attempting to start up GDB.
 debug-%: $(OUTPUT_FOLDER)/%.elf
-	if [ ! -e $(OCD_CHECK_FILE) ] ; then ( echo 'OpenOCD not running'; false ) fi
-	$(GDB) -x debug.gdb $<
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -x debug.gdb $< \
+		) \
+	fi
 
 
 clean:
