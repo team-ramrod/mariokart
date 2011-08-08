@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "brake_act.h"
 #include <boards/mariokartv1/board.h>
 #include <peripherals/pio/pio.h>

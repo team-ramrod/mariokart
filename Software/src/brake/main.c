@@ -19,7 +19,7 @@ void set_act(int distance){
     }
 
     //convert distance to adc output
-    int adc_dist = (1024 * distance) / ACT_MAX_LENGTH;
+    //int adc_dist = (1024 * distance) / ACT_MAX_LENGTH;
 }
 
 //calibrates steering position

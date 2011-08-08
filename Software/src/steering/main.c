@@ -16,7 +16,7 @@ void set_steering(int angle){
         angle = min_angle;
     }
     //convert angle to pulses and account for any offset
-    int pulses = (angle * PULSES_PER_REV)/360 + (max_angle + min_angle);
+    //int pulses = (angle * PULSES_PER_REV)/360 + (max_angle + min_angle);
 }
 
 //calibrates steering position

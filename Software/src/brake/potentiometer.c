@@ -4,7 +4,7 @@
 #include <boards/mariokartv1/board.h>
 
 /// Pio pins to configure.
-static const Pin pins[] = {PIN_POT};
+//static const Pin pins[] = {PIN_POT};
 
 //priority of interrupt
 #define ADC_PRIORITY 5
@@ -25,7 +25,7 @@ static void ISR_Adc(void)
 //Sets up pins and adc for pot
 void init_pot(void){
 
-    PIO_Configure(pins, PIO_LISTSIZE(pins));
+//    PIO_Configure(pins, PIO_LISTSIZE(pins));
 
     ADC_Initialize( AT91C_BASE_ADC,
                     AT91C_ID_ADC,
