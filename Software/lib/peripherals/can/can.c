@@ -36,6 +36,15 @@
  * rs is not used.
  *
  */
+/*
+ * Modified by Wim Looman 2011-07-01
+ * Copyright (c) 2011, University of Canterbury
+ *
+ * Released under same terms as above.
+ *
+ * Fixed warnings in functions ‘CAN_Handler’ and ‘CAN_InitMailboxRegisters’.
+ *
+ */
 
 //------------------------------------------------------------------------------
 //         Headers
@@ -166,7 +175,9 @@ static void CAN_Handler( unsigned char can_number )
     unsigned int message_mode;
     unsigned char numMailbox;
     unsigned char state0=CAN_DISABLED;
+#ifdef AT91C_BASE_CAN1
     unsigned char state1=CAN_DISABLED;
+#endif
 
     if( can_number == 0 ) {
         base_can = AT91C_BASE_CAN0;
@@ -257,9 +268,11 @@ static void CAN_Handler( unsigned char can_number )
                     if( can_number == 0 ) {
                         state0 = CAN_IDLE;
                     }
+#ifdef AT91C_BASE_CAN1
                     else {
                         state1 = CAN_IDLE;
                     }
+#endif
                 }
             }
         }
@@ -305,16 +318,13 @@ static void CAN1_Handler(void)
 //------------------------------------------------------------------------------
 void CAN_InitMailboxRegisters( CanTransfer *pTransfer )
 {
-    AT91PS_CAN    base_can;
     AT91PS_CAN_MB CAN_Mailbox;
 
     if( pTransfer->can_number == 0 ) {
-        base_can = AT91C_BASE_CAN0;
         CAN_Mailbox = AT91C_BASE_CAN0_MB0;
     }
 #ifdef AT91C_BASE_CAN1
     else {
-        base_can = AT91C_BASE_CAN1;
         CAN_Mailbox = AT91C_BASE_CAN1_MB0;
     }
 #endif

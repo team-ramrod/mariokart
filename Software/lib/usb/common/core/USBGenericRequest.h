@@ -26,6 +26,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
+/*
+ * Modified by Wim Looman 2011-07-01
+ * Copyright (c) 2011, University of Canterbury
+ *
+ * Released under same terms as above.
+ *
+ * Fixed warnings to do with bit-fields in the USBGenericRequest struct.
+ *
+ */
 
 /**
  \unit
@@ -198,16 +207,16 @@ typedef struct {
     /// \sa "USB Request Recipients"
     /// \sa "USB Request Types"
     /// \sa "USB Request Directions"
-    unsigned char bmRequestType:8;
+    unsigned char bmRequestType;
     /// Request code
     /// \sa "USB Request Codes"
-    unsigned char bRequest:8;
+    unsigned char bRequest;
     /// Request-specific value parameter.
-    unsigned short wValue:16;
+    unsigned short wValue;
     /// Request-specific index parameter.
-    unsigned short wIndex:16;
+    unsigned short wIndex;
     /// Expected length (in bytes) of the data phase.
-    unsigned short wLength:16;
+    unsigned short wLength;
 
 } USBGenericRequest;
 
