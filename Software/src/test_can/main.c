@@ -418,7 +418,6 @@ static void DisplayMenu(void)
 int main(void)
 {    
     unsigned char CharReceive = 0;
-    unsigned char dummy = 0;    
     unsigned int time;
 
     TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);   
@@ -461,7 +460,6 @@ int main(void)
                                 time = RTT_GetTime(AT91C_BASE_RTTC);
                                 while (time == RTT_GetTime(AT91C_BASE_RTTC));
                             }
-                            dummy = DBGU_GetChar();                           
                         }
                         break;
                         case '2': {                           
@@ -474,7 +472,6 @@ int main(void)
                                 time = RTT_GetTime(AT91C_BASE_RTTC);
                                 while (time == RTT_GetTime(AT91C_BASE_RTTC));
                             }   
-                            dummy = DBGU_GetChar();
                         }
                         break;
                         case '3': {
