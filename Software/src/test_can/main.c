@@ -32,7 +32,6 @@ CanTransfer canTransfer1;
 //------------------------------------------------------------------------------
 void Test1(void )
 {
-#if defined AT91C_BASE_CAN1_MB0
     CAN_ResetAllMailbox();
 
     TRACE_INFO("With Interrupt ");
@@ -78,7 +77,6 @@ void Test1(void )
     else {
         TRACE_INFO("Test ERROR\n\r");
     }
-#endif
 }
 
 
@@ -282,7 +280,6 @@ void InitCANInRecept( void )
 {
     unsigned char i;
 
-#if defined (AT91C_BASE_CAN0_MB0)
     CAN_ResetTransfer( &canTransfer1 );
     for( i=0; i<8; i++ ) {
         canTransfer1.can_number = 0;
@@ -295,8 +292,6 @@ void InitCANInRecept( void )
         canTransfer1.control_reg = 0x00000000;
         CAN_InitMailboxRegisters( &canTransfer1 );
     }
-#endif
-#if defined (AT91C_BASE_CAN0_MB8)
     for( i=0; i<8; i++ ) {
         canTransfer1.can_number = 0;
         canTransfer1.mailbox_number = i+8;
@@ -308,7 +303,6 @@ void InitCANInRecept( void )
         canTransfer1.control_reg = 0x00000000;
         CAN_InitMailboxRegisters( &canTransfer1 );
     }
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -403,37 +397,6 @@ void DumpRegisters(void)
 //         Global functions
 //-----------------------------------------------------------------------------
 
-#if defined(at91sam7a3ek)
-//-----------------------------------------------------------------------------
-/// main function
-//-----------------------------------------------------------------------------
-int main(void)
-{
-    PIO_InitializeInterrupts(0);
-    TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);
-    printf("-- Basic CAN Project %s --\n\r", SOFTPACK_VERSION);
-    printf("-- %s\n\r", BOARD_NAME);
-    printf("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
-
-    if( CAN_Init( 1000, &canTransfer1, &canTransfer2 ) == 1 ) {
-
-        Test1();
-        Test2();
-        Test3();
-        Test4();
-
-        CAN_BasicTestSuiteWithoutInterrupt();
-
-        CAN_disable();
-    }
-    else {
-        printf("ERROR CAN initialisation (synchro)\n\r");
-    }
-    
-    return 0;    
-}
-#else
-
 //------------------------------------------------------------------------------
 /// Displays the user menu on the DBGU.
 //------------------------------------------------------------------------------
@@ -463,11 +426,7 @@ int main(void)
     printf("-- %s\n\r", BOARD_NAME);
     printf("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
         
-#if defined( AT91C_CAN_VR )
     printf("IP version: 0x%X\n\r", *(unsigned int*)AT91C_CAN_VR);
-#else
-    printf("IP version: 0x%X\n\r", *(unsigned int*)AT91C_CAN0_VR);
-#endif
 
     PIO_InitializeInterrupts(0); 
 
@@ -545,4 +504,3 @@ int main(void)
 
     return 0;
 }
-#endif
