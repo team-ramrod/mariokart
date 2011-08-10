@@ -5,7 +5,7 @@
 MCU = arm7tdmi
 CHIP = at91sam7xc256
 BOARD = mariokartv1
-MEMORY = sram
+MEMORY ?= sram
 
 # Trace level used for compilation
 # (can be overriden by adding TRACE_LEVEL=#number to the command-line)
@@ -15,7 +15,7 @@ MEMORY = sram
 # TRACE_LEVEL_ERROR      2
 # TRACE_LEVEL_FATAL      1
 # TRACE_LEVEL_NO_TRACE   0
-TRACE_LEVEL = 4
+TRACE_LEVEL ?= 4
 
 
 ########################
@@ -24,13 +24,18 @@ TRACE_LEVEL = 4
 
 PREFIX = arm-eabi-
 
-CC = $(PREFIX)gcc
-AR = $(PREFIX)ar
-RANLIB = $(PREFIX)ranlib
+CC      = $(PREFIX)gcc
+AR      = $(PREFIX)ar
+GDB     = $(PREFIX)gdb
+RANLIB  = $(PREFIX)ranlib
 OBJCOPY = $(PREFIX)objcopy
 
-OUTPUT_FOLDER = build
+OPENOCD = openocd
+
+OUTPUT_FOLDER  = build
 OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
+
+OCD_CHECK_FILE = /tmp/mariokart-ocd.running
 
 VPATH += $(OUTPUT_FOLDER)
 VPATH += $(OBJECTS_FOLDER)
@@ -54,7 +59,7 @@ INCLUDES += -Ilib/usb/common/core
 INCLUDES += -Ilib/usb/device/cdc-serial
 INCLUDES += -Ilib/usb/device/core
 
-CFLAGS =  -Wall -std=gnu99 -pedantic
+CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
 CFLAGS += -Os
 CFLAGS += -D$(CHIP)
@@ -65,7 +70,7 @@ CFLAGS += $(INCLUDES)
 # Generate dependency information
 CFLAGS += -MD -MP -MF .dep/$(subst /,-,$@).d
 
-ASFLAGS =  -Os
+ASFLAGS += -Os
 ASFLAGS += -D$(CHIP)
 ASFLAGS += -D$(MEMORY)
 ASFLAGS += -D__ASSEMBLY__
@@ -73,7 +78,7 @@ ASFLAGS += $(INCLUDES)
 
 LINK_SCRIPT = -T"lib/boards/$(BOARD)/$(CHIP)/$(MEMORY).lds"
 
-LDFLAGS =  -nostartfiles -Wl,--gc-sections
+LDFLAGS += -nostartfiles -Wl,--gc-sections
 LDFLAGS += -Lbuild
 LDFLAGS += -lmario
 
@@ -92,6 +97,8 @@ C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
 
 #steering files (I dont know much about makefiles so this probably needs changing)
 C_FILES += $(wildcard src/steering/*.c)
+#brake files will tidy this up soon
+C_FILES += $(wildcard src/brake/*.c)
 
 ASM_FILES = lib/boards/$(BOARD)/board_cstartup.S
 
@@ -121,23 +128,58 @@ rebuild: clean all
 
 
 $(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o $(LIB)
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(LINK_SCRIPT) -o $@ $< $(LDFLAGS)
 
 
 $(OBJECTS_FOLDER)/%.o: %.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
 $(OBJECTS_FOLDER)/%.o: %.S
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(ASFLAGS) -o $@ -c $<
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
+
+
+# Temporarily creates a file to allow the debug task to
+# check that OpenOCD has been started before starting GDB.
+ocd:
+	@touch $(OCD_CHECK_FILE);\
+		$(OPENOCD) -f openocd.cfg;\
+		rm $(OCD_CHECK_FILE)
+
+
+program-%: $(OUTPUT_FOLDER)/%.elf
+	@echo "\n"\
+		"======================================" "\n"\
+		"  Programming is not yet implemented  " "\n"\
+		"                                      " "\n"\
+		"  Use \`make debug-$*\` to start GDB  " "\n"\
+		"  then enter \`continue\` in GDB.     " "\n"\
+		"======================================" "\n"
+
+
+# Uses the check file to ensure that OpenOCD has
+# been started before attempting to start up GDB.
+debug-%: $(OUTPUT_FOLDER)/%.elf
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -x debug.gdb $< \
+		) \
+	fi
 
 
 clean:

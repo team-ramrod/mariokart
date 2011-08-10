@@ -43,7 +43,7 @@
 #define ADC_MAX_CK_10BIT         5000000
 // ADC clock frequency, at 8-bit resolution (in Hz)
 #define ADC_MAX_CK_8BIT          8000000
-// Startup time max, return from Idle mode (in �s)
+// Startup time max, return from Idle mode (in µs)
 #define ADC_STARTUP_TIME_MAX       20
 // Track and hold Acquisition Time min (in ns)
 #define ADC_TRACK_HOLD_TIME_MIN   600
@@ -102,8 +102,9 @@
 #define PIN_USART0_RXD  {1 << 0, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 // USART0 TXD pin definition.
 #define PIN_USART0_TXD  {1 << 1, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
-// USART0 SCK pin definition.
-#define PIN_USART0_SCK  {1 << 2, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+// USART0 SCK pin definition. Removed as it is being used as GND for the uart
+//#define PIN_USART0_SCK  {1 << 2, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+#define PIN_USART0_GND  {1 << 2, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_OUTPUT_0, PIO_DEFAULT}
 // USART0 RTS pin definition
 #define PIN_USART0_RTS  {1 << 3, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 // USART0 CTS pin definition
@@ -113,8 +114,8 @@
 #define PIN_USART1_RXD  {1 << 5, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 // USART1 TXD pin definition.
 #define PIN_USART1_TXD  {1 << 6, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
-// USART1 SCK pin definition.
-#define PIN_USART1_SCK  {1 << 7, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
+// USART1 SCK pin definition. Removed as it is being used as GND for the uart
+#define PIN_USART1_GND  {1 << 7, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_OUTPUT_0, PIO_DEFAULT}
 // USART1 RTS pin definition
 #define PIN_USART1_RTS  {1 << 8, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 // USART1 CTS pin definition
@@ -151,6 +152,9 @@
 #define PIN_SPI1_NPCS1  {1 << 25, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}
 // SPI1 chip select 2 pin definition.
 #define PIN_SPI1_NPCS2  {1 << 26, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_PULLUP}
+
+//potientiometer pin definitions
+//#define PIN_POT {1 << 7, AT91C_BASE_ADC, AT91C_ID_ADC, PIO_PERIPH_A, PIO_DEFAULT}
 
 //encoder pin definitions
 #define ENCODER_CLOCKWISE   {1 << 23, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_PERIPH_A, PIO_PULLUP}
