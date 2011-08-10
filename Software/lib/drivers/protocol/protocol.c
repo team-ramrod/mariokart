@@ -9,7 +9,7 @@
 static CanTransfer read_transfer, write_transfer;
 
 // The current state as per our state diagram
-static state state_t state;
+static state_t state;
 
 // The watchdog timer
 static volatile int wait_timer = 0;
@@ -43,7 +43,7 @@ int proto_read() {
  */
 void proto_write(int msg) {
     write_transfer.data_low_reg = msg;
-    if (!CAN_Write(write_transfer)) {
+    if (!CAN_Write(&write_transfer)) {
         state = ERROR;
     }
 }
