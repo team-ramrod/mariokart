@@ -1,8 +1,10 @@
+#include <peripherals/can/can.h>
+
 #define BAUD_RATE 1000 // allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
 #define TIMEOUT 2000 // May be replaced by a settable variable
 
 // The current state as per our state diagram
-enum state_t {INITIALISING, WAITING, RUNNING, ERROR};
+typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
 
 
 /**
