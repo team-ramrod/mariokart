@@ -4,14 +4,14 @@
 #include <boards/mariokartv1/board.h>
 
 /// Pio pins for encoder
-const Pin pin_encoder_cw = ENCODER_CLOCKWISE;
-const Pin pin_encoder_acw = ENCODER_ANTICLOCKWISE;
+const Pin encoder_pin_cw = ENCODER_CLOCKWISE;
+const Pin encoder_pin_acw = ENCODER_ANTICLOCKWISE;
 
 //updates position value if turning clockwise
 void ENCODER_ISR_UP ( void )
 {
 //only updates on change from high to low
-    if(!PIO_Get(&pin_encoder_cw)){
+    if(!PIO_Get(&encoder_pin_cw)){
         encoder_position_output++;
     }
 }
@@ -20,7 +20,7 @@ void ENCODER_ISR_UP ( void )
 void ENCODER_ISR_DOWN ( void )
 {
 //only updates on change from high to low
-    if(!PIO_Get(&pin_encoder_acw)){
+    if(!PIO_Get(&encoder_pin_acw)){
         encoder_position_output--;
     }
 }
@@ -32,12 +32,12 @@ void encoder_init(void){
     encoder_position_output = 0;
     
     //sets pins as inputs
-    PIO_Configure(&pin_encoder_cw, 1);
-    PIO_Configure(&pin_encoder_acw, 1);
+    PIO_Configure(&encoder_pin_cw, 1);
+    PIO_Configure(&encoder_pin_acw, 1);
 
     // Initialize interrupts
-    PIO_ConfigureIt(&pin_encoder_cw, (void (*)(const Pin *)) ENCODER_ISR_UP);
-    PIO_ConfigureIt(&pin_encoder_acw, (void (*)(const Pin *)) ENCODER_ISR_DOWN);
-    PIO_EnableIt(&pin_encoder_cw);
-    PIO_EnableIt(&pin_encoder_acw);
+    PIO_ConfigureIt(&encoder_pin_cw, (void (*)(const Pin *)) ENCODER_ISR_UP);
+    PIO_ConfigureIt(&encoder_pin_acw, (void (*)(const Pin *)) ENCODER_ISR_DOWN);
+    PIO_EnableIt(&encoder_pin_cw);
+    PIO_EnableIt(&encoder_pin_acw);
 }
