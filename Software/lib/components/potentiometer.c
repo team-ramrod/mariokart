@@ -3,30 +3,31 @@
 #include <peripherals/irq/irq.h>
 #include <boards/mariokartv1/board.h>
 
-/// Pio pins to configure.
-//static const Pin pins[] = {PIN_POT};
-
-//priority of interrupt
-#define ADC_PRIORITY 5
+// Pio pin to configure.
+const Pin pot_pin = PIN_POT;
 
 #define BOARD_ADC_FREQ 5000000
-#define ADC_VREF       3300  // 3.3 * 1000
 
 #define POT_CHANNEL ADC_CHANNEL_7
 
 // Interrupt handler for the ADC. Signals that the conversion is finished by
 // setting a flag variable.
-static void ISR_Adc(void)
+static void ISR_ADC(void)
 {
-    current_adc_value = AT91C_BASE_ADC->ADC_CDR7;
+    //gets the new value from ADC
+    pot_current_value = AT91C_BASE_ADC->ADC_CDR7;
+
+    //starts the converter running again
     ADC_StartConversion(AT91C_BASE_ADC);
 }
 
 //Sets up pins and adc for pot
-void init_pot(void){
+void pot_init(void){
 
-//    PIO_Configure(pins, PIO_LISTSIZE(pins));
+    //configures pots pin
+    PIO_Configure(&pot_pin, 1);
 
+    //initilize ADC
     ADC_Initialize( AT91C_BASE_ADC,
                     AT91C_ID_ADC,
                     AT91C_ADC_TRGEN_DIS,
@@ -38,7 +39,8 @@ void init_pot(void){
                     10,
                     1200);
 
-    IRQ_ConfigureIT(AT91C_ID_ADC, 0, ISR_Adc);
+    //sets up interrupts to trigger on every sucessful conversion
+    IRQ_ConfigureIT(AT91C_ID_ADC, 0, ISR_ADC);
     IRQ_EnableIT(AT91C_ID_ADC);
 
     //Starts the adc

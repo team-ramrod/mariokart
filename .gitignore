@@ -10,6 +10,11 @@
 /Altium/*/History/
 Thumbs.db
 
+# Netbeans files
+Makefile-Software.mk
+nbproject/
+p
+
 # Source files
 local.mk
 *.hex
