@@ -1,7 +1,9 @@
+#include "speed_sensor.h"
 #include <boards/mariokartv1/board.h>
+#include <utility/trace.h>
 
 //the timer resolution in ms
-#define SPEED_TIMER_RES 250
+#define SPEED_TIMER_RES 1
 
 //the number of speed readings to average over
 #define SPEED_BUFFER_SIZE 10
@@ -24,11 +26,8 @@ float speed_buffer[] = float[10];
 //Time since the speed sensor last triggered in ms
 uint speed_time = 0;
 
-//speed in ms
-float speed = 0;
-
 //updates time since speed sensor last triggered
-void ISR_Tc0(void)
+void SPEED_TIMER_ISR(void)
 {
     // Clear status bit to acknowledge interrupt
     AT91C_BASE_TC0->TC_SR;
@@ -50,6 +49,8 @@ void SPEED_ISR ( void )
     if(!PIO_Get(&speed_pin)){
         if(speed_time == 0){
             //implement error state here
+            TRACE_INFO("Error: Kart moving too fast for speed sensors current"
+                    "setup, lower SPEED_TIMER_RES");
         }
         else
         {
@@ -83,16 +84,21 @@ void speed_init(void){
         speed_buffer[i] = 0;
     }
 
+    //initilize timer counter
+    speed_configure_tc();
+
     //sets pins as inputs
     PIO_Configure(&speed_pin, 1);
 
     // Initialize interrupts
     PIO_ConfigureIt(&speed_pin, (void (*)(const Pin *)) SPEED_ISR);
     PIO_EnableIt(&speed_pin);
+
+    TRACE_INFO("Speed sensor initilazaton complete");
 }
 
 // Configure Timer Counter 0 to generate an interrupt every 250ms.
-void ConfigureTc(void)
+void speed_configure_tc(void)
 {
     unsigned int div;
     unsigned int tcclks;
@@ -106,7 +112,7 @@ void ConfigureTc(void)
     AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / (1000/SPEED_TIMER_RES); // timerFreq / desiredFreq
 
     // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, ISR_Tc0);
+    AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, SPEED_TIMER_ISR);
     AT91C_BASE_TC0->TC_IER = AT91C_TC_CPCS;
     AIC_EnableIT(AT91C_ID_TC0);
 
