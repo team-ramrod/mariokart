@@ -7,7 +7,7 @@
 #include <utility/trace.h>
 
 //the timer resolution in ms
-#define SPEED_TIMER_RES 1
+#define SPEED_TIMER_RES 500
 
 //the number of speed readings to average over
 #define SPEED_BUFFER_SIZE 10
@@ -36,6 +36,7 @@ void SPEED_TIMER_ISR(void)
     // Clear status bit to acknowledge interrupt
     AT91C_BASE_TC0->TC_SR;
 
+    TRACE_INFO("a \n\r");
     speed_time += SPEED_TIMER_RES;
 }
 
@@ -76,7 +77,7 @@ void SPEED_ISR ( void )
     temp_speed /= SPEED_BUFFER_SIZE;
 
     //assigns temp_speed to speed
-    speed = temp_speed;
+    speed_output = temp_speed;
 
 }
 
@@ -110,6 +111,9 @@ void speed_init(void){
     for(int i = 0; i < SPEED_BUFFER_SIZE; i++){
         speed_buffer[i] = 0;
     }
+
+    //sets inital speed to 0
+    speed_output = 0;
 
     //initilize timer counter
     speed_configure_tc();

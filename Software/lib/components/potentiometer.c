@@ -4,7 +4,7 @@
 #include <boards/mariokartv1/board.h>
 
 // Pio pin to configure.
-const Pin pot_pin = PIN_POT;
+//const Pin pot_pin = PIN_POT;
 
 #define BOARD_ADC_FREQ 5000000
 
