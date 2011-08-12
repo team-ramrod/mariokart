@@ -25,7 +25,7 @@ static void ISR_ADC(void)
 void pot_init(void){
 
     //configures pots pin
-    PIO_Configure(&pot_pin, 1);
+    //PIO_Configure(&pot_pin, 1);
 
     //initilize ADC
     ADC_Initialize( AT91C_BASE_ADC,
