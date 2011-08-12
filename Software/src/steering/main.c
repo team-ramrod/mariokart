@@ -1,6 +1,7 @@
 #include <encoder.h>
 #include <actuator_driver.h>
 #include <peripherals/pio/pio.h>
+#include <peripherals/pio/pio_it.h>
 #include <char_display.h>
 
 //angle in degrees that the wheel may come within the end of its travel

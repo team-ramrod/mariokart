@@ -1,5 +1,9 @@
 #include "speed_sensor.h"
 #include <boards/mariokartv1/board.h>
+#include <peripherals/pio/pio.h>
+#include <peripherals/pio/pio_it.h>
+#include <peripherals/tc/tc.h>
+#include <aic/aic.h>
 #include <utility/trace.h>
 
 //the timer resolution in ms
@@ -21,7 +25,7 @@
 const Pin speed_pin = SPEED_PIN;
 
 //buffer holding speed values
-float speed_buffer[] = float[10];
+float speed_buffer[SPEED_BUFFER_SIZE];
 
 //Time since the speed sensor last triggered in ms
 uint speed_time = 0;
@@ -76,27 +80,6 @@ void SPEED_ISR ( void )
 
 }
 
-//Sets up pin and buffer for speed sensor
-void speed_init(void){
-
-    //initilize buffer
-    for(int i = 0; i < SPEED_BUFFER_SIZE; i++){
-        speed_buffer[i] = 0;
-    }
-
-    //initilize timer counter
-    speed_configure_tc();
-
-    //sets pins as inputs
-    PIO_Configure(&speed_pin, 1);
-
-    // Initialize interrupts
-    PIO_ConfigureIt(&speed_pin, (void (*)(const Pin *)) SPEED_ISR);
-    PIO_EnableIt(&speed_pin);
-
-    TRACE_INFO("Speed sensor initilazaton complete");
-}
-
 // Configure Timer Counter 0 to generate an interrupt every 250ms.
 void speed_configure_tc(void)
 {
@@ -118,4 +101,25 @@ void speed_configure_tc(void)
 
     // Start the counter
     TC_Start(AT91C_BASE_TC0);
+}
+
+//Sets up pin and buffer for speed sensor
+void speed_init(void){
+
+    //initilize buffer
+    for(int i = 0; i < SPEED_BUFFER_SIZE; i++){
+        speed_buffer[i] = 0;
+    }
+
+    //initilize timer counter
+    speed_configure_tc();
+
+    //sets pins as inputs
+    PIO_Configure(&speed_pin, 1);
+
+    // Initialize interrupts
+    PIO_ConfigureIt(&speed_pin, (void (*)(const Pin *)) SPEED_ISR);
+    PIO_EnableIt(&speed_pin);
+
+    TRACE_INFO("Speed sensor initilazaton complete");
 }

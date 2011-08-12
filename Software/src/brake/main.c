@@ -1,6 +1,8 @@
 #include <potentiometer.h>
 #include <actuator_driver.h>
 #include <peripherals/pio/pio.h>
+#include <peripherals/pio/pio_it.h>
+#include <char_display.h>
 
 #define ACT_MAX_LENGTH 101.6 //mm
 
