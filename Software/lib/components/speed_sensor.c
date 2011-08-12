@@ -7,7 +7,7 @@
 #include <utility/trace.h>
 
 //the timer resolution in ms
-#define SPEED_TIMER_RES 500
+#define SPEED_TIMER_RES 1
 
 //the number of speed readings to average over
 #define SPEED_BUFFER_SIZE 10
@@ -36,8 +36,13 @@ void SPEED_TIMER_ISR(void)
     // Clear status bit to acknowledge interrupt
     AT91C_BASE_TC0->TC_SR;
 
-    TRACE_INFO("a \n\r");
     speed_time += SPEED_TIMER_RES;
+
+    //if the sensor hasnt sent a pulse in the last second the kart is moving
+    //so slow its pretty much stopped
+    if(speed_time > 1000){
+        speed_output = 0;
+    }
 }
 
 //updates speed sensor reading
@@ -62,6 +67,9 @@ void SPEED_ISR ( void )
             //adds speed to buffer
             speed_buffer[i] = SPEED_DIST/speed_time;
             i++;
+
+            //resets timer
+            speed_time = 0;
         }
     }
 

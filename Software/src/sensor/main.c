@@ -25,8 +25,9 @@ int main(int argc, char *argv[]) {
     speed_init();
     char_display_init();
 
-    while(1){
+    while(1){        
         int display = speed_output;
+        TRACE_INFO("Current kart speed = %i\n\r",display);
         char_display_number(display);
         char_display_tick();
     }
