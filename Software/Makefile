@@ -146,7 +146,7 @@ $(OBJECTS_FOLDER)/%.o: %.S
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
-	$(AR) $(ARFLAGS) $@ $?
+	$(AR) $(ARFLAGS) $@ $? 2>/dev/null >/dev/null
 	$(RANLIB) $@
 
 
