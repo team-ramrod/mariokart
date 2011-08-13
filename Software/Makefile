@@ -113,7 +113,7 @@ OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))
 all: libs hexes
 
 test:
-	@CFLAGS=-Werror $(MAKE) -ks
+	@CFLAGS=-Werror $(MAKE) -ks rebuild
 
 
 LIB = $(OUTPUT_FOLDER)/libmario.a
