@@ -163,7 +163,7 @@ int main(void)
 {
     //configure UART GND pin
     const Pin pinUsartGnd[] = {PIN_USART0_GND};
-    PIO_Configure(pinUsartGnd, PIO_LISTSIZE(pinUsartGnd)); \
+    PIO_Configure(pinUsartGnd, PIO_LISTSIZE(pinUsartGnd));
     PIO_Clear(&pinUsartGnd[0]);
 
     // DBGU configuration
