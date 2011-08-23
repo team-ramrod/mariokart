@@ -223,6 +223,8 @@
 #define PINS_ADC PIN_ADC0_ADC0, PIN_ADC0_ADC1, PIN_ADC0_ADC2, PIN_ADC0_ADC3
 */
 
+// CAN Bus transfer rate.
+#define CAN_BUS_SPEED 1000
 // CAN Status LED #0 pin definition.
 #define PIN_CAN_LED_0  {AT91C_PIO_PB10, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_OUTPUT_0, PIO_DEFAULT}
 // CAN Status LED #1 pin definition.
