@@ -152,10 +152,14 @@ $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
 
 # Temporarily creates a file to allow the debug task to
 # check that OpenOCD has been started before starting GDB.
-ocd:
+ocd: openocd.cfg
 	@touch $(OCD_CHECK_FILE);\
-		$(OPENOCD) -f openocd.cfg;\
+		$(OPENOCD) -f $<;\
 		rm $(OCD_CHECK_FILE)
+ocd%: openocd%.cfg
+	@touch $(OCD_CHECK_FILE)$*;\
+		$(OPENOCD) -f $<;\
+		rm $(OCD_CHECK_FILE)$*
 
 
 program-%: $(OUTPUT_FOLDER)/%.elf

@@ -25,6 +25,11 @@
 //-----------------------------------------------------------------------------
 CanTransfer canTransfer1;
 
+const Pin s0 = PIN_PUSHBUTTON_0;
+const Pin s1 = PIN_PUSHBUTTON_1;
+const Pin s2 = PIN_PUSHBUTTON_2;
+const Pin s3 = PIN_PUSHBUTTON_3;
+
 //------------------------------------------------------------------------------
 /// Configures the RTT to generate a one second tick
 //------------------------------------------------------------------------------
@@ -182,7 +187,7 @@ static void DisplayMenu(void)
 //-----------------------------------------------------------------------------
 int main(void)
 {    
-    unsigned char CharReceive = 0;
+    int CharReceive = -1;
     unsigned int time;
 
     TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);   
@@ -192,6 +197,10 @@ int main(void)
         
     printf("IP version: 0x%X\n\r", *(unsigned int*)AT91C_CAN_VR);
 
+    PIO_Configure(&s0, 1);
+    PIO_Configure(&s1, 1);
+    PIO_Configure(&s2, 1);
+    PIO_Configure(&s3, 1);
     PIO_InitializeInterrupts(0); 
 
     if( CAN_Init( 1000, &canTransfer1, NULL ) == 1 ) {
@@ -207,56 +216,73 @@ int main(void)
             // wait answer
             
             while( CAN_IsInIdle(&canTransfer1) ) {
-               
-                CharReceive = 0;
-                if ( DBGU_IsRxReady() ) {
-                    
-                    CharReceive = DBGU_GetChar();
-                    
+                TRACE_INFO("CAN is in idle\n\r");
+
+                while(CharReceive == -1) {
+                //while(1) {
+                    if ( !PIO_Get(&s0) ) {
+                        TRACE_INFO("Switch 0 is pressed\n\r");
+                        CharReceive = '0';
+                    } else if ( !PIO_Get(&s1) ) {
+                        TRACE_INFO("Switch 1 is pressed\n\r");
+                        CharReceive = '1';
+                    } else if ( !PIO_Get(&s2) ) {
+                        TRACE_INFO("Switch 2 is pressed\n\r");
+                        CharReceive = '2';
+                    } else if ( !PIO_Get(&s3) ) {
+                        TRACE_INFO("Switch 3 is pressed\n\r");
+                        CharReceive = '3';
+                    } else {
+                        //TRACE_INFO("No Switch is pressed\n\r");
+                    }
+                }
+                if (CharReceive) {
+
                     switch(CharReceive) {
 
-                        case '1': {
-                            while(!DBGU_IsRxReady()) {                        
-                                
-                                // Transmit, with acceptance mask
-                                Test_TransmitWithAccMask(1, 0xAABBCCDD, 0x11223344);
-                                
-                                // Wait for the next second
-                                time = RTT_GetTime(AT91C_BASE_RTTC);
-                                while (time == RTT_GetTime(AT91C_BASE_RTTC));
-                            }
-                        }
-                        break;
-                        case '2': {                           
-                            while(!DBGU_IsRxReady()) {                        
-                                
-                                // Transmit, no acceptance mask
-                                Test_TransmitWithoutAccMask(2, 0x12345678, 0xABCDEFAB);                            
-                                
-                                // Wait for the next second
-                                time = RTT_GetTime(AT91C_BASE_RTTC);
-                                while (time == RTT_GetTime(AT91C_BASE_RTTC));
-                            }   
-                        }
-                        break;
-                        case '3': {
-                            
-                            DumpRegisters();
-                        }
-                        break;
+                        case '0': {
+                                      while(!PIO_Get(&s1));
+
+                                      // Transmit, with acceptance mask
+                                      Test_TransmitWithAccMask(1, 0xAABBCCDD, 0x11223344);
+
+                                      // Wait for the next second
+                                      time = RTT_GetTime(AT91C_BASE_RTTC);
+                                      while (time == RTT_GetTime(AT91C_BASE_RTTC));
+                                  }
+                                  break;
+                        case '1': {                           
+                                      while(!PIO_Get(&s2));
+
+                                      // Transmit, no acceptance mask
+                                      Test_TransmitWithoutAccMask(2, 0x12345678, 0xABCDEFAB);                            
+
+                                      // Wait for the next second
+                                      time = RTT_GetTime(AT91C_BASE_RTTC);
+                                      while (time == RTT_GetTime(AT91C_BASE_RTTC));
+                                  }
+                                  break;
+                        case '2': {
+                                      while(!PIO_Get(&s3));
+
+                                      DumpRegisters();
+                                  }
+                                  break;
                         default:
-                            // nothing
-                        break;
+                                  // nothing
+                                  break;
                     }
-                
+
+                    CharReceive = -1;
                     DisplayMenu();    
                 }
             }
-            if( CharReceive == 0 ) {
+            if( CharReceive == '3' ) {
                 printf("Receive - Maibox Number: %02d - Data (Low/High): %08X %08X\n\r", 
                     canTransfer1.mailbox_number, 
                     canTransfer1.data_low_reg,
                     canTransfer1.data_high_reg);
+                    CharReceive = -1;
             }
         }
     }
