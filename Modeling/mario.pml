@@ -18,9 +18,8 @@ byte motor_id;
 
 
 proctype Comms() {
-Startup:
     mtype response;
-
+Startup:
     M!ready;
     M?response;
     if
@@ -42,8 +41,8 @@ Running:
     do
         ::M!data;
           S!data;
-          C?_
-        :: goto Reset
+          S?_
+        :: goto Startup
         :: goto Error
     od;
 
@@ -72,7 +71,7 @@ Startup:
         ::S!error; goto Error // or no (e.g. pre-flight check failed)
     fi;
     
-    S?response
+    S?response;
     if
         ::response == go
         ::else -> goto Error
@@ -86,33 +85,63 @@ Running:
     od;
 
 Error:
-    S?reset1;
+    S?response;
     if 
-        ::S!ok3
-        ::S!error; goto Error
+        ::response == reset1 -> S!ok1
+        ::else -> goto Error
     fi;
+    
+    S?response;
     if
-        ::S?reset2
+        ::response == reset2 -> S!ok2
         ::else -> goto Error
     fi;
 
     goto Startup;
 }
 
-proctype Motor() {
-Startup:
-    do 
-        :: M?waiting
-        :: timeout -> goto Error
-    od;
 
+proctype Motor() {
+    mtype response;
+Startup:
+    S?response;// wait until asked if ready
+    if 
+        ::response == ready
+        ::else -> goto Error // incorrect input results in error state (e.g. board rebooted mid-flight)
+    fi;
+
+    if
+        ::S!ok1 // respond either yes (and continue)
+        ::S!error; goto Error // or no (e.g. pre-flight check failed)
+    fi;
+    
+    S?response;
+    if
+        ::response == go
+        ::else -> goto Error
+    fi;
+
+Running:
     do 
-        ::M?_
-        :: goto Reset
+        :: S?_; S!data
+        :: goto Startup
         :: goto Error
     od;
 
-Error: skip
+Error:
+    S?response;
+    if 
+        ::response == reset1 -> S!ok1
+        ::else -> goto Error
+    fi;
+    
+    S?response;
+    if
+        ::response == reset2 -> S!ok2
+        ::else -> goto Error
+    fi;
+
+    goto Startup;
 }
 
 init {
