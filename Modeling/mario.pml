@@ -1,26 +1,43 @@
-mtype = {error, ready, reset1, reset2, ok1, ok2, ok3, data};
+mtype = {error, ready, go, reset1, reset2, ok1, ok2, ok3, data};
 chan M = [0] of {mtype};
 chan S = [0] of {mtype};
 byte sensor_id;
 byte motor_id;
 
+// Basic state machine description of Comms
+// hit up all boards                    
+// once all ack tell all boards ready   
+// wait for all boards to ready up      
+// signal start to all boards
+
+//ISSUE               RESPONSE
+//incorrect reply     error
+//never ack           acks time out, must be refreshed if a board is hanging
+//board returns error propagate error 
+//heartbeat timesout  propagate error                                         
+
+
 proctype Comms() {
-Reset:
-    //                                      ISSUES          RESPONSE
-    // hit up all boards                    incorrect reply     error
-    // once all ack tell all boards ready   never ack           acks time out, must be refreshed if a board is hanging
-    // wait for all boards to ready up      board returns error propagate error 
-    // signal start to all boards           heartbeat timesout  propagate error
-    do
-        ::M!ready;
-          if 
-              ::M?ok -> S!ready;
-              if 
-                  ::S?ok -> //exit out of do loop
-              fi
-          fi
-        ::skip//do nothing (stay in loop)
-    od;
+Startup:
+    mtype response;
+
+    M!ready;
+    M?response;
+    if
+        ::response == ok1
+        ::else -> goto Startup
+    fi;
+
+    S!ready;
+    S?response;
+    if
+        ::response == ok1
+        ::else -> goto Startup
+    fi;
+
+    S!go;
+    M!go;
+
 Running:
     do
         ::M!data;
@@ -30,30 +47,40 @@ Running:
         :: goto Error
     od;
 
-Error: skip
+Error:
+    do
+        ::S!error; M!error
+        ::break
+    od  
+    
+
     // move all boards to error state
     // wait until reset signal received
 }
 
 proctype Sensor() {
+    mtype response;
 Startup:
-    S?ready1;// wait until asked if ready
+    S?response;// wait until asked if ready
+    if 
+        ::response == ready
+        ::else -> goto Error // incorrect input results in error state (e.g. board rebooted mid-flight)
+    fi;
+
     if
         ::S!ok1 // respond either yes (and continue)
-        ::S!error; goto Startup // or no
+        ::S!error; goto Error // or no (e.g. pre-flight check failed)
     fi;
     
-    mtype response;
     S?response
     if
-        ::response == ok2 -> skip
-        ::else -> goto error
+        ::response == go
+        ::else -> goto Error
     fi;
 
 Running:
     do 
-        ::S?_;
-        D!data
+        :: S?_; S!data
         :: goto Startup
         :: goto Error
     od;
