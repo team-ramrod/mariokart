@@ -38,7 +38,7 @@
 #include "pio_it.h"
 #include "pio.h"
 #include <board.h>
-#include <irq/irq.h>
+#include <aic/aic.h>
 #include <utility/assert.h>
 #include <utility/trace.h>
 
@@ -133,7 +133,7 @@ static void PioInterruptHandler(unsigned int id, AT91S_PIO *pPio)
 /// from any PIO controller (PIO A, B, C ...). Dispatches the interrupt to
 /// the user-configured handlers.
 //------------------------------------------------------------------------------
-void PIO_IT_InterruptHandler(void)
+static void InterruptHandler(void)
 {
 #if defined(AT91C_ID_PIOA)
     // Treat PIOA interrupts
@@ -223,7 +223,7 @@ void PIO_InitializeInterrupts(unsigned int priority)
 {
     TRACE_DEBUG("PIO_Initialize()\n\r");
 
-//    SANITY_CHECK((priority & ~AT91C_AIC_PRIOR) == 0);
+    SANITY_CHECK((priority & ~AT91C_AIC_PRIOR) == 0);
 
     // Reset sources
     numSources = 0;
@@ -234,8 +234,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;
     AT91C_BASE_PIOA->PIO_ISR;
     AT91C_BASE_PIOA->PIO_IDR = 0xFFFFFFFF;
-    IRQ_ConfigureIT(AT91C_ID_PIOA, priority, PIO_IT_InterruptHandler);
-    IRQ_EnableIT(AT91C_ID_PIOA);
+    AIC_ConfigureIT(AT91C_ID_PIOA, priority, InterruptHandler);
+    AIC_EnableIT(AT91C_ID_PIOA);
 #endif
 
 #ifdef AT91C_ID_PIOB
@@ -243,8 +243,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOB;
     AT91C_BASE_PIOB->PIO_ISR;
     AT91C_BASE_PIOB->PIO_IDR = 0xFFFFFFFF;
-    IRQ_ConfigureIT(AT91C_ID_PIOB, priority, PIO_IT_InterruptHandler);
-    IRQ_EnableIT(AT91C_ID_PIOB);
+    AIC_ConfigureIT(AT91C_ID_PIOB, priority, InterruptHandler);
+    AIC_EnableIT(AT91C_ID_PIOB);
 #endif
 
 #ifdef AT91C_ID_PIOC
@@ -252,8 +252,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOC;
     AT91C_BASE_PIOC->PIO_ISR;
     AT91C_BASE_PIOC->PIO_IDR = 0xFFFFFFFF;
-    IRQ_ConfigureIT(AT91C_ID_PIOC, priority, PIO_IT_InterruptHandler);
-    IRQ_EnableIT(AT91C_ID_PIOC);
+    AIC_ConfigureIT(AT91C_ID_PIOC, priority, InterruptHandler);
+    AIC_EnableIT(AT91C_ID_PIOC);
 #endif
 
 #ifdef AT91C_ID_PIOD
@@ -261,8 +261,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOD;
     AT91C_BASE_PIOC->PIO_ISR;
     AT91C_BASE_PIOC->PIO_IDR = 0xFFFFFFFF;
-    IRQ_ConfigureIT(AT91C_ID_PIOD, priority, PIO_IT_InterruptHandler);
-    IRQ_EnableIT(AT91C_ID_PIOD);
+    AIC_ConfigureIT(AT91C_ID_PIOD, priority, InterruptHandler);
+    AIC_EnableIT(AT91C_ID_PIOD);
 #endif
 
 #ifdef AT91C_ID_PIOE
@@ -270,8 +270,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOE;
     AT91C_BASE_PIOC->PIO_ISR;
     AT91C_BASE_PIOC->PIO_IDR = 0xFFFFFFFF;
-    IRQ_ConfigureIT(AT91C_ID_PIOE, priority, PIO_IT_InterruptHandler);
-    IRQ_EnableIT(AT91C_ID_PIOE);
+    AIC_ConfigureIT(AT91C_ID_PIOE, priority, InterruptHandler);
+    AIC_EnableIT(AT91C_ID_PIOE);
 #endif
 
 #if defined(AT91C_ID_PIOABCD)
@@ -285,8 +285,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOABCD;
         AT91C_BASE_PIOA->PIO_ISR;
         AT91C_BASE_PIOA->PIO_IDR = 0xFFFFFFFF;
-        IRQ_ConfigureIT(AT91C_ID_PIOABCD, priority, PIO_IT_InterruptHandler);
-        IRQ_EnableIT(AT91C_ID_PIOABCD);
+        AIC_ConfigureIT(AT91C_ID_PIOABCD, priority, InterruptHandler);
+        AIC_EnableIT(AT91C_ID_PIOABCD);
     #endif
 #endif
 
@@ -302,8 +302,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOABCDE;
         AT91C_BASE_PIOA->PIO_ISR;
         AT91C_BASE_PIOA->PIO_IDR = 0xFFFFFFFF;
-        IRQ_ConfigureIT(AT91C_ID_PIOABCDE, priority, PIO_IT_InterruptHandler);
-        IRQ_EnableIT(AT91C_ID_PIOABCDE);
+        AIC_ConfigureIT(AT91C_ID_PIOABCDE, priority, InterruptHandler);
+        AIC_EnableIT(AT91C_ID_PIOABCDE);
     #endif
 #endif
 
@@ -317,8 +317,8 @@ void PIO_InitializeInterrupts(unsigned int priority)
         AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOCDE;
         AT91C_BASE_PIOC->PIO_ISR;
         AT91C_BASE_PIOC->PIO_IDR = 0xFFFFFFFF;
-        IRQ_ConfigureIT(AT91C_ID_PIOCDE, priority, PIO_IT_InterruptHandler);
-        IRQ_EnableIT(AT91C_ID_PIOCDE);
+        AIC_ConfigureIT(AT91C_ID_PIOCDE, priority, InterruptHandler);
+        AIC_EnableIT(AT91C_ID_PIOCDE);
     #endif
 #endif
 }
@@ -378,32 +378,6 @@ void PIO_EnableIt(const Pin *pPin)
 
     pPin->pio->PIO_ISR;
     pPin->pio->PIO_IER = pPin->mask;
-    
-
-#if defined(AT91C_PIOA_AIMMR)
-    //PIO3 with additional interrupt support
-    //configure additional interrupt mode registers
-    if(pPin->mask&pPin->itMode.itMask) {
-   
-    //enable additional interrupt mode
-    pPin->pio->PIO_AIMER  = pPin->itMode.itMask;
-    
-    if(pPin->mask&pPin->itMode.edgeLvlSel)
-        //if bit field of selected pin is 1, set as Level detection source
-        pPin->pio->PIO_LSR = pPin->itMode.edgeLvlSel;
-    else
-        //if bit field of selected pin is 0, set as Edge detection source
-        pPin->pio->PIO_ESR = ~(pPin->itMode.edgeLvlSel);
-
-    if(pPin->mask&pPin->itMode.lowFallOrRiseHighSel)
-        //if bit field of selected pin is 1, set as Rising Edge/High level detection event
-        pPin->pio->PIO_REHLSR     = pPin->itMode.lowFallOrRiseHighSel;
-    else
-        //if bit field of selected pin is 0, set as Falling Edge/Low level detection event
-        pPin->pio->PIO_FELLSR     = ~(pPin->itMode.lowFallOrRiseHighSel);
-    }
-
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -417,45 +391,5 @@ void PIO_DisableIt(const Pin *pPin)
     TRACE_DEBUG("PIO_DisableIt()\n\r");
 
     pPin->pio->PIO_IDR = pPin->mask;
-#if defined(AT91C_PIOA_AIMMR)
-    if(pPin->mask & pPin->itMode.itMask)
-        //disable additional interrupt mode
-        pPin->pio->PIO_AIMDR = pPin->mask & pPin->itMode.itMask;
-#endif
-
 }
 
-#if defined(cortexm3)
-//------------------------------------------------------------------------------
-/// Override cortex-m3's default PIOA irq handler
-//------------------------------------------------------------------------------
-void PIOA_IrqHandler(void)
-{
-    #if defined(AT91C_ID_PIOA)
-    // Treat PIOA interrupts
-    PioInterruptHandler(AT91C_ID_PIOA, AT91C_BASE_PIOA);
-    #endif
-}
-
-//------------------------------------------------------------------------------
-/// Override cortex-m3's default PIOB irq handler
-//------------------------------------------------------------------------------
-void PIOB_IrqHandler(void)
-{
-    #if defined(AT91C_ID_PIOB)
-    // Treat PIOA interrupts
-    PioInterruptHandler(AT91C_ID_PIOB, AT91C_BASE_PIOB);
-    #endif
-}
-
-//------------------------------------------------------------------------------
-/// Override cortex-m3's default PIOC irq handler
-//------------------------------------------------------------------------------
-void PIOC_IrqHandler(void)
-{
-    #if defined(AT91C_ID_PIOC)
-    // Treat PIOA interrupts
-    PioInterruptHandler(AT91C_ID_PIOC, AT91C_BASE_PIOC);
-    #endif
-}
-#endif

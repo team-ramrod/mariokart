@@ -112,6 +112,9 @@ OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))
 
 all: libs hexes
 
+test:
+	@CFLAGS=-Werror $(MAKE) -ks rebuild
+
 
 LIB = $(OUTPUT_FOLDER)/libmario.a
 libs: $(LIB)
@@ -143,16 +146,20 @@ $(OBJECTS_FOLDER)/%.o: %.S
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
-	$(AR) $(ARFLAGS) $@ $?
+	$(AR) $(ARFLAGS) $@ $? 2>/dev/null >/dev/null
 	$(RANLIB) $@
 
 
 # Temporarily creates a file to allow the debug task to
 # check that OpenOCD has been started before starting GDB.
-ocd:
+ocd: openocd.cfg
 	@touch $(OCD_CHECK_FILE);\
-		$(OPENOCD) -f openocd.cfg;\
+		$(OPENOCD) -f $<;\
 		rm $(OCD_CHECK_FILE)
+ocd%: openocd%.cfg
+	@touch $(OCD_CHECK_FILE)$*;\
+		$(OPENOCD) -f $<;\
+		rm $(OCD_CHECK_FILE)$*
 
 
 program-%: $(OUTPUT_FOLDER)/%.elf

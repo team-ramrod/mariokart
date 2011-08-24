@@ -112,34 +112,6 @@
 //------------------------------------------------------------------------------
 //         Global Types
 //------------------------------------------------------------------------------
-typedef struct _ExtIntMode {
-  ///indicate which pin to enable/disable additional Interrupt mode
-  ///each of 32 bit field represents one PIO line.
-  unsigned int itMask;
-  ///select Edge or level interrupt detection source
-  ///each of 32 bit field represents one PIO line, 0 is Edge, 1 is Level
-  unsigned int edgeLvlSel;
-  ///select rising/high or falling/low detection event
-  ///each of 32 bit field represents one PIO line:
-  ///0 is Falling Edge detection event (if selected Edge interrupt 
-  ///   detection source, or Low Level detection (if selected
-  ///   Level interrupt detection source;
-  ///1 is Rising Edge detection(if selected Edge interrupt 
-  ///   source, or Low Level detection event(if selected Level
-  ///   interrupt detection source.
-  unsigned int lowFallOrRiseHighSel;
-
-} ExtIntMode;
-
-typedef struct _GlitchDeBounceFilter {
-  ///Select Glitch/Debounce filtering for PIO input
-  ///each of 32 bit field represents one PIO line
-  ///0 is Glitch, 1 is Debouncing
-  unsigned int filterSel;
-  ///slow clock divider selection for Debouncing filter
-  unsigned int clkDivider:14;
-
-} GlitchDebounceFilter;
 
 //------------------------------------------------------------------------------
 /// Describes the type and attribute of one PIO pin or a group of similar pins.
@@ -168,42 +140,8 @@ typedef struct {
     unsigned char type;
     /// Pin attribute.
     unsigned char attribute;
-#if defined(AT91C_PIOA_AIMMR)
-    ///Additional Interrupt Mode
-    ExtIntMode itMode;
-#endif
-
-#if defined(AT91C_PIOA_IFDGSR)
-    ///Glitch/Debouncing filter
-    GlitchDebounceFilter inFilter;
-#endif
 
 } Pin;
-
-//------------------------------------------------------------------------------
-//         Global Access Macros 
-//------------------------------------------------------------------------------
-
-//Get Glitch input filter enable/disable status
-#define PIO_GetIFSR(pPin)	((pPin)->pio->PIO_IFSR)
-
-//Get Glitch/Deboucing selection status
-#define PIO_GetIFDGSR(pPin) ((pPin)->pio->PIO_IFDGSR)
-
-//Get Additional PIO interrupt mode mask status
-#define PIO_GetAIMMR(pPin)  ((pPin)->pio->PIO_AIMMR)
-
-//Get Interrupt status
-#define PIO_GetISR(pPin)	((pPin)->pio->PIO_ISR)
-
-//Get Edge or Level selection status
-#define PIO_GetELSR(pPin)	((pPin)->pio->PIO_ELSR)
-
-//Get Fall/Rise or Low/High selection status
-#define PIO_GetFRLHSR(pPin)	((pPin)->pio->PIO_FRLHSR)
-
-//Get PIO Lock Status
-#define PIO_GetLockStatus(pPin) ((pPin)->pio->PIO_LOCKSR)
 
 //------------------------------------------------------------------------------
 //         Global Functions
@@ -217,7 +155,7 @@ extern void PIO_Clear(const Pin *pin);
 
 extern unsigned char PIO_Get(const Pin *pin);
 
-//extern unsigned int PIO_GetISR(const Pin *pin);
+extern unsigned int PIO_GetISR(const Pin *pin);
 
 extern unsigned char PIO_GetOutputDataStatus(const Pin *pin);
 

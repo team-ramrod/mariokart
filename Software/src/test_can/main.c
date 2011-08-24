@@ -23,242 +23,12 @@
 //-----------------------------------------------------------------------------
 //         Local variables
 //-----------------------------------------------------------------------------
-CanTransfer canTransfer2;
 CanTransfer canTransfer1;
 
-
-//------------------------------------------------------------------------------
-/// Test CAN0 Mailbox 0 transmitting to CAN1 Mailbox 0
-//------------------------------------------------------------------------------
-void Test1(void )
-{
-    CAN_ResetAllMailbox();
-
-    TRACE_INFO("With Interrupt ");
-    TRACE_INFO("CAN0 Mailbox 0 transmitting to CAN1 Mailbox 0\n\r");
-    // Init CAN1 Mailbox 0, receive, 
-    CAN_ResetTransfer( &canTransfer2 );
-    canTransfer2.can_number = 1;
-    canTransfer2.mailbox_number = 0;
-    canTransfer2.mode_reg = AT91C_CAN_MOT_RX;
-    canTransfer2.acceptance_mask_reg = AT91C_CAN_MIDvA | AT91C_CAN_MIDvB;
-    canTransfer2.identifier = AT91C_CAN_MIDvA & (0x07<<18);
-    canTransfer2.data_low_reg = 0x00000000;
-    canTransfer2.data_high_reg = 0x00000000;
-    canTransfer2.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &canTransfer2 );
-
-    // Init CAN0 Mailbox 0, transmit
-    CAN_ResetTransfer( &canTransfer1 );
-    canTransfer1.can_number = 0;
-    canTransfer1.mailbox_number = 0;
-    canTransfer1.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
-    canTransfer1.acceptance_mask_reg = 0x00000000;
-    canTransfer1.identifier = AT91C_CAN_MIDvA & (0x07<<18);
-    canTransfer1.data_low_reg = 0x11223344;
-    canTransfer1.data_high_reg = 0x01234567;
-    canTransfer1.control_reg = (AT91C_CAN_MDLC & (0x8<<16));
-    CAN_InitMailboxRegisters( &canTransfer1 );
-
-    while( CAN_STATUS_SUCCESS !=  CAN_Read( &canTransfer2 ) ){}
-    while( CAN_STATUS_SUCCESS !=  CAN_Write( &canTransfer1 ) ){}
-
-    // wait answer
-    while( CAN_IsInIdle(&canTransfer2) ) {}
-    while( CAN_IsInIdle(&canTransfer1) ) {}
-
-    TRACE_DEBUG("Read data low 0x%X\n\r", canTransfer2.data_low_reg);
-    TRACE_DEBUG("Read data high 0x%X\n\r", canTransfer2.data_high_reg);
-    if( (canTransfer2.data_low_reg == 0x11223344)
-      &&(canTransfer2.data_high_reg == 0x01234567) 
-      &&(canTransfer2.size == 8)) {
-        TRACE_INFO("Test passed\n\r");
-    }
-    else {
-        TRACE_INFO("Test ERROR\n\r");
-    }
-}
-
-
-//------------------------------------------------------------------------------
-/// Test CAN0 Mailboxes 1 & 2 transmitting to CAN1 Mailbox 15
-//------------------------------------------------------------------------------
-void Test2(void )
-{
-    CAN_ResetAllMailbox();
-
-    TRACE_INFO("With Interrupt ");
-    TRACE_INFO("CAN0 Mailboxes 1 & 2 transmitting to CAN1 Mailbox 15\n\r");
-
-    // Init CAN1 Mailbox 15, reception
-    CAN_ResetTransfer( &canTransfer2 );
-    canTransfer2.can_number = 1;
-    canTransfer2.mailbox_number = 15;
-    canTransfer2.mode_reg = AT91C_CAN_MOT_RX;
-    canTransfer2.acceptance_mask_reg = 0;
-    canTransfer2.identifier = 0x0;
-    canTransfer2.data_low_reg = 0x00000000;
-    canTransfer2.data_high_reg = 0x00000000;
-    canTransfer2.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &canTransfer2 );
-
-    // Init CAN0 Mailbox 1, transmit
-    CAN_ResetTransfer( &canTransfer1 );
-    canTransfer1.can_number = 0;
-    canTransfer1.mailbox_number = 1;
-    canTransfer1.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
-    canTransfer1.acceptance_mask_reg = 0x00000000;
-    canTransfer1.identifier = AT91C_CAN_MIDvA & (0x09<<18);      // ID 9
-    canTransfer1.data_low_reg = 0xAABBCCDD;
-    canTransfer1.data_high_reg = 0xCAFEDECA;
-    canTransfer1.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
-    CAN_InitMailboxRegisters( &canTransfer1 );
-
-    // Init CAN0 Mailbox 2, transmit
-    canTransfer1.can_number = 0;
-    canTransfer1.mailbox_number = 2;
-    canTransfer1.mode_reg = AT91C_CAN_MOT_TX | (AT91C_CAN_PRIOR-(1<<16));
-    canTransfer1.acceptance_mask_reg = 0x00000000;
-    canTransfer1.identifier = AT91C_CAN_MIDvA & (0x0A<<18);      // ID 10
-    canTransfer1.data_low_reg = 0x55667788;
-    canTransfer1.data_high_reg = 0x99AABBCC;
-    canTransfer1.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
-    CAN_InitMailboxRegisters( &canTransfer1 );
-
-    while( CAN_STATUS_SUCCESS !=  CAN_Read( &canTransfer2 ) ){}
-    while( CAN_STATUS_SUCCESS !=  CAN_Write( &canTransfer1 ) ){}
-    // wait answer
-    while( CAN_IsInIdle(&canTransfer1) ) {}
-    while( CAN_IsInIdle(&canTransfer2) ) {}
-
-    TRACE_DEBUG("canTransfer2.data_low_reg 0x%X\n\r", canTransfer2.data_low_reg);
-    TRACE_DEBUG("canTransfer2.data_high_reg 0x%X\n\r", canTransfer2.data_high_reg);
-    if( (canTransfer2.data_low_reg == 0x55667788)
-      &&(canTransfer2.data_high_reg == 0x99AABBCC) ) {
-        TRACE_INFO("Test passed\n\r");
-    }
-    else {
-        TRACE_INFO("Test ERROR\n\r");
-    }
-}
-
-//------------------------------------------------------------------------------
-/// Test CAN0 Mailboxes 1 & 2 transmitting to CAN1 Mailbox 15
-//------------------------------------------------------------------------------
-void Test3(void )
-{
-    CAN_ResetAllMailbox();
-
-    TRACE_INFO("With Interrupt ");
-    TRACE_INFO("CAN0 Mailboxes 1 & 2 transmitting to CAN1 Mailbox 15\n\r");
-
-    // Init CAN1 Mailbox 15, reception with overwrite
-    CAN_ResetTransfer( &canTransfer2 );
-    canTransfer2.can_number = 1;
-    canTransfer2.mailbox_number = 15;
-    canTransfer2.mode_reg = AT91C_CAN_MOT_RXOVERWRITE;
-    canTransfer2.acceptance_mask_reg = 0;
-    canTransfer2.identifier = 0x0;
-    canTransfer2.data_low_reg = 0x00000000;
-    canTransfer2.data_high_reg = 0x00000000;
-    canTransfer2.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &canTransfer2 );
-
-    // Init CAN0 Mailbox 1, transmit
-    CAN_ResetTransfer( &canTransfer1 );
-    canTransfer1.can_number = 0;
-    canTransfer1.mailbox_number = 1;
-    canTransfer1.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
-    canTransfer1.acceptance_mask_reg = 0x00000000;
-    canTransfer1.identifier = AT91C_CAN_MIDvA & (0x09<<18);      // ID 9
-    canTransfer1.data_low_reg = 0xAABBCCDD;
-    canTransfer1.data_high_reg = 0x43424140;
-    canTransfer1.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
-    CAN_InitMailboxRegisters( &canTransfer1 );
-
-    // Init CAN0 Mailbox 2, transmit
-    canTransfer1.can_number = 0;
-    canTransfer1.mailbox_number = 2;
-    canTransfer1.mode_reg = AT91C_CAN_MOT_TX | (AT91C_CAN_PRIOR-(1<<16));
-    canTransfer1.acceptance_mask_reg = 0x00000000;
-    canTransfer1.identifier = AT91C_CAN_MIDvA & (0x0A<<18);      // ID 10
-    canTransfer1.data_low_reg = 0x55667788;
-    canTransfer1.data_high_reg = 0x99AABBCC;
-    canTransfer1.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
-    CAN_InitMailboxRegisters( &canTransfer1 );
-
-    while( CAN_STATUS_SUCCESS !=  CAN_Write( &canTransfer1 ) ){}
-    TRACE_INFO("Wait, wait, wait, wait\n\r");
-    while( CAN_STATUS_SUCCESS !=  CAN_Read( &canTransfer2 ) ){}
-
-    // wait answer
-    while( CAN_IsInIdle(&canTransfer1) ) {}
-    while( CAN_IsInIdle(&canTransfer2) ) {}
-
-    TRACE_DEBUG("canTransfer2.data_low_reg 0x%X\n\r", canTransfer2.data_low_reg);
-    TRACE_DEBUG("canTransfer2.data_high_reg 0x%X\n\r", canTransfer2.data_high_reg);
-    if( (canTransfer2.data_low_reg == 0xAABBCCDD)
-      &&(canTransfer2.data_high_reg == 0x43424140) ) {
-        TRACE_INFO("Test passed\n\r");
-    }
-    else {
-        TRACE_INFO("Test ERROR\n\r");
-    }
-}
-
-
-//------------------------------------------------------------------------------
-/// Test CAN0 Mailbox 3 asking for CAN1 Mailbox 3 transmission
-//------------------------------------------------------------------------------
-void Test4(void )
-{
-    CAN_ResetAllMailbox();
-
-    TRACE_INFO("With Interrupt ");
-    TRACE_INFO("CAN0 Mailbox 3 asking for CAN1 Mailbox 3 transmission\n\r");
-    // Init CAN0 Mailbox 3, consumer mailbox
-    // Sends a remote frame and waits for an answer
-    // Init CAN1 Mailbox 15, reception with overwrite
-    CAN_ResetTransfer( &canTransfer2 );
-    canTransfer2.can_number = 1;
-    canTransfer2.mailbox_number = 3;
-    canTransfer2.mode_reg = AT91C_CAN_MOT_PRODUCER | AT91C_CAN_PRIOR;
-    canTransfer2.acceptance_mask_reg = 0;
-    canTransfer2.identifier = AT91C_CAN_MIDvA & (0x0B<<18);     // ID 11
-    canTransfer2.data_low_reg = 0xEEDDFF00;
-    canTransfer2.data_high_reg = 0x34560022;
-    canTransfer2.control_reg = (AT91C_CAN_MDLC & (0x8<<16));
-    CAN_InitMailboxRegisters( &canTransfer2 );
-
-    // Init CAN0 Mailbox 1, transmit
-    CAN_ResetTransfer( &canTransfer1 );
-    canTransfer1.can_number = 0;
-    canTransfer1.mailbox_number = 3;
-    canTransfer1.mode_reg = AT91C_CAN_MOT_CONSUMER | AT91C_CAN_PRIOR;
-    canTransfer1.acceptance_mask_reg = AT91C_CAN_MIDvA | AT91C_CAN_MIDvB;
-    canTransfer1.identifier = AT91C_CAN_MIDvA & (0x0B<<18);     // ID 11
-    canTransfer1.data_low_reg = 0x00000000;
-    canTransfer1.data_high_reg = 0x00000000;
-    canTransfer1.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &canTransfer1 );
-
-    while( CAN_STATUS_SUCCESS !=  CAN_Write( &canTransfer2 ) ){}
-    while( CAN_STATUS_SUCCESS !=  CAN_Write( &canTransfer1 ) ){}
-    // wait answer
-    while( CAN_IsInIdle(&canTransfer1) ) {}
-    while( CAN_IsInIdle(&canTransfer2) ) {}
-
-    TRACE_DEBUG("canTransfer2.data_low_reg 0x%X\n\r", canTransfer2.data_low_reg);
-    TRACE_DEBUG("canTransfer2.data_high_reg 0x%X\n\r", canTransfer2.data_high_reg);
-    if( (canTransfer2.data_low_reg == 0xEEDDFF00)
-      &&(canTransfer2.data_high_reg == 0x34560022) ) {
-        TRACE_INFO("Test passed\n\r");
-    }
-    else {
-        TRACE_INFO("Test ERROR\n\r");
-    }
-
-}
+const Pin s0 = PIN_PUSHBUTTON_0;
+const Pin s1 = PIN_PUSHBUTTON_1;
+const Pin s2 = PIN_PUSHBUTTON_2;
+const Pin s3 = PIN_PUSHBUTTON_3;
 
 //------------------------------------------------------------------------------
 /// Configures the RTT to generate a one second tick
@@ -417,7 +187,7 @@ static void DisplayMenu(void)
 //-----------------------------------------------------------------------------
 int main(void)
 {    
-    unsigned char CharReceive = 0;
+    int CharReceive = -1;
     unsigned int time;
 
     TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);   
@@ -427,6 +197,10 @@ int main(void)
         
     printf("IP version: 0x%X\n\r", *(unsigned int*)AT91C_CAN_VR);
 
+    PIO_Configure(&s0, 1);
+    PIO_Configure(&s1, 1);
+    PIO_Configure(&s2, 1);
+    PIO_Configure(&s3, 1);
     PIO_InitializeInterrupts(0); 
 
     if( CAN_Init( 1000, &canTransfer1, NULL ) == 1 ) {
@@ -442,56 +216,73 @@ int main(void)
             // wait answer
             
             while( CAN_IsInIdle(&canTransfer1) ) {
-               
-                CharReceive = 0;
-                if ( DBGU_IsRxReady() ) {
-                    
-                    CharReceive = DBGU_GetChar();
-                    
+                TRACE_INFO("CAN is in idle\n\r");
+
+                while(CharReceive == -1) {
+                //while(1) {
+                    if ( !PIO_Get(&s0) ) {
+                        TRACE_INFO("Switch 0 is pressed\n\r");
+                        CharReceive = '0';
+                    } else if ( !PIO_Get(&s1) ) {
+                        TRACE_INFO("Switch 1 is pressed\n\r");
+                        CharReceive = '1';
+                    } else if ( !PIO_Get(&s2) ) {
+                        TRACE_INFO("Switch 2 is pressed\n\r");
+                        CharReceive = '2';
+                    } else if ( !PIO_Get(&s3) ) {
+                        TRACE_INFO("Switch 3 is pressed\n\r");
+                        CharReceive = '3';
+                    } else {
+                        //TRACE_INFO("No Switch is pressed\n\r");
+                    }
+                }
+                if (CharReceive) {
+
                     switch(CharReceive) {
 
-                        case '1': {
-                            while(!DBGU_IsRxReady()) {                        
-                                
-                                // Transmit, with acceptance mask
-                                Test_TransmitWithAccMask(1, 0xAABBCCDD, 0x11223344);
-                                
-                                // Wait for the next second
-                                time = RTT_GetTime(AT91C_BASE_RTTC);
-                                while (time == RTT_GetTime(AT91C_BASE_RTTC));
-                            }
-                        }
-                        break;
-                        case '2': {                           
-                            while(!DBGU_IsRxReady()) {                        
-                                
-                                // Transmit, no acceptance mask
-                                Test_TransmitWithoutAccMask(2, 0x12345678, 0xABCDEFAB);                            
-                                
-                                // Wait for the next second
-                                time = RTT_GetTime(AT91C_BASE_RTTC);
-                                while (time == RTT_GetTime(AT91C_BASE_RTTC));
-                            }   
-                        }
-                        break;
-                        case '3': {
-                            
-                            DumpRegisters();
-                        }
-                        break;
+                        case '0': {
+                                      while(!PIO_Get(&s1));
+
+                                      // Transmit, with acceptance mask
+                                      Test_TransmitWithAccMask(1, 0xAABBCCDD, 0x11223344);
+
+                                      // Wait for the next second
+                                      time = RTT_GetTime(AT91C_BASE_RTTC);
+                                      while (time == RTT_GetTime(AT91C_BASE_RTTC));
+                                  }
+                                  break;
+                        case '1': {                           
+                                      while(!PIO_Get(&s2));
+
+                                      // Transmit, no acceptance mask
+                                      Test_TransmitWithoutAccMask(2, 0x12345678, 0xABCDEFAB);                            
+
+                                      // Wait for the next second
+                                      time = RTT_GetTime(AT91C_BASE_RTTC);
+                                      while (time == RTT_GetTime(AT91C_BASE_RTTC));
+                                  }
+                                  break;
+                        case '2': {
+                                      while(!PIO_Get(&s3));
+
+                                      DumpRegisters();
+                                  }
+                                  break;
                         default:
-                            // nothing
-                        break;
+                                  // nothing
+                                  break;
                     }
-                
+
+                    CharReceive = -1;
                     DisplayMenu();    
                 }
             }
-            if( CharReceive == 0 ) {
+            if( CharReceive == '3' ) {
                 printf("Receive - Maibox Number: %02d - Data (Low/High): %08X %08X\n\r", 
                     canTransfer1.mailbox_number, 
                     canTransfer1.data_low_reg,
                     canTransfer1.data_high_reg);
+                    CharReceive = -1;
             }
         }
     }
