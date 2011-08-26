@@ -16,6 +16,13 @@ byte motor_id;
 //board returns error propagate error 
 //heartbeat timesout  propagate error                                         
 
+//TODO: Slave startup function with chan param
+//      Slave error state function with chan param
+//      Random error state entry sets global high for ltl claims
+//      Same deal with random restarts
+//      Introduce broadcast channel for go and error (maybe insert message n times for n slaves?)
+//      write those never claims
+
 
 proctype Comms() {
     mtype response;
@@ -124,7 +131,8 @@ Startup:
 
 Running:
     do 
-        :: M?_; M!ack
+        :: M?data; M!ack
+        :: 
 //        :: goto Startup
 //        :: goto Error
     od;
