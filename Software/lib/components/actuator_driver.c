@@ -5,6 +5,7 @@
 #include <peripherals/pwmc/pwmc.h>
 #include <peripherals/aic/aic.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 //defining actuator pins (note for linar actuator clockwise == extending
 //  anticlockwise == retracting)
@@ -123,6 +124,10 @@ void act_driver_init(void) {
     PIO_EnableIt(&act_driver_otw);
     PIO_EnableIt(&act_driver_fault);
 
+    //disables the PWM while initilizing
+    PWMC_DisableChannel(ACT_DRIVER_CHANNEL_CLOCKWISE);
+    PWMC_DisableChannel(ACT_DRIVER_CHANNEL_ANTICLOCKWISE);
+
     //sets up a pwm wave on channel 0
     PWMC_ConfigureChannel(ACT_DRIVER_CHANNEL_CLOCKWISE,
             //sets prescaler to divide by 1
@@ -149,6 +154,7 @@ void act_driver_init(void) {
     //sets the duty cycle to 0
     PWMC_SetDutyCycle(ACT_DRIVER_CHANNEL_CLOCKWISE, 0x0000);
     PWMC_SetDutyCycle(ACT_DRIVER_CHANNEL_ANTICLOCKWISE, 0x0000);
+
 }
 
 //takes in a number between ACT_SPEED_DIVISIONS and -ACT_SPEED_DIVISIONS and
@@ -172,8 +178,11 @@ void act_driver_drive(int speed) {
     int new_duty = abs((speed * ACT_PWM_PERIOD) / ACT_SPEED_DIVISIONS);
 
     //sets duty cycle note cannot be 100% for motor driver to function
-    //correctly thus the +1 ( this still allows a duty of 99.9%)
-    new_duty = abs((ACT_SPEED_DIVISIONS * ACT_PWM_PERIOD) / ACT_SPEED_DIVISIONS) - new_duty + 1;
+    //correctly thus the 10 ( this still allows a duty of 99.9%)
+    new_duty = abs((ACT_SPEED_DIVISIONS * ACT_PWM_PERIOD) / ACT_SPEED_DIVISIONS) - new_duty;
+    if(new_duty < 10){
+        new_duty = 10;
+    }
 
     //if changing directions switch PWM pins
     if ((prev_speed >= 0) && (speed <= 0)) {
@@ -203,6 +212,8 @@ void act_driver_drive(int speed) {
         //enables the other channel
         PWMC_EnableChannel(ACT_DRIVER_CHANNEL_CLOCKWISE);
     }
+    
+    printf("Duty set to %i\n\r", new_duty);
 
     //sets the duty cycle
     if (speed > 0) {
