@@ -1,4 +1,4 @@
-mtype = {error, ready, go, reset1, reset2, ok1, ok2, ok3, data};
+mtype = {error, ack, ready, go, reset1, reset2, ok1, ok2, ok3, data};
 chan M = [0] of {mtype};
 chan S = [0] of {mtype};
 byte sensor_id;
@@ -40,10 +40,11 @@ Startup:
 Running:
     do
         ::M!data;
+          M?ack;
           S!data;
           S?_
-        :: goto Startup
-        :: goto Error
+    //    :: goto Startup
+    //    :: goto Error
     od;
 
 Error:
@@ -68,7 +69,7 @@ Startup:
 
     if
         ::S!ok1 // respond either yes (and continue)
-        ::S!error; goto Error // or no (e.g. pre-flight check failed)
+ //       ::S!error; goto Error // or no (e.g. pre-flight check failed)
     fi;
     
     S?response;
@@ -80,8 +81,8 @@ Startup:
 Running:
     do 
         :: S?_; S!data
-        :: goto Startup
-        :: goto Error
+//        :: goto Startup
+//        :: goto Error
     od;
 
 Error:
@@ -104,18 +105,18 @@ Error:
 proctype Motor() {
     mtype response;
 Startup:
-    S?response;// wait until asked if ready
+    M?response;// wait until asked if ready
     if 
         ::response == ready
         ::else -> goto Error // incorrect input results in error state (e.g. board rebooted mid-flight)
     fi;
 
     if
-        ::S!ok1 // respond either yes (and continue)
-        ::S!error; goto Error // or no (e.g. pre-flight check failed)
+        ::M!ok1 // respond either yes (and continue)
+//        ::M!error; goto Error // or no (e.g. pre-flight check failed)
     fi;
     
-    S?response;
+    M?response;
     if
         ::response == go
         ::else -> goto Error
@@ -123,21 +124,21 @@ Startup:
 
 Running:
     do 
-        :: S?_; S!data
-        :: goto Startup
-        :: goto Error
+        :: M?_; M!ack
+//        :: goto Startup
+//        :: goto Error
     od;
 
 Error:
-    S?response;
+    M?response;
     if 
-        ::response == reset1 -> S!ok1
+        ::response == reset1 -> M!ok1
         ::else -> goto Error
     fi;
     
-    S?response;
+    M?response;
     if
-        ::response == reset2 -> S!ok2
+        ::response == reset2 -> M!ok2
         ::else -> goto Error
     fi;
 
