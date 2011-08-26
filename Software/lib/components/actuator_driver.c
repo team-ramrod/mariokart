@@ -212,8 +212,6 @@ void act_driver_drive(int speed) {
         //enables the other channel
         PWMC_EnableChannel(ACT_DRIVER_CHANNEL_CLOCKWISE);
     }
-    
-    printf("Duty set to %i\n\r", new_duty);
 
     //sets the duty cycle
     if (speed > 0) {
