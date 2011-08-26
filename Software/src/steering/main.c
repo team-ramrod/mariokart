@@ -26,8 +26,7 @@ const Pin pin_lim_down = LIM_SW_DOWN;
 //triggers error on limit switches (ISR must not be set till after calibration)
 
 void LIMIT_ISR(void) {
-    printf("aoeun\r\n");
-    /*if (!PIO_Get(&pin_lim_up) || !PIO_Get(&pin_lim_down)) {
+    if (!PIO_Get(&pin_lim_up) || !PIO_Get(&pin_lim_down)) {
         //something wrong with steering so stops motor
         act_driver_drive(0);
 
@@ -36,7 +35,7 @@ void LIMIT_ISR(void) {
         while (1) {
             continue;
         }
-    }*/
+    }
 }
 
 //sets steering to an angle (in degrees) between min_angle and max_angle
@@ -76,9 +75,9 @@ void steering_limit_sw_init(void) {
 
     // Initialize interrupts
     PIO_ConfigureIt(&pin_lim_up, (void (*)(const Pin *)) LIMIT_ISR);
-    PIO_ConfigureIt(&pin_lim_up, (void (*)(const Pin *)) LIMIT_ISR);
-    //PIO_EnableIt(&pin_lim_up);
-    //PIO_EnableIt(&pin_lim_down);
+    PIO_ConfigureIt(&pin_lim_down, (void (*)(const Pin *)) LIMIT_ISR);
+    PIO_EnableIt(&pin_lim_up);
+    PIO_EnableIt(&pin_lim_down);
 
     printf("Limit switch ISR activated\n\r");
 
@@ -167,7 +166,6 @@ int main(int argc, char *argv[]) {
     //calibrate steering (commented out till limit switches in place)
     cal_steering();
 
-    printf("Limit switches ISR activating\n\r");
     //now steering is calibrated active limit switch interrupts
     steering_limit_sw_init();
 
