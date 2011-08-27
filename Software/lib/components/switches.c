@@ -10,8 +10,14 @@
 #include <components/switches.h>
 
 //------------------------------------------------------------------------------
-//         Internal variables
+//         Global variable init
 //------------------------------------------------------------------------------
+switches = {
+    PIN_PUSHBUTTON_0,
+    PIN_PUSHBUTTON_1,
+    PIN_PUSHBUTTON_2,
+    PIN_PUSHBUTTON_3
+};
 
 //------------------------------------------------------------------------------
 //         Local Functions
@@ -20,7 +26,7 @@
 //------------------------------------------------------------------------------
 //         Global Functions
 //------------------------------------------------------------------------------
-void switch_init(){
+void switches_init(){
     PIO_Configure(switches, PIO_LISTSIZE(switches));
 }
 
