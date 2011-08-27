@@ -4,6 +4,11 @@ chan S = [0] of {mtype};
 byte sensor_id;
 byte motor_id;
 
+bool comms_error, motor_error, sensor_error,
+     comms_restart, motor_restart, sensor_restart;
+
+int error_count;
+
 // Basic state machine description of Comms
 // hit up all boards                    
 // once all ack tell all boards ready   
@@ -44,7 +49,7 @@ Startup:
     S!go;
     M!go;
 
-Running:
+progress:
     do
         ::M!data;
           M?ack;
@@ -85,7 +90,7 @@ Startup:
         ::else -> goto Error
     fi;
 
-Running:
+progress:
     do 
         :: S?_; S!data
 //        :: goto Startup
@@ -129,7 +134,7 @@ Startup:
         ::else -> goto Error
     fi;
 
-Running:
+progress:
     do 
         :: M?data; M!ack
         :: 
