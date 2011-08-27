@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 
     //Main initialisations
     char_display_init();
-    switch_init();
+    switches_init();
     PIO_InitializeInterrupts(0); 
 
     /* The third pram in CAN_Init is if you have two CAN controllers */
