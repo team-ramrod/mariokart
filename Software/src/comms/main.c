@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------------
 #include <board.h>
 #include <components/char_display.h>
+#include <components/switches.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <aic/aic.h>
@@ -12,25 +13,16 @@
 #include <utility/assert.h>
 #include <can/can.h>
 
-#define SOFTWARE_NAME Comms
+#define SOFTWARE_NAME "Comms"
 
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
 CanTransfer canTransfer; //Can transfer structure
-const Pin switchs[] = {
-    PIN_PUSHBUTTON_0,
-    PIN_PUSHBUTTON_1,
-    PIN_PUSHBUTTON_2,
-    PIN_PUSHBUTTON_3
-};
 
 //------------------------------------------------------------------------------
 //         Initialisation Functions
 //------------------------------------------------------------------------------
-void switch_init(){
-    PIO_Configure(switchs, PIO_LISTSIZE(switchs));
-}
 void debug_init(){
     TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);   
     printf("-- Mariokart - %s Board %s --\n\r", SOFTWARE_NAME, SOFTPACK_VERSION);
