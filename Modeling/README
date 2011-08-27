@@ -1,0 +1,3 @@
+you can download the spin sources (including the iSpin gui) at spinroot.com
+To install you will need yacc (sudo aptitude install bison on ubuntu) and
+to use iSpin you will need wish (sudo aptitude install tk8.5)

@@ -83,7 +83,7 @@ static const Pin pins_can_transceiver_txd[] = {PINS_CAN_TRANSCEIVER_TXD};
 #if defined (PINS_CAN_TRANSCEIVER_RXD)
 static const Pin pins_can_transceiver_rxd[] = {PINS_CAN_TRANSCEIVER_RXD};
 #endif
-#if defined (IN_CAN_TRANSCEIVER_RS)
+#if defined (PIN_CAN_TRANSCEIVER_RS)
 static const Pin pin_can_transceiver_rs   = PIN_CAN_TRANSCEIVER_RS;
 #endif
 #if defined (PIN_CAN_TRANSCEIVER_RXEN)
@@ -853,7 +853,7 @@ void CAN_disable( void )
     // Enable Low Power mode
     AT91C_BASE_CAN0->CAN_MR |= AT91C_CAN_LPM;
 
-#if defined (IN_CAN_TRANSCEIVER_RS)
+#if defined (PIN_CAN_TRANSCEIVER_RS)
     // Disable CANs Transceivers
     // Enter standby mode
     PIO_Set(&pin_can_transceiver_rs);
@@ -991,7 +991,7 @@ unsigned char CAN_Init( unsigned int baudrate,
     // CAN Receive Serial Data
     PIO_Configure(pins_can_transceiver_rxd, PIO_LISTSIZE(pins_can_transceiver_rxd));
 #endif
-#if defined (IN_CAN_TRANSCEIVER_RS)
+#if defined (PIN_CAN_TRANSCEIVER_RS)
     // CAN RS
     PIO_Configure(&pin_can_transceiver_rs, PIO_LISTSIZE(pin_can_transceiver_rs));
 #endif
@@ -1020,7 +1020,7 @@ unsigned char CAN_Init( unsigned int baudrate,
     // Disable ultra Low Power mode
     PIO_Set(&pin_can_transceiver_rxen);
 #endif
-#if defined (IN_CAN_TRANSCEIVER_RS)
+#if defined (PIN_CAN_TRANSCEIVER_RS)
     // Normal Mode (versus Standby mode)
     PIO_Clear(&pin_can_transceiver_rs);
 #endif
