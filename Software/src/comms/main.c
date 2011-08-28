@@ -1,19 +1,18 @@
 //-----------------------------------------------------------------------------
 //         Headers
 //-----------------------------------------------------------------------------
+#define SOFTWARE_NAME "Comms"
+
 #include <board.h>
 #include <components/char_display.h>
 #include <components/switches.h>
+#include <components/debug.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <aic/aic.h>
-#include <dbgu/dbgu.h>
 #include <rtt/rtt.h>
-#include <utility/trace.h>
-#include <utility/assert.h>
 #include <can/can.h>
 
-#define SOFTWARE_NAME "Comms"
 
 //------------------------------------------------------------------------------
 //         Local variables
@@ -23,17 +22,12 @@ CanTransfer canTransfer; //Can transfer structure
 //------------------------------------------------------------------------------
 //         Initialisation Functions
 //------------------------------------------------------------------------------
-void debug_init(){
-    TRACE_CONFIGURE(DBGU_STANDARD, 115200, BOARD_MCK);   
-    printf("-- Mariokart - %s Board %s --\n\r", SOFTWARE_NAME, SOFTPACK_VERSION);
-    printf("-- %s\n\r", BOARD_NAME);
-    printf("-- Compiled: %s %s --\n\r", __DATE__, __TIME__);
-}
 
 //------------------------------------------------------------------------------
 //         Main Function
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
+    debug_init();
 
     //Main initialisations
     char_display_init();
