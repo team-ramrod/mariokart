@@ -5,7 +5,7 @@ byte sensor_id;
 byte motor_id;
 
 bool comms_error, motor_error, sensor_error,
-     comms_restart, motor_restart, sensor_restart;
+     comms_reset, motor_reset, sensor_reset;
 
 int error_count;
 
@@ -24,7 +24,7 @@ int error_count;
 //TODO: Slave startup function with chan param
 //      Slave error state function with chan param
 //      Random error state entry sets global high for ltl claims
-//      Same deal with random restarts
+//      Same deal with random resets
 //      Introduce broadcast channel for go and error (maybe insert message n times for n slaves?)
 //      write those never claims
 
@@ -55,8 +55,8 @@ progress:
           M?ack;
           S!data;
           S?_
-    //    :: goto Startup
-    //    :: goto Error
+          :: comms_reset = true; goto Startup
+          :: comms_error = true; goto Error
     od;
 
 Error:
@@ -93,8 +93,8 @@ Startup:
 progress:
     do 
         :: S?_; S!data
-//        :: goto Startup
-//        :: goto Error
+        :: sensor_reset = true; goto Startup
+        :: sensor_error = true; goto Error
     od;
 
 Error:
@@ -125,7 +125,7 @@ Startup:
 
     if
         ::M!ok1 // respond either yes (and continue)
-//        ::M!error; goto Error // or no (e.g. pre-flight check failed)
+        :: motor_error = true; M!error; goto Error // or no (e.g. pre-flight check failed)
     fi;
     
     M?response;
@@ -137,15 +137,14 @@ Startup:
 progress:
     do 
         :: M?data; M!ack
-        :: 
-//        :: goto Startup
-//        :: goto Error
+        :: motor_reset = true; goto Startup
+        :: motor_error = true; goto Error
     od;
 
 Error:
     M?response;
     if 
-        ::response == reset1 -> M!ok1
+        ::response == reset1 -> M!ok1 // change this to safely exit the process (for all processes) as getting back to the start is fine
         ::else -> goto Error
     fi;
     
