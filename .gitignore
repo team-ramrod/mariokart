@@ -15,6 +15,9 @@ Makefile-Software.mk
 nbproject/
 p
 
+# vim files
+.*.swp
+
 # Source files
 local.mk
 *.hex
