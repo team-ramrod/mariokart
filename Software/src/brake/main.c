@@ -1,10 +1,31 @@
-#include <potentiometer.h>
-#include <actuator_driver.h>
-#include <peripherals/pio/pio.h>
-#include <peripherals/pio/pio_it.h>
-#include <char_display.h>
+/* ----------------------------------------------------------------------------
+ *          Mariokart project
+ * ----------------------------------------------------------------------------
+ *  Copyright (c) 2011, University of Canterbury
+ */
 
+//------------------------------------------------------------------------------
+//         Headers
+//------------------------------------------------------------------------------
+#include <actuator_driver.h>
+#include <can/can.h>
+#include <char_display.h>
+#include <debug.h>
+#include <pio/pio.h>
+#include <pio/pio_it.h>
+#include <potentiometer.h>
+#include <switches.h>
+
+//------------------------------------------------------------------------------
+//         Local defines
+//------------------------------------------------------------------------------
+#define SOFTWARE_NAME "Brake"
 #define ACT_MAX_LENGTH 101.6 //mm
+
+//------------------------------------------------------------------------------
+//         Local variables
+//------------------------------------------------------------------------------
+CanTransfer canTransfer; //Can transfer structure
 
 //minimum distance for linear actuator in mm
 int brake_min_distance = 0;
@@ -15,6 +36,9 @@ int brake_max_distance = 101;
 //desired length of actuator in adc units
 int brake_location_in_adc = 0;
 
+//------------------------------------------------------------------------------
+//         Local functions
+//------------------------------------------------------------------------------
 //sets actuator to a distance (in mm) between min_distance and max_distance
 void set_act(int distance){
 
@@ -29,15 +53,28 @@ void set_act(int distance){
     brake_location_in_adc = (1024 * distance) / ACT_MAX_LENGTH;
 }
 
+//------------------------------------------------------------------------------
+//         Main Function
+//------------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
+    debug_init(SOFTWARE_NAME);
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
 
-    //initilizes brake
+    //Main initialisations
+    char_display_init();
+    switches_init();
     pot_init();
     act_driver_init();
-    char_display_init();
+
+    //Init CAN Bus
+    /* The third pram in CAN_Init is if you have two CAN controllers */
+    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
+        TRACE_ERROR("CAN Bus did not init\n\r");
+    }
+    TRACE_INFO("CAN Init OK\n\r");
+    CAN_ResetTransfer(&canTransfer);
 
     //drives the actuator out 30mm
     set_act(30);
@@ -47,7 +84,7 @@ int main(int argc, char *argv[]) {
         int speed = act_driver_pid(brake_location_in_adc, pot_current_value);
         act_driver_drive(speed);
     }
-    
+
     return 0;
 }
 
