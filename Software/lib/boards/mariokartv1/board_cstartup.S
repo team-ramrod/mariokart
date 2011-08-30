@@ -118,7 +118,7 @@ irqHandler:
 //------------------------------------------------------------------------------
 /// Initializes the chip and branches to the main() function.
 //------------------------------------------------------------------------------
-            .section    .text
+            .section    .startup
             .global     entry
 
 entry:
