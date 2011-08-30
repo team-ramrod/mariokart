@@ -24,8 +24,8 @@ void ENCODER_ISR_DOWN ( const Pin *encoder_pin_acw )
 //Sets up pins for encoder 
 void encoder_init(void){
     // Pio pins for encoder
-    const Pin encoder_pin_cw = ENCODER_CLOCKWISE;
-    const Pin encoder_pin_acw = ENCODER_ANTICLOCKWISE;
+    static const Pin encoder_pin_cw = ENCODER_CLOCKWISE;
+    static const Pin encoder_pin_acw = ENCODER_ANTICLOCKWISE;
 
 
     //initilise pulse counter

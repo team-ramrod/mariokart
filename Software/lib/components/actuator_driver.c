@@ -49,7 +49,7 @@ void act_driver_WaitTimeInUs(unsigned int mck, unsigned int time_ms) {
 //Interrupt occurs to indicate shit has just hit the fan
 //indicates that a short/ loss of power / overheating has caused the loss of
 //control of either the brakes or steering
-void ACT_DRIVER_ERROR(void) {
+void ACT_DRIVER_ERROR( const Pin *pin ) {
     /*Overtemperature warning and (overtemperature shut down or overcurrent
     shut down or undervoltage protection) occurred*/
     if ((PIO_Get(&act_driver_otw) == 0) && (PIO_Get(&act_driver_fault) == 0)) {
@@ -119,8 +119,8 @@ void act_driver_init(void) {
     PIO_Set(&act_driver_reset2);
 
     // Initialize interrupts
-    PIO_ConfigureIt(&act_driver_otw, (void (*)(const Pin *)) ACT_DRIVER_ERROR);
-    PIO_ConfigureIt(&act_driver_fault, (void (*)(const Pin *)) ACT_DRIVER_ERROR);
+    PIO_ConfigureIt(&act_driver_otw,  ACT_DRIVER_ERROR);
+    PIO_ConfigureIt(&act_driver_fault, ACT_DRIVER_ERROR);
     PIO_EnableIt(&act_driver_otw);
     PIO_EnableIt(&act_driver_fault);
 
