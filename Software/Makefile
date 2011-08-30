@@ -56,8 +56,8 @@ INCLUDES += -Ilib
 
 INCLUDES += -Ilib/usb/common/cdc
 INCLUDES += -Ilib/usb/common/core
-INCLUDES += -Ilib/usb/device/cdc-serial
 INCLUDES += -Ilib/usb/device/core
+INCLUDES += -Ilib/usb/device/cdc-serial
 
 CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
