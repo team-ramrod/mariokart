@@ -26,6 +26,17 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
+/*
+ * Modified by Henry Jenkins 2011-08-27
+ * Copyright (c) 2011, University of Canterbury
+ *
+ * Released under same terms as above.
+ *
+ * Removed incorrect function deffinitions:
+ *  CAN_IsInIdle() was duplicated.
+ *  CAN_BasicTestSuite() Does not exist in can.c.
+ *
+ */
 
 #ifndef _CAN_H
 #define _CAN_H
@@ -97,17 +108,14 @@ typedef struct
 extern unsigned char CAN_Init( unsigned int baudrate, 
                                CanTransfer *canTransferRead, 
                                CanTransfer *canTransferWrite );
-extern void CAN_BasicTestSuite(void);
 extern void CAN_disable( void );
 extern void CAN_ResetAllMailbox( void );
 extern void CAN_ResetTransfer( CanTransfer *pTransfer );
 extern void CAN_InitMailboxRegisters( CanTransfer *pTransfer );
 extern unsigned char CAN_IsInIdle( CanTransfer *pTransfer );
-
 extern unsigned char CAN_Write( CanTransfer *pTransfer );
 extern unsigned char CAN_Read( CanTransfer *pTransfer );
 
 extern void CAN_BasicTestSuiteWithoutInterrupt( void );
-extern unsigned char CAN_IsInIdle( CanTransfer *pTransfer );
 #endif // _CAN_H
 

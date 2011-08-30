@@ -4,51 +4,53 @@
  *  Copyright (c) 2011, University of Canterbury
  */
 
+#ifndef SWITCHES_H
+#define SWITCHES_H
+
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
-#include <components/char_display.h>
-#include <components/debug.h>
-#include <components/switches.h>
+
+#include <board.h>
 #include <pio/pio.h>
-#include <pio/pio_it.h>
+#include <stdbool.h>
 
 //------------------------------------------------------------------------------
-//         Local defines
+//         Global Definitions
 //------------------------------------------------------------------------------
-#define SOFTWARE_NAME "Comms"
-
-//------------------------------------------------------------------------------
-//         Local variables
-//------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
+#define SWITCHES_NUMBER_OF 4
 
 //------------------------------------------------------------------------------
-//         Main Function
+//         Global Macros
 //------------------------------------------------------------------------------
-int main(int argc, char *argv[]) {
-    debug_init(SOFTWARE_NAME);
 
-    //enables interrupts (note resets all configured interrupts)
-    PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
+//------------------------------------------------------------------------------
+//         Exported variables
+//------------------------------------------------------------------------------
 
-    //Main initialisations
-    char_display_init();
-    switches_init();
+//------------------------------------------------------------------------------
+//         Global Functions
+//------------------------------------------------------------------------------
+/**
+ * Setup a interrupt callback on a switch
+ *
+ * @param switch number between zero and SWITCHES_NUMBER_OF
+ * @param interrupt handler
+ */
+void switches_init_interupt(unsigned int switch_no, void (*handler)(const Pin *));
 
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
+/**
+ * Get the current switch position
+ * 
+ * @param switch number between zero and SWITCHES_NUMBER_OF
+ * @return true for pressed
+ */
+bool switches_pressed(unsigned int switch_no);
 
-    while(1) {
-        char_display_tick();
-    }
+/**
+ * Initialise all the switches as inputs that can have PIO calls on them
+ */
+void switches_init(void);
 
-    return 0;
-}
+#endif //#ifndef SWITCHES_H
 

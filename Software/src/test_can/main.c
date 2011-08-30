@@ -62,17 +62,6 @@ void InitCANInRecept( void )
         canTransfer1.control_reg = 0x00000000;
         CAN_InitMailboxRegisters( &canTransfer1 );
     }
-    for( i=0; i<8; i++ ) {
-        canTransfer1.can_number = 0;
-        canTransfer1.mailbox_number = i+8;
-        canTransfer1.mode_reg = AT91C_CAN_MOT_RX;
-        canTransfer1.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+i));
-        canTransfer1.identifier = AT91C_CAN_MIDvA & (1<<(18+i));
-        canTransfer1.data_low_reg = 0x00000000;
-        canTransfer1.data_high_reg = 0x00000000;
-        canTransfer1.control_reg = 0x00000000;
-        CAN_InitMailboxRegisters( &canTransfer1 );
-    }
 }
 
 //-----------------------------------------------------------------------------

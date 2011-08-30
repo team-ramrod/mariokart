@@ -7,48 +7,53 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
-#include <components/char_display.h>
-#include <components/debug.h>
-#include <components/switches.h>
+#include "switches.h"
 #include <pio/pio.h>
 #include <pio/pio_it.h>
+#include <stdbool.h>
+#include <utility/trace.h>
 
 //------------------------------------------------------------------------------
-//         Local defines
+//         Global variable init
 //------------------------------------------------------------------------------
-#define SOFTWARE_NAME "Comms"
+const Pin switches[] = {
+    PIN_PUSHBUTTON_0,
+    PIN_PUSHBUTTON_1,
+    PIN_PUSHBUTTON_2,
+    PIN_PUSHBUTTON_3
+    };
 
 //------------------------------------------------------------------------------
-//         Local variables
+//         Local Functions
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
 
 //------------------------------------------------------------------------------
-//         Main Function
+//         Global Functions
 //------------------------------------------------------------------------------
-int main(int argc, char *argv[]) {
-    debug_init(SOFTWARE_NAME);
 
-    //enables interrupts (note resets all configured interrupts)
-    PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
-
-    //Main initialisations
-    char_display_init();
-    switches_init();
-
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
+void switches_init_interupt(unsigned int switch_no, void (*handler)(const Pin *)) {
+    if (switch_no < SWITCHES_NUMBER_OF ) {
+        PIO_ConfigureIt(&switches[switch_no], handler);
     }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
-
-    while(1) {
-        char_display_tick();
+    else {
+        TRACE_WARNING("An incorrect switch number was passed\n\r");
     }
+}
 
-    return 0;
+bool switches_pressed(unsigned int switch_no) {
+    bool return_val = false;
+    if (switch_no < SWITCHES_NUMBER_OF ) {
+        if (PIO_Get(&switches[switch_no])) {
+            return_val = true;
+        }
+    }
+    else {
+        TRACE_WARNING("An incorrect switch number was passed\n\r");
+    }
+    return return_val;
+}
+
+void switches_init(){
+    PIO_Configure(switches, PIO_LISTSIZE(switches));
 }
 
