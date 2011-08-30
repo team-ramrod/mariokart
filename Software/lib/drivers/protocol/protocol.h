@@ -25,7 +25,8 @@ int proto_read();
  * signature. For now it is written assuming CAN writes are
  * asynchronous.
  */
-void proto_write(int msg);
+void proto_write(unsigned int hi, unsigned int lo);
+
 /**
  * To be called when an arbitrary 'heartbeat' message is received
  */

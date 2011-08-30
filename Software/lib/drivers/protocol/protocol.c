@@ -27,10 +27,10 @@ void proto_init() {
     // Init incoming mailbox
     CAN_ResetTransfer( &read_transfer );
     read_transfer.can_number = 0;
-    read_transfer.mailbox_number = i;
-    read_transfer.mode_reg = AT91C_CAN_MOT_RX;
-    read_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
-    read_transfer.identifier = AT91C_CAN_MIDvA;
+    read_transfer.mailbox_number = 0; //TODO: make a #define for these
+    read_transfer.mode_reg = 0;//AT91C_CAN_MOT_RX;
+    read_transfer.acceptance_mask_reg = 0;//AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
+    read_transfer.identifier = 0;//AT91C_CAN_MIDvA;
     read_transfer.data_low_reg = 0x00000000;
     read_transfer.data_high_reg = 0x00000000;
     read_transfer.control_reg = 0x00000000;
@@ -38,11 +38,11 @@ void proto_init() {
 
     // Init outgoing mailbox
     write_transfer.can_number = 1;
-    write_transfer.mailbox_number = mailboxNumber;
-    write_transfer.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
-    write_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
-    write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
-    write_transfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
+    write_transfer.mailbox_number = 0;
+    write_transfer.mode_reg = 0;//AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
+    write_transfer.acceptance_mask_reg = 0;//AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
+    write_transfer.identifier = 0;//AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
+    write_transfer.control_reg = 0;//(AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
     CAN_InitMailboxRegisters( &write_transfer );
 }
 
@@ -65,7 +65,7 @@ int proto_read() {
 void proto_write(unsigned int hi, unsigned int lo) {
     write_transfer.data_high_reg = hi;
     write_transfer.data_low_reg = lo;
-    while( CAN_STATUS_SUCCESS != CAN_Write( &canTransfer1 ) ); // TODO: blocks until sending starts, may block indefinitely?
+    while( CAN_STATUS_SUCCESS != CAN_Write( &write_transfer ) ); // TODO: blocks until sending starts, may block indefinitely?
     // possibly drop out here and return the error code, client code can handle resending attempts.
 }
 
