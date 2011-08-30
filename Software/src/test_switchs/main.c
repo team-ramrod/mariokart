@@ -29,16 +29,16 @@ int main(int argc, char *argv[]) {
     switches_init();
 
     while(1) {
-        if ( !PIO_Get(&switches[0]) ) {
+        if ( !switches_pressed(0) ) {
             TRACE_INFO("Switch 0 is pressed\n\r");
         }
-        if ( !PIO_Get(&switches[1]) ) {
+        if ( !switches_pressed(1) ) {
             TRACE_INFO("Switch 1 is pressed\n\r");
         }
-        if ( !PIO_Get(&switches[2]) ) {
+        if ( !switches_pressed(2) ) {
             TRACE_INFO("Switch 2 is pressed\n\r");
         }
-        if ( !PIO_Get(&switches[3]) ) {
+        if ( !switches_pressed(3) ) {
             TRACE_INFO("Switch 3 is pressed\n\r");
         }
     }

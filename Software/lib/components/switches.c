@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 #include "switches.h"
 #include <pio/pio.h>
+#include <pio/pio_it.h>
+#include <stdbool.h>
+#include <utility/trace.h>
 
 //------------------------------------------------------------------------------
 //         Global variable init
@@ -27,6 +30,29 @@ const Pin switches[] = {
 //------------------------------------------------------------------------------
 //         Global Functions
 //------------------------------------------------------------------------------
+
+void switches_init_interupt(unsigned int switch_no, void (*handler)(const Pin *)) {
+    if (switch_no < SWITCHES_NUMBER_OF ) {
+        PIO_ConfigureIt(&switches[switch_no], handler);
+    }
+    else {
+        TRACE_WARNING("An incorrect switch number was passed\n\r");
+    }
+}
+
+bool switches_pressed(unsigned int switch_no) {
+    bool return_val = false;
+    if (switch_no < SWITCHES_NUMBER_OF ) {
+        if (PIO_Get(&switches[switch_no])) {
+            return_val = true;
+        }
+    }
+    else {
+        TRACE_WARNING("An incorrect switch number was passed\n\r");
+    }
+    return return_val;
+}
+
 void switches_init(){
     PIO_Configure(switches, PIO_LISTSIZE(switches));
 }
