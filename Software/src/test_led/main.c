@@ -6,14 +6,14 @@
 //         Headers
 //------------------------------------------------------------------------------
 
-//#include <board.h>
-//#include <pio/pio.h>
-//#include <pio/pio_it.h>
-//#include <pit/pit.h>
-//#include <aic/aic.h>
-//#include <tc/tc.h>
-//#include <utility/led.h>
-//#include <utility/trace.h>
+#include <board.h>
+#include <pio/pio.h>
+#include <pio/pio_it.h>
+#include <pit/pit.h>
+#include <aic/aic.h>
+#include <tc/tc.h>
+#include <utility/led.h>
+#include <utility/trace.h>
 //#include <dbgu/dbgu.h>
 
 #include <stdio.h>
