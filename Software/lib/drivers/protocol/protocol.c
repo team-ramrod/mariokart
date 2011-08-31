@@ -6,6 +6,7 @@
 #include "protocol.h"
 #include <tc/tc.h>
 #include <aic/aic.h>
+#include <utility/trace.h>
 
 // The structures for reading and writing to CAN
 static CanTransfer read_transfer, write_transfer;
