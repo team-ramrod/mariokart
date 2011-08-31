@@ -49,6 +49,7 @@ SECTIONS
         _sfixed = .;
         *(.vectors)
         *(.ramfunc)
+        *(.startup*)
         *(.text*)
         *(.rodata*)
         *(.data)

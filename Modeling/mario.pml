@@ -1,6 +1,8 @@
 mtype = {error, ack, ready, go, reset1, reset2, ok1, ok2, ok3, data};
-chan M = [0] of {mtype};
-chan S = [0] of {mtype};
+chan Mt = [0] of {mtype};
+chan Mr = [0] of {mtype};
+chan St = [0] of {mtype};
+chan Sr = [0] of {mtype};
 byte sensor_id;
 byte motor_id;
 
@@ -21,47 +23,87 @@ int error_count;
 //board returns error propagate error 
 //heartbeat timesout  propagate error                                         
 
-//TODO: Slave startup function with chan param
-//      Slave error state function with chan param
+//TODO:
 //      Random error state entry sets global high for ltl claims
 //      Same deal with random resets
 //      Introduce broadcast channel for go and error (maybe insert message n times for n slaves?)
 //      write those never claims
 
 
+inline error_state(input, output) {
+    mtype error_response;
+    error_count ++;
+    input?error_response;
+    if 
+        ::error_response == reset1 -> output!ok1 // change this to safely exit the process (for all processes) as getting back to the start is fine
+        ::else -> goto Error
+    fi;
+    
+    input?error_response;
+    if
+        ::error_response == reset2 -> output!ok2
+        ::else -> goto Error
+    fi;
+
+}
+
+inline start_state(input, output) {
+    mtype response;
+    input?response;// wait until asked if ready
+    if 
+        ::response == ready
+        ::else -> goto Error // incorrect input results in error state (e.g. board rebooted mid-flight)
+    fi;
+
+    if
+        :: output!ok1 // respond either yes (and continue)
+        :: motor_error = true;
+           output!error; 
+           goto Error // or no (e.g. pre-flight check failed)
+    fi;
+    
+    input?response;
+    if
+        ::response == go
+        ::else -> goto Error
+    fi;
+
+}
+
 proctype Comms() {
     mtype response;
 Startup:
-    M!ready;
-    M?response;
+    Mt!ready;
+    Mr?response;
     if
         ::response == ok1
         ::else -> goto Startup
     fi;
 
-    S!ready;
-    S?response;
+    St!ready;
+    Sr?response;
     if
         ::response == ok1
         ::else -> goto Startup
     fi;
 
-    S!go;
-    M!go;
+    St!go;
+    Mr!go;
 
 progress:
     do
-        ::M!data;
-          M?ack;
-          S!data;
-          S?_
+        ::Mt!data;
+          Mr?ack;
+          St!data;
+          Sr?_
           :: comms_reset = true; goto Startup
           :: comms_error = true; goto Error
     od;
 
 Error:
+    error_count++;
     do
-        ::S!error; M!error
+        ::St!error; Mt!error
         ::break
     od  
     
@@ -71,88 +113,36 @@ Error:
 }
 
 proctype Sensor() {
-    mtype response;
 Startup:
-    S?response;// wait until asked if ready
-    if 
-        ::response == ready
-        ::else -> goto Error // incorrect input results in error state (e.g. board rebooted mid-flight)
-    fi;
-
-    if
-        ::S!ok1 // respond either yes (and continue)
- //       ::S!error; goto Error // or no (e.g. pre-flight check failed)
-    fi;
-    
-    S?response;
-    if
-        ::response == go
-        ::else -> goto Error
-    fi;
+    start_state(St, Sr);
 
 progress:
     do 
-        :: S?_; S!data
+        :: St?_; Sr!data
         :: sensor_reset = true; goto Startup
         :: sensor_error = true; goto Error
     od;
 
 Error:
-    S?response;
-    if 
-        ::response == reset1 -> S!ok1
-        ::else -> goto Error
-    fi;
-    
-    S?response;
-    if
-        ::response == reset2 -> S!ok2
-        ::else -> goto Error
-    fi;
+    error_state(St, Sr);
 
     goto Startup;
 }
 
 
 proctype Motor() {
-    mtype response;
 Startup:
-    M?response;// wait until asked if ready
-    if 
-        ::response == ready
-        ::else -> goto Error // incorrect input results in error state (e.g. board rebooted mid-flight)
-    fi;
-
-    if
-        ::M!ok1 // respond either yes (and continue)
-        :: motor_error = true; M!error; goto Error // or no (e.g. pre-flight check failed)
-    fi;
-    
-    M?response;
-    if
-        ::response == go
-        ::else -> goto Error
-    fi;
+    start_state(Mt, Mr);
 
 progress:
     do 
-        :: M?data; M!ack
+        :: Mt?data; Mr!ack
         :: motor_reset = true; goto Startup
         :: motor_error = true; goto Error
     od;
 
 Error:
-    M?response;
-    if 
-        ::response == reset1 -> M!ok1 // change this to safely exit the process (for all processes) as getting back to the start is fine
-        ::else -> goto Error
-    fi;
-    
-    M?response;
-    if
-        ::response == reset2 -> M!ok2
-        ::else -> goto Error
-    fi;
+    error_state(Mt, Mr);
 
     goto Startup;
 }
