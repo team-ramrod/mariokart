@@ -4,6 +4,9 @@
  */
 
 #include "protocol.h"
+#include <tc/tc.h>
+#include <aic/aic.h>
+#include <irq/irq.h>
 
 // The structures for reading and writing to CAN
 static CanTransfer read_transfer, write_transfer;
@@ -14,38 +17,6 @@ static state_t state;
 // The watchdog timer
 static volatile int wait_timer = 0;
 
-/**
- * Initialises the protocol handler and the can bus. 
- * 
- */
-void proto_init(unsigned int acceptance_mask, 
-                unsigned int* identifier_list, 
-                unsigned int num_identifiers) {
-    state = INITIALISING;
-
-    // Init incoming mailbox
-    CAN_ResetTransfer( &read_transfer );
-    read_transfer.can_number = 0;
-    read_transfer.mailbox_number = 0; //TODO: make a #define for these
-    read_transfer.mode_reg = AT91C_CAN_MOT_RX;
-    read_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
-    read_transfer.identifier = AT91C_CAN_MIDvA;
-    read_transfer.data_low_reg = 0x00000000;
-    read_transfer.data_high_reg = 0x00000000;
-    read_transfer.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &read_transfer );
-
-    // Init outgoing mailbox
-    write_transfer.can_number = 0;
-    write_transfer.mailbox_number = 1;
-    write_transfer.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
-    write_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
-    write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
-    write_transfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
-    CAN_InitMailboxRegisters( &write_transfer );
-
-    ConfigureTc();
-}
 
 //------------------------------------------------------------------------------
 /// Interrupt handler for TC0 interrupt. 
@@ -58,7 +29,7 @@ void ISR_Tc0(void)
     wait_timer += 250;
 
     if (wait_timer >= TIMEOUT) {
-        state = error;
+        state = ERROR;
     }
 }
 
@@ -86,6 +57,40 @@ void ConfigureTc(void)
     TC_Start(AT91C_BASE_TC0);
 }
 
+/**
+ * Initialises the protocol handler and the can bus. 
+ * 
+ */
+void proto_init(unsigned int acceptance_mask, 
+                unsigned int* identifier_list, 
+                unsigned int num_identifiers) {
+    state = INITIALISING;
+
+    // Init incoming mailbox
+    CAN_ResetTransfer( &read_transfer );
+    read_transfer.can_number = 0;
+    read_transfer.mailbox_number = 0; //TODO: make a #define for these
+    read_transfer.mode_reg = AT91C_CAN_MOT_RX;
+    read_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
+    read_transfer.identifier = AT91C_CAN_MIDvA;
+    read_transfer.data_low_reg = 0x00000000;
+    read_transfer.data_high_reg = 0x00000000;
+    read_transfer.control_reg = 0x00000000;
+    CAN_InitMailboxRegisters( &read_transfer );
+
+    // Init outgoing mailbox
+    write_transfer.can_number = 0;
+    write_transfer.mailbox_number = 1;
+    write_transfer.mode_reg = AT91C_CAN_MOT_TX;
+    write_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
+    write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
+    write_transfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
+    CAN_InitMailboxRegisters( &write_transfer );
+
+    ConfigureTc();
+}
+
+
 
 /**
  * Depending on demand this function may need a different
@@ -100,7 +105,9 @@ int proto_read() {
 /**
  * Attempts a write and returns status code (success == 0)
  */
-int proto_write(unsigned int hi, unsigned int lo) {
+int proto_write(unsigned int address, 
+                unsigned int hi,
+                unsigned int lo) {
     write_transfer.data_high_reg = hi;
     write_transfer.data_low_reg = lo;
     return CAN_Write(&write_transfer);
@@ -115,6 +122,8 @@ void proto_refresh() {
 
 /**
  * Blocks until all other boards are ready.
+ * On exit the board may be in error state so check state after this
+ * method returns.
  */
 void wait_on_others() {
     int ready_count = 0; // May be better of as a bit mask or something else
