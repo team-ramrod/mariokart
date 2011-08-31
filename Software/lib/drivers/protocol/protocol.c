@@ -1,12 +1,11 @@
 /**
  * This file will be closer to completion once I can work out
- * timers, the CAN lib and interrupts.
+ * the CAN lib.
  */
 
 #include "protocol.h"
 #include <tc/tc.h>
 #include <aic/aic.h>
-#include <irq/irq.h>
 
 // The structures for reading and writing to CAN
 static CanTransfer read_transfer, write_transfer;
@@ -35,6 +34,7 @@ void ISR_Tc0(void)
 
 //------------------------------------------------------------------------------
 /// Configure Timer Counter 0 to generate an interrupt every 250ms.
+// TODO: change this to a higher frequency for better accuracy
 //------------------------------------------------------------------------------
 void ConfigureTc(void)
 {
@@ -76,7 +76,8 @@ void proto_init(unsigned int acceptance_mask,
     read_transfer.data_low_reg = 0x00000000;
     read_transfer.data_high_reg = 0x00000000;
     read_transfer.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &read_transfer );
+    CAN_InitMailboxRegisters( &read_transfer ); //TODO: the two calls to this method will change the same
+    // mailbox it registers it seems
 
     // Init outgoing mailbox
     write_transfer.can_number = 0;
@@ -97,8 +98,13 @@ void proto_init(unsigned int acceptance_mask,
  * signature. For now it is designed to pop an int off the end of a queue
  * or return 0 if no data has been receieved
  */
-int proto_read() {
-    return 0;
+int proto_read(unsigned int* data) { //TODO: pick a max data size
+    if (1) { //TODO: if read_transfer has new data
+        *data = read_transfer.data_high_reg;
+        return read_transfer.size;
+    } else {
+        return 0;
+    }
 }
 
 
@@ -106,10 +112,11 @@ int proto_read() {
  * Attempts a write and returns status code (success == 0)
  */
 int proto_write(unsigned int address, 
-                unsigned int hi,
-                unsigned int lo) {
-    write_transfer.data_high_reg = hi;
-    write_transfer.data_low_reg = lo;
+                unsigned char* data,
+                unsigned char num_bytes) {
+    // TODO: prepend DATA identifier and the to and from addresses
+    //write_transfer.data_high_reg = hi;
+    //write_transfer.data_low_reg = lo;
     return CAN_Write(&write_transfer);
 }
 
@@ -122,15 +129,27 @@ void proto_refresh() {
 
 /**
  * Blocks until all other boards are ready.
+ * To be used before and after calibration routine.
  * On exit the board may be in error state so check state after this
  * method returns.
  */
-void wait_on_others() {
+void proto_wait() {
+    //TODO: depending on the current state, wait on the correct signal from comms
+    //if another signal is received then transition to error state and return
     int ready_count = 0; // May be better of as a bit mask or something else
     state = WAITING;
     while (ready_count < 5) {
         //listen for waiting messages and note how many are ready
     }
+}
+
+/**
+ * TODO: a seperate function for the comms board to wait on other boards
+ */
+void proto_comms_wait() {
+    // TODO: Depending on the current state, transmit state to client boards 
+    // and return once the have all ok'd, else return if incorrect reply is
+    // received and transition into error state.
 }
 
 /**
@@ -140,12 +159,4 @@ state_t proto_state() {
     return state;
 }
 
-/**
- * An timer driven interrupt that needs to repeat somewhere near millisecond intervals
- */ 
-void timer_interrupt(void) {
-    if (wait_timer++ > TIMEOUT) {
-        state = ERROR;
-    }
-}
 

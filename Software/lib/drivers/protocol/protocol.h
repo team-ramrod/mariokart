@@ -13,7 +13,9 @@ typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
  * Initialises the protocol handler and the can bus. 
  * 
  */
-void proto_init();
+void proto_init(unsigned int acceptance_mask, 
+                unsigned int* identifier_list, 
+                unsigned int num_identifiers);
 
 
 /**
@@ -29,8 +31,8 @@ int proto_read();
  * asynchronous.
  */
 int proto_write(unsigned int address, 
-                unsigned int hi,
-                unsigned int lo);
+                unsigned char* data,
+                unsigned char num_bytes);
 
 /**
  * To be called when an arbitrary 'heartbeat' message is received
@@ -38,9 +40,14 @@ int proto_write(unsigned int address,
 void proto_refresh();
 
 /**
+ * Blocks until comms board gives the OK.
+ */
+void proto_wait();
+
+/**
  * Blocks until all other boards are ready.
  */
-void wait_on_others();
+void proto_comms_wait();
 
 /**
  * A getter for the can handler's state
