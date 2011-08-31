@@ -12,6 +12,12 @@ typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
 /**
  * Initialises the protocol handler and the can bus. 
  * 
+ * Make sure when giving any of the masks you put the identifier in the lowest
+ * 11 bits.
+ *
+ * @param reciving mailbox's mask
+ * @param list of sending identifiers
+ * @param Number of sending mailboxes to setup
  */
 void proto_init(unsigned int acceptance_mask, 
                 unsigned int* identifier_list, 

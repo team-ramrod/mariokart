@@ -9,7 +9,7 @@
 #include <utility/trace.h>
 
 // The structures for reading and writing to CAN
-static CanTransfer read_transfer, write_transfer;
+static CanTransfer canTransfer;
 
 // The current state as per our state diagram
 static state_t state;
@@ -65,29 +65,34 @@ void ConfigureTc(void)
 void proto_init(unsigned int acceptance_mask, 
                 unsigned int* identifier_list, 
                 unsigned int num_identifiers) {
+    unsigned int i;
     state = INITIALISING;
 
+    TRACE_INFO("Running proto_init\n\r");
+
     // Init incoming mailbox
-    CAN_ResetTransfer( &read_transfer );
-    read_transfer.can_number = 0;
-    read_transfer.mailbox_number = 0; //TODO: make a #define for these
-    read_transfer.mode_reg = AT91C_CAN_MOT_RX;
-    read_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
-    read_transfer.identifier = AT91C_CAN_MIDvA;
-    read_transfer.data_low_reg = 0x00000000;
-    read_transfer.data_high_reg = 0x00000000;
-    read_transfer.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &read_transfer ); //TODO: the two calls to this method will change the same
+    CAN_ResetTransfer( &canTransfer );
+    canTransfer.can_number = 0;
+    canTransfer.mailbox_number = 0;
+    canTransfer.mode_reg = AT91C_CAN_MOT_RX;
+    canTransfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (acceptance_mask << 18); // Set CAN2.0A, then shift to be between 18th and 29th bits
+    canTransfer.identifier = AT91C_CAN_MIDvA;
+    canTransfer.data_low_reg = 0x00000000;
+    canTransfer.data_high_reg = 0x00000000;
+    canTransfer.control_reg = 0x00000000;
+    CAN_InitMailboxRegisters( &canTransfer ); //TODO: the two calls to this method will change the same
     // mailbox it registers it seems
 
-    // Init outgoing mailbox
-    write_transfer.can_number = 0;
-    write_transfer.mailbox_number = 1;
-    write_transfer.mode_reg = AT91C_CAN_MOT_TX;
-    write_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
-    write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
-    write_transfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
-    CAN_InitMailboxRegisters( &write_transfer );
+    // Init outgoing mailboxs
+    for (i = 0; i > num_identifiers; i++) {
+        canTransfer.can_number = 0;
+        canTransfer.mailbox_number = i + 1; //Leave the first for Rx
+        canTransfer.mode_reg = AT91C_CAN_MOT_TX;
+        canTransfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 
+        canTransfer.identifier = AT91C_CAN_MIDvA & (identifier_list[i] << 18); // Set CAN2.0A, then shift to be between 18th and 29th bits
+        canTransfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code of 8 bytes
+        CAN_InitMailboxRegisters( &canTransfer );
+    }
 
     ConfigureTc();
 }
@@ -100,9 +105,9 @@ void proto_init(unsigned int acceptance_mask,
  * or return 0 if no data has been receieved
  */
 int proto_read(unsigned int* data) { //TODO: pick a max data size
-    if (1) { //TODO: if read_transfer has new data
-        *data = read_transfer.data_high_reg;
-        return read_transfer.size;
+    if (1) { //TODO: if canTransfer has new data
+        *data = canTransfer.data_high_reg;
+        return canTransfer.size;
     } else {
         return 0;
     }
@@ -116,9 +121,9 @@ int proto_write(unsigned int address,
                 unsigned char* data,
                 unsigned char num_bytes) {
     // TODO: prepend DATA identifier and the to and from addresses
-    //write_transfer.data_high_reg = hi;
-    //write_transfer.data_low_reg = lo;
-    return CAN_Write(&write_transfer);
+    //canTransfer.data_high_reg = hi;
+    //canTransfer.data_low_reg = lo;
+    return CAN_Write(&canTransfer);
 }
 
 /**
