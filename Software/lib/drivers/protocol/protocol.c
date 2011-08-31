@@ -22,9 +22,6 @@ void proto_init(unsigned int acceptance_mask,
                 unsigned int* identifier_list, 
                 unsigned int num_identifiers) {
     state = INITIALISING;
-    if (!CAN_Init(BAUD_RATE, &read_transfer, &write_transfer)) {
-        state = ERROR;
-    }
 
     // Init incoming mailbox
     CAN_ResetTransfer( &read_transfer );
@@ -39,8 +36,8 @@ void proto_init(unsigned int acceptance_mask,
     CAN_InitMailboxRegisters( &read_transfer );
 
     // Init outgoing mailbox
-    write_transfer.can_number = 1;
-    write_transfer.mailbox_number = 0;
+    write_transfer.can_number = 0;
+    write_transfer.mailbox_number = 1;
     write_transfer.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
     write_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
     write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
