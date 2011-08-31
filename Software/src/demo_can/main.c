@@ -7,50 +7,49 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <actuator_driver.h>
 #include <can/can.h>
-#include <char_display.h>
-#include <debug.h>
+#include <components/char_display.h>
+#include <components/debug.h>
+#include <components/switches.h>
+#include <drivers/protocol/protocol.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
-#include <potentiometer.h>
-#include <switches.h>
 
 //------------------------------------------------------------------------------
 //         Local defines
 //------------------------------------------------------------------------------
-#define SOFTWARE_NAME "Brake"
-#define ACT_MAX_LENGTH 101.6 //mm
+#define SOFTWARE_NAME "Demo-CAN"
 
 //------------------------------------------------------------------------------
-//         Local variables
+//         Local Variables
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
-
-//minimum distance for linear actuator in mm
-int brake_min_distance = 0;
-
-//maximum distance for Actuator in mm
-int brake_max_distance = 101;
-
-//desired length of actuator in adc units
-int brake_location_in_adc = 0;
+unsigned int counter = 0;
 
 //------------------------------------------------------------------------------
-//         Local functions
+//         Local Functions
 //------------------------------------------------------------------------------
-//sets actuator to a distance (in mm) between min_distance and max_distance
-void set_act(int distance){
-
-    if(distance > brake_max_distance){
-        distance = brake_max_distance;
+void switch_0_handler(const Pin *pin) {
+    if (switches_pressed(0)) {
+        counter++;
     }
-    else if(distance < brake_min_distance){
-        distance = brake_min_distance;
+}
+void switch_1_handler(const Pin *pin) {
+    if (switches_pressed(1)) {
+        //TODO: send 'counter' value to brake
     }
-
-    //convert distance to adc output
-    brake_location_in_adc = (1024 * distance) / ACT_MAX_LENGTH;
+    counter = 0;
+}
+void switch_2_handler(const Pin *pin) {
+    if (switches_pressed(2)) {
+        //TODO: send 'counter' value to steering
+    }
+    counter = 0;
+}
+void switch_3_handler(const Pin *pin) {
+    if (switches_pressed(3)) {
+        //TODO: send 'counter' value to sensor
+    }
+    counter = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -65,24 +64,12 @@ int main(int argc, char *argv[]) {
     //Main initialisations
     char_display_init();
     switches_init();
-    pot_init();
-    act_driver_init();
+    switches_init_interupt(0, switch_0_handler);
 
     //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
-
-    //drives the actuator out 30mm
-    set_act(30);
-
-    //infinite loop running PID controller
-    while(1){
-        int speed = act_driver_pid(brake_location_in_adc, pot_current_value);
-        act_driver_drive(speed);
+    //TODO
+    while(1) {
+        char_display_tick();
     }
 
     return 0;

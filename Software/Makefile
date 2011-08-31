@@ -15,7 +15,7 @@ MEMORY ?= sram
 # TRACE_LEVEL_ERROR      2
 # TRACE_LEVEL_FATAL      1
 # TRACE_LEVEL_NO_TRACE   0
-TRACE_LEVEL = 4
+TRACE_LEVEL ?= 4
 
 
 ########################
@@ -56,8 +56,8 @@ INCLUDES += -Ilib
 
 INCLUDES += -Ilib/usb/common/cdc
 INCLUDES += -Ilib/usb/common/core
-INCLUDES += -Ilib/usb/device/cdc-serial
 INCLUDES += -Ilib/usb/device/core
+INCLUDES += -Ilib/usb/device/cdc-serial
 
 CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
@@ -113,6 +113,9 @@ OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))
 
 all: libs hexes
 
+test:
+	@CFLAGS=-Werror $(MAKE) -ks rebuild
+
 
 LIB = $(OUTPUT_FOLDER)/libmario.a
 libs: $(LIB)
@@ -129,34 +132,62 @@ rebuild: clean all
 
 
 $(OUTPUT_FOLDER)/%.elf: $(OBJECTS_FOLDER)/src/%/main.o $(LIB)
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(LINK_SCRIPT) -o $@ $< $(LDFLAGS)
 
 
 $(OBJECTS_FOLDER)/%.o: %.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
 $(OBJECTS_FOLDER)/%.o: %.S
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(ASFLAGS) -o $@ -c $<
 
 
 $(OUTPUT_FOLDER)/libmario.a: $(OBJS)
-	$(AR) $(ARFLAGS) $@ $?
+	$(AR) $(ARFLAGS) $@ $? 2>/dev/null >/dev/null
 	$(RANLIB) $@
 
 
-ocd:
-	touch $(OCD_CHECK_FILE) ; $(OPENOCD) -f openocd.cfg ; rm $(OCD_CHECK_FILE)
+# Temporarily creates a file to allow the debug task to
+# check that OpenOCD has been started before starting GDB.
+ocd: openocd.cfg
+	@touch $(OCD_CHECK_FILE);\
+		$(OPENOCD) -f $<;\
+		rm $(OCD_CHECK_FILE)
+ocd%: openocd%.cfg
+	@touch $(OCD_CHECK_FILE)$*;\
+		$(OPENOCD) -f $<;\
+		rm $(OCD_CHECK_FILE)$*
+
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	echo "\n\n======================================\n  Programming is not yet implemented  \n\n  Use \`make debug-$*\` then  \n  enter \`continue\` in GDB  \n======================================"
+	@echo "\n"\
+		"======================================" "\n"\
+		"  Programming is not yet implemented  " "\n"\
+		"                                      " "\n"\
+		"  Use \`make debug-$*\` to start GDB  " "\n"\
+		"  then enter \`continue\` in GDB.     " "\n"\
+		"======================================" "\n"
 
+
+# Uses the check file to ensure that OpenOCD has
+# been started before attempting to start up GDB.
 debug-%: $(OUTPUT_FOLDER)/%.elf
-	if [ ! -e $(OCD_CHECK_FILE) ] ; then ( echo 'OpenOCD not running'; false ) fi
-	$(GDB) -x debug.gdb $<
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -x debug.gdb $< \
+		) \
+	fi
 
 
 clean:

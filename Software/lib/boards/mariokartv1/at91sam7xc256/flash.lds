@@ -47,6 +47,7 @@ SECTIONS
     {
         . = ALIGN(4);
         _sfixed = .;
+        *(.startup*)
         *(.text*)
         *(.rodata*)
         . = ALIGN(4);

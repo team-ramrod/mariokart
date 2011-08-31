@@ -26,6 +26,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
  */
+/*
+ * Modified by Wim Looman 2011-07-01
+ * Copyright (c) 2011, University of Canterbury
+ *
+ * Released under same terms as above.
+ *
+ * Fixed warning in function ‘EMAC_Handler’.
+ *
+ */
 
 //-----------------------------------------------------------------------------
 //         Headers
@@ -405,7 +414,7 @@ void EMAC_SetLinkSpeed(unsigned char speed, unsigned char fullduplex)
 void EMAC_Handler(void)
 {
     volatile EmacTxTDescriptor *pTxTd;
-    volatile EMAC_TxCallback   *pTxCb;
+    volatile EMAC_TxCallback   *pTxCb = NULL;
     volatile unsigned int isr;
     volatile unsigned int rsr;
     volatile unsigned int tsr;

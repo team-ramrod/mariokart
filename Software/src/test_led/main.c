@@ -23,11 +23,11 @@
 //------------------------------------------------------------------------------
 #ifndef AT91C_ID_TC0
 #if defined(AT91C_ID_TC012)
-    #define AT91C_ID_TC0 AT91C_ID_TC012
+#define AT91C_ID_TC0 AT91C_ID_TC012
 #elif defined(AT91C_ID_TC)
-    #define AT91C_ID_TC0 AT91C_ID_TC
+#define AT91C_ID_TC0 AT91C_ID_TC
 #else
-    #error Pb define ID_TC
+#error Pb define ID_TC
 #endif
 #endif
 
@@ -163,7 +163,7 @@ int main(void)
 {
     //configure UART GND pin
     const Pin pinUsartGnd[] = {PIN_USART0_GND};
-    PIO_Configure(pinUsartGnd, PIO_LISTSIZE(pinUsartGnd)); \
+    PIO_Configure(pinUsartGnd, PIO_LISTSIZE(pinUsartGnd));
     PIO_Clear(&pinUsartGnd[0]);
 
     // DBGU configuration
