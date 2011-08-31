@@ -11,6 +11,7 @@
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
+#include <board_powermode.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <pmc/pmc.h>
@@ -19,7 +20,6 @@
 #include <utility/trace.h>
 
 #include "usb.c"
-#include "power.c"
 
 //------------------------------------------------------------------------------
 //         Local defines
