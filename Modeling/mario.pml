@@ -101,6 +101,7 @@ progress:
     od;
 
 Error:
+    error_count++;
     do
         ::St!error; Mt!error
         ::break
