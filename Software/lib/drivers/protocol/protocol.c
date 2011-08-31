@@ -28,9 +28,9 @@ void proto_init() {
     CAN_ResetTransfer( &read_transfer );
     read_transfer.can_number = 0;
     read_transfer.mailbox_number = 0; //TODO: make a #define for these
-    read_transfer.mode_reg = 0;//AT91C_CAN_MOT_RX;
-    read_transfer.acceptance_mask_reg = 0;//AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
-    read_transfer.identifier = 0;//AT91C_CAN_MIDvA;
+    read_transfer.mode_reg = AT91C_CAN_MOT_RX;
+    read_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA;    // TODO: add in hash-definable values for these two
+    read_transfer.identifier = AT91C_CAN_MIDvA;
     read_transfer.data_low_reg = 0x00000000;
     read_transfer.data_high_reg = 0x00000000;
     read_transfer.control_reg = 0x00000000;
@@ -39,11 +39,18 @@ void proto_init() {
     // Init outgoing mailbox
     write_transfer.can_number = 1;
     write_transfer.mailbox_number = 0;
-    write_transfer.mode_reg = 0;//AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
-    write_transfer.acceptance_mask_reg = 0;//AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
-    write_transfer.identifier = 0;//AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
-    write_transfer.control_reg = 0;//(AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
+    write_transfer.mode_reg = AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR;
+    write_transfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 TODO: these too
+    write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
+    write_transfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
     CAN_InitMailboxRegisters( &write_transfer );
+    
+    unsigned int previousTime;
+
+    // Configure RTT for a 1 second tick interrupt
+    RTT_SetPrescaler(AT91C_BASE_RTTC, 32768);
+    previousTime = RTT_GetTime(AT91C_BASE_RTTC);
+    while (previousTime == RTT_GetTime(AT91C_BASE_RTTC));
 }
 
 
