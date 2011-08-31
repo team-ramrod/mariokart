@@ -18,7 +18,9 @@ static volatile int wait_timer = 0;
  * Initialises the protocol handler and the can bus. 
  * 
  */
-void proto_init() {
+void proto_init(unsigned int acceptance_mask, 
+                unsigned int* identifier_list, 
+                unsigned int num_identifiers) {
     state = INITIALISING;
     if (!CAN_Init(BAUD_RATE, &read_transfer, &write_transfer)) {
         state = ERROR;
@@ -44,13 +46,47 @@ void proto_init() {
     write_transfer.identifier = AT91C_CAN_MIDvA & (1<<(18+5));     // ID 11
     write_transfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code
     CAN_InitMailboxRegisters( &write_transfer );
-    
-    unsigned int previousTime;
 
-    // Configure RTT for a 1 second tick interrupt
-    RTT_SetPrescaler(AT91C_BASE_RTTC, 32768);
-    previousTime = RTT_GetTime(AT91C_BASE_RTTC);
-    while (previousTime == RTT_GetTime(AT91C_BASE_RTTC));
+    ConfigureTc();
+}
+
+//------------------------------------------------------------------------------
+/// Interrupt handler for TC0 interrupt. 
+//------------------------------------------------------------------------------
+void ISR_Tc0(void)
+{
+    // Clear status bit to acknowledge interrupt
+    AT91C_BASE_TC0->TC_SR;
+
+    wait_timer += 250;
+
+    if (wait_timer >= TIMEOUT) {
+        state = error;
+    }
+}
+
+//------------------------------------------------------------------------------
+/// Configure Timer Counter 0 to generate an interrupt every 250ms.
+//------------------------------------------------------------------------------
+void ConfigureTc(void)
+{
+    unsigned int div;
+    unsigned int tcclks;
+
+    // Enable peripheral clock
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
+
+    // Configure TC for a 4Hz frequency and trigger on RC compare
+    TC_FindMckDivisor(4, BOARD_MCK, &div, &tcclks);
+    TC_Configure(AT91C_BASE_TC0, tcclks | AT91C_TC_CPCTRG);
+    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / 4; // timerFreq / desiredFreq
+
+    // Configure and enable interrupt on RC compare
+    AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, ISR_Tc0);
+    AT91C_BASE_TC0->TC_IER = AT91C_TC_CPCS;
+    AIC_EnableIT(AT91C_ID_TC0);
+
+    TC_Start(AT91C_BASE_TC0);
 }
 
 
@@ -65,15 +101,12 @@ int proto_read() {
 
 
 /**
- * Depending on demand this function may need a different
- * signature. For now it is written assuming CAN writes are
- * asynchronous.
+ * Attempts a write and returns status code (success == 0)
  */
-void proto_write(unsigned int hi, unsigned int lo) {
+int proto_write(unsigned int hi, unsigned int lo) {
     write_transfer.data_high_reg = hi;
     write_transfer.data_low_reg = lo;
-    while( CAN_STATUS_SUCCESS != CAN_Write( &write_transfer ) ); // TODO: blocks until sending starts, may block indefinitely?
-    // possibly drop out here and return the error code, client code can handle resending attempts.
+    return CAN_Write(&write_transfer);
 }
 
 /**

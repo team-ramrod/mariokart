@@ -23,11 +23,11 @@
 //------------------------------------------------------------------------------
 #ifndef AT91C_ID_TC0
 #if defined(AT91C_ID_TC012)
-    #define AT91C_ID_TC0 AT91C_ID_TC012
+#define AT91C_ID_TC0 AT91C_ID_TC012
 #elif defined(AT91C_ID_TC)
-    #define AT91C_ID_TC0 AT91C_ID_TC
+#define AT91C_ID_TC0 AT91C_ID_TC
 #else
-    #error Pb define ID_TC
+#error Pb define ID_TC
 #endif
 #endif
 
