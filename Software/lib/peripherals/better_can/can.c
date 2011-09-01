@@ -408,7 +408,7 @@ CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox) {
     return packet;
 }
 
-unsigned char BCAN_IsIdle(unsigned int can_number) {
+unsigned int BCAN_IsInIdle(unsigned int can_number) {
     CAN_t *can;
     switch (can_number) {
         case 0:

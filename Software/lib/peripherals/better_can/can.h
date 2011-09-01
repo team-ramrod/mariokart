@@ -97,7 +97,7 @@ void BCAN_InitMailboxRegisters(
     unsigned int mode_reg, unsigned int control_reg
 );
 
-unsigned int BCAN_IsInIdle( CanTransfer *pTransfer );
+unsigned int BCAN_IsInIdle(unsigned int can_number);
 
 unsigned int BCAN_Write(
     unsigned int can_number, unsigned int mailbox,
