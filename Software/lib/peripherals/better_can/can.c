@@ -81,7 +81,7 @@ static AT91PS_CAN_MB CAN_Mailboxes[2][NUM_MAILBOX_MAX] = {
 #endif /* AT91C_BASE_CAN1 */
 };
 
-static void CAN_ErrorHandling( unsigned int status, unsigned char can_number)
+static void BCAN_ErrorHandling( unsigned int status, unsigned char can_number)
 {
     if( (status&AT91C_CAN_ERRA) == AT91C_CAN_ERRA) {
         TRACE_ERROR("(CAN) CAN is in Error Active mode\n\r");
@@ -131,7 +131,7 @@ static void CAN_ErrorHandling( unsigned int status, unsigned char can_number)
     }
 }
 
-static void CAN_Handler(unsigned int can_number) {
+static void BCAN_Handler(unsigned int can_number) {
     CAN_t *can;
     unsigned int status;
 
@@ -207,24 +207,24 @@ static void CAN_Handler(unsigned int can_number) {
     }
 
     if (status & 0xFFCF0000) {
-        CAN_ErrorHandling(status, can_number);
+        BCAN_ErrorHandling(status, can_number);
     }
 }
 
 static void CAN0_Handler(void)
 {
-    CAN_Handler( 0 );
+    BCAN_Handler( 0 );
 }
 
 #if defined AT91C_BASE_CAN1
 static void CAN1_Handler(void)
 {
-    CAN_Handler( 1 );
+    BCAN_Handler( 1 );
 }
 #endif
 
 
-void CAN_InitMailboxRegisters(
+void BCAN_InitMailboxRegisters(
         unsigned int can_number, unsigned int mailbox_number,
         unsigned int acceptance_mask, unsigned int identifier,
         unsigned int mode_reg, unsigned int control_reg
@@ -255,20 +255,20 @@ void CAN_InitMailboxRegisters(
 }
 
 
-void CAN_ResetAllMailbox( void )
+void BCAN_ResetAllMailbox( void )
 {
     for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
-        CAN_InitMailboxRegisters(0, i, 0, 0, AT91C_CAN_MOT_DIS, 0);
+        BCAN_InitMailboxRegisters(0, i, 0, 0, AT91C_CAN_MOT_DIS, 0);
     }
 #if defined (AT91C_BASE_CAN1_MB0)
     for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
-        CAN_InitMailboxRegisters(0, i, 0, 0, AT91C_CAN_MOT_DIS, 0);
+        BCAN_InitMailboxRegisters(0, i, 0, 0, AT91C_CAN_MOT_DIS, 0);
     }
 #endif
 }
 
 
-static unsigned char CAN_Synchronisation( unsigned int syncCan1 ) {
+static unsigned char BCAN_Synchronisation( unsigned int syncCan1 ) {
     unsigned int tick=0;
 
     TRACE_INFO("CAN_Synchronisation\n\r");
@@ -316,7 +316,7 @@ static unsigned char CAN_Synchronisation( unsigned int syncCan1 ) {
     return 1;
 }
 
-unsigned int CAN_Write(
+unsigned int BCAN_Write(
         unsigned int can_number, unsigned int mailbox_number,
         unsigned long long data, unsigned int size
 ) {
@@ -362,7 +362,7 @@ unsigned int CAN_Write(
 }
 
 
-CAN_Packet CAN_Read(unsigned int can_number, unsigned int mailbox) {
+CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox) {
     CAN_t *can;
     AT91PS_CAN base_can;
     CAN_Packet packet = {
@@ -408,7 +408,7 @@ CAN_Packet CAN_Read(unsigned int can_number, unsigned int mailbox) {
     return packet;
 }
 
-unsigned char CAN_IsIdle(unsigned int can_number) {
+unsigned char BCAN_IsIdle(unsigned int can_number) {
     CAN_t *can;
     switch (can_number) {
         case 0:
@@ -426,7 +426,7 @@ unsigned char CAN_IsIdle(unsigned int can_number) {
     return can->state == CAN_IDLE;
 }
 
-void CAN_disable() {
+void BCAN_disable() {
     // Disable the interrupt on the interrupt controller
     IRQ_DisableIT(AT91C_ID_CAN0);
     // disable all IT
@@ -470,7 +470,7 @@ void CAN_disable() {
 ///                 allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
 /// \return return 1 in success, otherwise return 0
 //------------------------------------------------------------------------------
-static unsigned char CAN_BaudRateCalculate( AT91PS_CAN   base_CAN, 
+static unsigned char BCAN_BaudRateCalculate( AT91PS_CAN   base_CAN, 
                                      unsigned int baudrate )
 {
     unsigned int BRP;
@@ -552,7 +552,7 @@ static unsigned char CAN_BaudRateCalculate( AT91PS_CAN   base_CAN,
 
 }
 
-unsigned int CAN_Init(unsigned int baudrate, unsigned int initCan1)
+unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1)
 {
     // CAN Transmit Serial Data
 #if defined (PINS_CAN_TRANSCEIVER_TXD)
@@ -602,7 +602,7 @@ unsigned int CAN_Init(unsigned int baudrate, unsigned int initCan1)
     // Enable the interrupt on the interrupt controller
     IRQ_EnableIT(AT91C_ID_CAN0);
 
-    if (! CAN_BaudRateCalculate(AT91C_BASE_CAN0, baudrate)) {
+    if (! BCAN_BaudRateCalculate(AT91C_BASE_CAN0, baudrate)) {
         // Baudrate problem
         TRACE_DEBUG("Baudrate CAN0 problem\n\r");
         return 0;
@@ -622,7 +622,7 @@ unsigned int CAN_Init(unsigned int baudrate, unsigned int initCan1)
         // Enable the interrupt on the interrupt controller
         IRQ_EnableIT(AT91C_ID_CAN1);
 
-        if (! CAN_BaudRateCalculate(AT91C_BASE_CAN1, baudrate)) {
+        if (! BCAN_BaudRateCalculate(AT91C_BASE_CAN1, baudrate)) {
             // Baudrate problem
             TRACE_DEBUG("Baudrate CAN1 problem\n\r");
             return 0;
@@ -630,7 +630,7 @@ unsigned int CAN_Init(unsigned int baudrate, unsigned int initCan1)
     }
 #endif
     // Reset all mailbox
-    CAN_ResetAllMailbox();
+    BCAN_ResetAllMailbox();
 
     // Enable the interrupt with all error cases
     AT91C_BASE_CAN0->CAN_IER =  AT91C_CAN_CERR  // (CAN) CRC Error
@@ -650,6 +650,6 @@ unsigned int CAN_Init(unsigned int baudrate, unsigned int initCan1)
 #endif
 
     // Wait for CAN synchronisation
-    return CAN_Synchronisation(initCan1);
+    return BCAN_Synchronisation(initCan1);
 }
 

@@ -1,5 +1,5 @@
-#ifndef CAN_H
-#define CAN_H
+#ifndef BCAN_H
+#define BCAN_H
 
 //------------------------------------------------------------------------------
 //      Definitions
@@ -79,27 +79,27 @@ typedef struct {
  * @return 1 if CAN perpherial(s) have good baudrates and are synchronised,
  *         otherwise 0
  */
-unsigned int CAN_Init(unsigned int baudrate, unsigned int initCan1);
+unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1);
 
 /**
  * Disable CAN and enter low power mode.
  */
-void CAN_disable();
+void BCAN_disable();
 
 
-void CAN_ResetAllMailbox( void );
+void BCAN_ResetAllMailbox( void );
 
-void CAN_ResetTransfer( CanTransfer *pTransfer );
+void BCAN_ResetTransfer( CanTransfer *pTransfer );
 
-void CAN_InitMailboxRegisters(
+void BCAN_InitMailboxRegisters(
     unsigned int can_number, unsigned int mailbox_number,
     unsigned int acceptance_mask, unsigned int identifier,
     unsigned int mode_reg, unsigned int control_reg
 );
 
-unsigned int CAN_IsInIdle( CanTransfer *pTransfer );
+unsigned int BCAN_IsInIdle( CanTransfer *pTransfer );
 
-unsigned int CAN_Write(
+unsigned int BCAN_Write(
     unsigned int can_number, unsigned int mailbox,
     unsigned long long data, unsigned int size
 );
@@ -113,6 +113,6 @@ unsigned int CAN_Write(
  * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
  *          or {CAN_STATUS_SUCCESS,data,size}.
  */
-CAN_Packet CAN_Read(unsigned int can_number, unsigned int mailbox);
+CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox);
 
-#endif // _CAN_H
+#endif /* BCAN_H */
