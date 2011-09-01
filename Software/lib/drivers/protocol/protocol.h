@@ -1,3 +1,6 @@
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
+
 #include <peripherals/can/can.h>
 #include <board.h>
 #include <pio/pio.h>
@@ -81,3 +84,5 @@ void proto_comms_wait();
  * A getter for the can handler's state
  */
 state_t proto_state();
+
+#endif /* PROTOCOL_H */
