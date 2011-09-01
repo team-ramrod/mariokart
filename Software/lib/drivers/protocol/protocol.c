@@ -190,10 +190,25 @@ message_t proto_read() {
 /**
  * Attempts a write and returns status code (success == 0)
  */
-int proto_write(message_t msg) {
-    // TODO: prepend DATA identifier and the to and from addresses
-    //canTransfer.data_high_reg = hi;
-    //canTransfer.data_low_reg = lo;
+int proto_write(message_t* msg) {
+    // TODO: someone check my endianness
+    canTransfer.data_high_reg = hi;
+    canTransfer.data_low_reg = 
+        (unsigned char)(msg->from) |
+        (unsigned char)(msg->to) << 8 |
+        (unsigned char)(msg->command) << 16;
+
+    if (msg->len > 0) {
+        canTransfer.data_low_reg |=
+            data[0];
+    }
+
+    for (int i = 1; i < msg->len; i++) {
+        canTransfer.data_high_reg |= msg->data[i] << i*8;
+    }
+
+    canTransfer.size = msg->len;
+
 
     TRACE_INFO("Proto Transmit to: %02d - Command: %d\n\r",
             msg.to,

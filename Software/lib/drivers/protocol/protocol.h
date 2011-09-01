@@ -34,7 +34,8 @@ typedef struct {
     address_t     from,
                   to;
     command_t     command;
-    unsigned char data[8];
+    unsigned char len;
+    unsigned char data[5];
 } message_t;
 
 typedef enum {
