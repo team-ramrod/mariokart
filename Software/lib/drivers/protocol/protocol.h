@@ -10,7 +10,14 @@ typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
 
 // Needs to be only 8 bit
 typedef enum {
-    SENSOR_BOARD = 0x1,
+    ADDR_ERROR_RX     = 0x0,
+    ADDR_BROADCAST_RX = 0x1,
+    ADDR_BROADCAST_TX = 0x2,
+    ADDR_BRAKE        = 0x3,
+    ADDR_COMMS        = 0x4,
+    ADDR_STEERING     = 0x5,
+    ADDR_MOTOR        = 0x6,
+    ADDR_SENSOR       = 0x7,
 } address_t;
 
 // Needs to be only 8 bit
