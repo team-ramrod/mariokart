@@ -100,7 +100,8 @@ C_FILES += $(wildcard src/steering/*.c)
 #brake files will tidy this up soon
 C_FILES += $(wildcard src/brake/*.c)
 
-ASM_FILES = lib/boards/$(BOARD)/board_cstartup.S
+ASM_FILES =  lib/boards/$(BOARD)/board_cstartup.S
+ASM_FILES += $(wildcard lib/utility/*.S)
 
 OBJS =  $(addprefix $(OBJECTS_FOLDER)/,$(C_FILES:.c=.o))
 OBJS += $(addprefix $(OBJECTS_FOLDER)/,$(ASM_FILES:.S=.o))

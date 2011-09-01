@@ -6,9 +6,6 @@
 #include <aic/aic.h>
 #include <utility/trace.h>
 
-//the timer resolution in ms
-#define SPEED_TIMER_RES 1
-
 //the number of speed readings to average over
 #define SPEED_BUFFER_SIZE 10
 
@@ -29,21 +26,6 @@ float speed_buffer[SPEED_BUFFER_SIZE];
 
 //Time since the speed sensor last triggered in ms
 uint speed_time = 0;
-
-//updates time since speed sensor last triggered
-void SPEED_TIMER_ISR(void)
-{
-    // Clear status bit to acknowledge interrupt
-    AT91C_BASE_TC0->TC_SR;
-
-    speed_time += SPEED_TIMER_RES;
-
-    //if the sensor hasnt sent a pulse in the last second the kart is moving
-    //so slow its pretty much stopped
-    if(speed_time > 1000){
-        speed_output = 0;
-    }
-}
 
 //updates speed sensor reading
 void SPEED_ISR ( void )
@@ -89,27 +71,16 @@ void SPEED_ISR ( void )
 
 }
 
-// Configure Timer Counter 0 to generate an interrupt every 250ms.
-void speed_configure_tc(void)
+//updates time since speed sensor last triggered
+void speed_update_time(int timer_res)
 {
-    unsigned int div;
-    unsigned int tcclks;
+    speed_time += timer_res;
 
-    // Enable peripheral clock
-    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
-
-    // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor((1000/SPEED_TIMER_RES), BOARD_MCK, &div, &tcclks);
-    TC_Configure(AT91C_BASE_TC0, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / (1000/SPEED_TIMER_RES); // timerFreq / desiredFreq
-
-    // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, SPEED_TIMER_ISR);
-    AT91C_BASE_TC0->TC_IER = AT91C_TC_CPCS;
-    AIC_EnableIT(AT91C_ID_TC0);
-
-    // Start the counter
-    TC_Start(AT91C_BASE_TC0);
+    //if the sensor hasnt sent a pulse in the last second the kart is moving
+    //so slow its pretty much stopped
+    if(speed_time > 1000){
+        speed_output = 0;
+    }
 }
 
 //Sets up pin and buffer for speed sensor
@@ -122,9 +93,6 @@ void speed_init(void){
 
     //sets inital speed to 0
     speed_output = 0;
-
-    //initilize timer counter
-    speed_configure_tc();
 
     //sets pins as inputs
     PIO_Configure(&speed_pin, 1);

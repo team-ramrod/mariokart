@@ -157,7 +157,6 @@ void PWMC_SetPeriod(unsigned char channel, unsigned short period)
 {
     // If channel is disabled, write to CPRD
     if ((AT91C_BASE_PWMC->PWMC_SR & (1 << channel)) == 0) {
-
         AT91C_BASE_PWMC->PWMC_CH[channel].PWMC_CPRDR = period;
     }
     // Otherwise use update register
