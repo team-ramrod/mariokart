@@ -4,6 +4,7 @@
  */
 
 #include "protocol.h"
+#include "proto_msg_buff.h"
 #include <tc/tc.h>
 #include <aic/aic.h>
 #include <utility/trace.h>
