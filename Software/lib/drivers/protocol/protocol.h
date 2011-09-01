@@ -37,7 +37,7 @@ typedef struct {
     address_t     from,
                   to;
     command_t     command;
-    unsigned char len;
+    unsigned char data_len;
     unsigned char data[5];
 } message_t;
 
