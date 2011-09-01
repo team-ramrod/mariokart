@@ -55,7 +55,7 @@ static const Pin pinVbus = PIN_USB_VBUS;
 //------------------------------------------------------------------------------
 /// Handles interrupts coming from PIO controllers.
 //------------------------------------------------------------------------------
-static void ISR_Vbus(const Pin *pPin)
+static void ISR_VBus(const Pin *pPin)
 {
     // Check current level on VBus
     if (PIO_Get(&pinVbus)) {
@@ -80,7 +80,7 @@ static void VBus_Configure( void )
 
     // Configure PIO
     PIO_Configure(&pinVbus, 1);
-    PIO_ConfigureIt(&pinVbus, ISR_Vbus);
+    PIO_ConfigureIt(&pinVbus, ISR_VBus);
     PIO_EnableIt(&pinVbus);
 
     // Check current level on VBus
