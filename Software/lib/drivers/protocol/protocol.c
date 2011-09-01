@@ -17,6 +17,7 @@ static state_t state;
 // The watchdog timer
 static volatile int wait_timer = 0;
 
+static error_callback error_callback_function = NULL;
 
 //------------------------------------------------------------------------------
 /// Interrupt handler for TC0 interrupt. 
@@ -165,4 +166,13 @@ state_t proto_state() {
     return state;
 }
 
+/**
+ * Drop the can handler into error state then calls the error state callback
+ */
+void proto_state_error() {
+    state = ERROR;
+    if (error_call_function != NULL) {
+        error_callback_function();
+    }
+}
 

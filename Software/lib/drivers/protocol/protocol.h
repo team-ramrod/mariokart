@@ -8,6 +8,8 @@
 
 typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
 
+// For error state callback
+typedef void(*error_callback)( void );
 
 /**
  * Initialises the protocol handler and the can bus. 
@@ -59,3 +61,8 @@ void proto_comms_wait();
  * A getter for the can handler's state
  */
 state_t proto_state();
+
+/**
+ * Drop the can handler into error state then calls the error state callback
+ */
+void proto_state_error();
