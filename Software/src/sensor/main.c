@@ -39,7 +39,7 @@ void send_data(address_t to, unsigned char id, variable_t var) {
             TRACE_INFO("Current kart speed = %i\n\r", speed);
 
             message_t msg = {
-                .from    = SENSOR_BOARD,
+                .from    = ADDR_SENSOR,
                 .to      = to,
                 .command = CMD_REPLY,
                 .data    = {id, var, speed}
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     };
 
     debug_init(SOFTWARE_NAME);
-    proto_init(SENSOR_BOARD, NULL, 0);
+    proto_init(ADDR_SENSOR);
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);

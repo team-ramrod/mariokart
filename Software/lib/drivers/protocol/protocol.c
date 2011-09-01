@@ -180,7 +180,7 @@ message_t proto_read() {
         .command = CMD_NONE,
         .data    = {0x0}
     };
-    if (proto_msg_buff_len()) {
+    if (proto_msg_buff_length()) {
         msg = proto_msg_buff_pop();
     }
     return msg;
@@ -197,7 +197,7 @@ int proto_write(message_t msg) {
 
     TRACE_INFO("Proto Transmit to: %02d - Command: %d\n\r",
             msg.to,
-            msd.command);
+            msg.command);
 
     return CAN_Write(&canTransfer);
 }
