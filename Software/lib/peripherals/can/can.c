@@ -328,6 +328,8 @@ void CAN_InitMailboxRegisters( CanTransfer *pTransfer )
         CAN_Mailbox = AT91C_BASE_CAN1_MB0;
     }
 #endif
+    //This sets the correct registers to the values from the struct.
+    //0x20 is because there are 0x20 bits of memory per mailbox
     CAN_Mailbox = (AT91PS_CAN_MB)((unsigned int)CAN_Mailbox+(unsigned int)(0x20*pTransfer->mailbox_number));
 
     pTransfer->mailbox_in_use |= 1<<(pTransfer->mailbox_number);
