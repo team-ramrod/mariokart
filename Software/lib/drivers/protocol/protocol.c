@@ -199,7 +199,7 @@ int proto_write(message_t msg) {
         (unsigned char)(msg.command) << 16;
 
     if (msg.data_len > 0) {
-        canTransfer.data_low_reg |= data[0];
+        canTransfer.data_low_reg |= msg.data[0];
     }
 
     for (int i = 1; i < msg.data_len; i++) {
@@ -260,7 +260,7 @@ state_t proto_state() {
  */
 void proto_state_error() {
     state = ERROR;
-    if (error_call_function != NULL) {
+    if (error_callback_function != NULL) {
         error_callback_function();
     }
 }
