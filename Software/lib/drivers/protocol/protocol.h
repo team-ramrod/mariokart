@@ -44,14 +44,9 @@ typedef enum {
  * Make sure when giving any of the masks you put the identifier in the lowest
  * 11 bits.
  *
- * @param reciving mailbox's mask
- * @param list of sending identifiers
- * @param Number of sending mailboxes to setup
+ * @param host boards address
  */
-void proto_init(unsigned int acceptance_mask, 
-                unsigned int* identifier_list, 
-                unsigned int num_identifiers);
-
+void proto_init(address_t board_address);
 
 /**
  * Depending on demand this function may need a different
