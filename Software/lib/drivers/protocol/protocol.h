@@ -8,6 +8,28 @@
 
 typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
 
+// Needs to be only 8 bit
+typedef enum {
+    SENSOR_BOARD = 0x1,
+} address_t;
+
+// Needs to be only 8 bit
+typedef enum {
+    CMD_NONE  = 0x0,
+    CMD_GET   = 0x1,
+    CMD_REPLY = 0x2,
+} command_t;
+
+typedef struct {
+    address_t     from,
+                  to;
+    command_t     command;
+    unsigned char data[8];
+} message_t;
+
+typedef enum {
+    VAR_SPEED = 0x1,
+} variable_t;
 
 /**
  * Initialises the protocol handler and the can bus. 
@@ -29,16 +51,14 @@ void proto_init(unsigned int acceptance_mask,
  * signature. For now it is designed to pop an int off the end of a queue
  * or return 0 if no data has been receieved
  */
-int proto_read();
+message_t proto_read();
 
 /**
  * Depending on demand this function may need a different
  * signature. For now it is written assuming CAN writes are
  * asynchronous.
  */
-int proto_write(unsigned int address, 
-                unsigned char* data,
-                unsigned char num_bytes);
+int proto_write(message_t msg);
 
 /**
  * To be called when an arbitrary 'heartbeat' message is received
