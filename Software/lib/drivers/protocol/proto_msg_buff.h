@@ -1,3 +1,10 @@
+#ifndef PROTO_MSG_BUFF_H
+#define PROTO_MSG_BUFF_H
+
+#include <stdbool.h>
+
+#include "protocol.h"
+
 /**
  * A simple ring buffer used to store recieved messages until they are read.
  */
@@ -22,3 +29,5 @@ message_t proto_msg_buff_peek();
  * when pushing the message, i.e. true is an error state.
  */
 bool proto_msg_buff_push(message_t);
+
+#endif /* PROTO_MSG_BUFF_H */
