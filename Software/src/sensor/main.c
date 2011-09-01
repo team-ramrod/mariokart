@@ -11,6 +11,7 @@
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
+#include <protocol/protocol.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <peripherals/tc/tc.h>
@@ -28,7 +29,32 @@
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
+
+void send_data(address_t to, unsigned char id, variable_t var) {
+    unsigned char speed;
+
+    switch (var) {
+        case VAR_SPEED:
+            speed = speed_output;
+            TRACE_INFO("Current kart speed = %i\n\r", speed);
+
+            message_t msg = {
+                .from    = ADDR_SENSOR,
+                .to      = to,
+                .command = CMD_REPLY,
+                .data    = {id, var, speed}
+            };
+
+            proto_write(msg);
+
+            char_display_number(speed);
+            break;
+
+        default:
+            break;
+    }
+
+}
 
 //------------------------------------------------------------------------------
 //         Interrupt Handlers
@@ -73,7 +99,18 @@ void timer_init(void){
 //         Main Function
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
+    unsigned char id = 0x0;
+    variable_t var = 0x0;
+
+    message_t msg = {
+        .from    = 0x0,
+        .to      = 0x0,
+        .command = CMD_NONE,
+        .data    = {0x0}
+    };
+
     debug_init(SOFTWARE_NAME);
+    proto_init(ADDR_SENSOR);
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
@@ -84,19 +121,24 @@ int main(int argc, char *argv[]) {
     timer_init();
     speed_init();
 
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
+    proto_wait();
 
-    while(1){        
-        int display = speed_output;
-        TRACE_INFO("Current kart speed = %i\n\r",display);
-        char_display_number(display);
+    for (;;) {
+        // Need to add a delay to aim for ~100 Hz here.
+        msg = proto_read();
+
+        switch (msg.command) {
+            case CMD_GET:
+                id = msg.data[0];
+                var = msg.data[1];
+                send_data(msg.from, id, var);
+                break;
+            default:
+                break;
+        }
+
         char_display_tick();
+        proto_refresh();
     }
 
     return 0;

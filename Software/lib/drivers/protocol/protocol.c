@@ -4,9 +4,13 @@
  */
 
 #include "protocol.h"
+#include "proto_msg_buff.h"
 #include <tc/tc.h>
 #include <aic/aic.h>
 #include <utility/trace.h>
+
+#define PROTO_ADDR_PRIORITY 0x0001
+#define PROTO_ADDR_SUFFEX 0x1000
 
 // The structures for reading and writing to CAN
 static CanTransfer canTransfer;
@@ -20,7 +24,7 @@ static volatile int wait_timer = 0;
 static error_callback error_callback_function = NULL;
 
 //------------------------------------------------------------------------------
-/// Interrupt handler for TC0 interrupt. 
+/// Interrupt handler for TC0 interrupt.
 //------------------------------------------------------------------------------
 void ISR_Tc0(void)
 {
@@ -32,6 +36,40 @@ void ISR_Tc0(void)
     if (wait_timer >= TIMEOUT) {
         state = ERROR;
     }
+}
+
+//------------------------------------------------------------------------------
+/// Internal function for setting up a tx mailbox
+//------------------------------------------------------------------------------
+void proto_set_tx_mailbox(address_t mailbox_num, address_t dest_addr) {
+    unsigned int full_address;
+    full_address = (PROTO_ADDR_PRIORITY << 7) + (dest_addr << 4) + (PROTO_ADDR_SUFFEX << 0);
+    canTransfer.can_number = 0;
+    canTransfer.mailbox_number = mailbox_num;
+    canTransfer.mode_reg = AT91C_CAN_MOT_TX;
+    canTransfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (full_address << 18); //0b00001111111
+    canTransfer.identifier = AT91C_CAN_MIDvA & (full_address << 18);
+    canTransfer.data_low_reg = 0x00000000;
+    canTransfer.data_high_reg = 0x00000000;
+    canTransfer.control_reg = 0x00000000;
+    CAN_InitMailboxRegisters( &canTransfer );
+}
+
+//------------------------------------------------------------------------------
+/// Internal function for setting up a rx mailbox
+//------------------------------------------------------------------------------
+void proto_set_rx_mailbox(address_t addr, unsigned int acceptance_mask) {
+    unsigned int full_address;
+    full_address = (PROTO_ADDR_PRIORITY << 7) + (addr << 4) + (PROTO_ADDR_SUFFEX << 0);
+    canTransfer.can_number = 0;
+    canTransfer.mailbox_number = addr;
+    canTransfer.mode_reg = AT91C_CAN_MOT_RXOVERWRITE;
+    canTransfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (acceptance_mask<<18); //0b00001111111
+    canTransfer.identifier = AT91C_CAN_MIDvA & (full_address << 18);
+    canTransfer.data_low_reg = 0x00000000;
+    canTransfer.data_high_reg = 0x00000000;
+    canTransfer.control_reg = 0x00000000;
+    CAN_InitMailboxRegisters( &canTransfer );
 }
 
 //------------------------------------------------------------------------------
@@ -60,39 +98,70 @@ void ConfigureTc(void)
 }
 
 /**
- * Initialises the protocol handler and the can bus. 
- * 
+ * Initialises the protocol handler and the can bus.
+ *
  */
-void proto_init(unsigned int acceptance_mask, 
-                unsigned int* identifier_list, 
-                unsigned int num_identifiers) {
-    unsigned int i;
-    state = INITIALISING;
+void proto_init(address_t board_address) {
+    unsigned int address, acceptance_mask;
 
+    state = INITIALISING;
     TRACE_INFO("Running proto_init\n\r");
 
     // Init incoming mailbox
+    CAN_Init(BAUD_RATE, &canTransfer, NULL);
     CAN_ResetTransfer( &canTransfer );
-    canTransfer.can_number = 0;
-    canTransfer.mailbox_number = 0;
-    canTransfer.mode_reg = AT91C_CAN_MOT_RX;
-    canTransfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (acceptance_mask << 18); // Set CAN2.0A, then shift to be between 18th and 29th bits
-    canTransfer.identifier = AT91C_CAN_MIDvA;
-    canTransfer.data_low_reg = 0x00000000;
-    canTransfer.data_high_reg = 0x00000000;
-    canTransfer.control_reg = 0x00000000;
-    CAN_InitMailboxRegisters( &canTransfer ); //TODO: the two calls to this method will change the same
-    // mailbox it registers it seems
 
-    // Init outgoing mailboxs
-    for (i = 0; i > num_identifiers; i++) {
-        canTransfer.can_number = 0;
-        canTransfer.mailbox_number = i + 1; //Leave the first for Rx
-        canTransfer.mode_reg = AT91C_CAN_MOT_TX;
-        canTransfer.acceptance_mask_reg = AT91C_CAN_MIDvA & (1<<(18+5));// ID 11 
-        canTransfer.identifier = AT91C_CAN_MIDvA & (identifier_list[i] << 18); // Set CAN2.0A, then shift to be between 18th and 29th bits
-        canTransfer.control_reg = (AT91C_CAN_MDLC & (0x8<<16)); // Mailbox Data Length Code of 8 bytes
-        CAN_InitMailboxRegisters( &canTransfer );
+    // Init Error rx mailbox
+    address = (PROTO_ADDR_PRIORITY << 7) + (ADDR_ERROR_RX << 4) + (PROTO_ADDR_SUFFEX << 0);
+    acceptance_mask = 0x07F;
+    proto_set_rx_mailbox(address, acceptance_mask);
+
+    // Init ADDR_BROADCAST_RX mailbox
+    acceptance_mask = 0x07F;
+    proto_set_rx_mailbox(ADDR_BROADCAST_RX, acceptance_mask);
+
+    // Init ADDR_BROADCAST_TX mailbox
+    proto_set_tx_mailbox(ADDR_BROADCAST_TX,ADDR_BROADCAST_RX);
+
+    switch (board_address) {
+        case ADDR_BRAKE:
+            proto_set_rx_mailbox(ADDR_BRAKE,acceptance_mask);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_COMMS:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_rx_mailbox(ADDR_COMMS,acceptance_mask);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_STEERING:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_rx_mailbox(ADDR_STEERING,acceptance_mask);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_MOTOR:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_rx_mailbox(ADDR_MOTOR,acceptance_mask);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_SENSOR:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_rx_mailbox(ADDR_SENSOR,acceptance_mask);
+            break;
+        default:
+            TRACE_WARNING("An incorrect address was passed to proto_init();\n\r");
+            break;
     }
 
     ConfigureTc();
@@ -105,25 +174,47 @@ void proto_init(unsigned int acceptance_mask,
  * signature. For now it is designed to pop an int off the end of a queue
  * or return 0 if no data has been receieved
  */
-int proto_read(unsigned int* data) { //TODO: pick a max data size
-    if (1) { //TODO: if canTransfer has new data
-        *data = canTransfer.data_high_reg;
-        return canTransfer.size;
-    } else {
-        return 0;
+message_t proto_read() {
+    message_t msg = {
+        .from    = 0x0,
+        .to      = 0x0,
+        .command = CMD_NONE,
+        .data    = {0x0}
+    };
+    if (proto_msg_buff_length()) {
+        msg = proto_msg_buff_pop();
     }
+    return msg;
 }
 
 
 /**
  * Attempts a write and returns status code (success == 0)
  */
-int proto_write(unsigned int address, 
-                unsigned char* data,
-                unsigned char num_bytes) {
-    // TODO: prepend DATA identifier and the to and from addresses
-    //canTransfer.data_high_reg = hi;
-    //canTransfer.data_low_reg = lo;
+int proto_write(message_t* msg) {
+    // TODO: someone check my endianness
+    canTransfer.data_high_reg = hi;
+    canTransfer.data_low_reg = 
+        (unsigned char)(msg->from) |
+        (unsigned char)(msg->to) << 8 |
+        (unsigned char)(msg->command) << 16;
+
+    if (msg->len > 0) {
+        canTransfer.data_low_reg |=
+            data[0];
+    }
+
+    for (int i = 1; i < msg->len; i++) {
+        canTransfer.data_high_reg |= msg->data[i] << i*8;
+    }
+
+    canTransfer.size = msg->len;
+
+
+    TRACE_INFO("Proto Transmit to: %02d - Command: %d\n\r",
+            msg.to,
+            msg.command);
+
     return CAN_Write(&canTransfer);
 }
 
@@ -154,7 +245,7 @@ void proto_wait() {
  * TODO: a seperate function for the comms board to wait on other boards
  */
 void proto_comms_wait() {
-    // TODO: Depending on the current state, transmit state to client boards 
+    // TODO: Depending on the current state, transmit state to client boards
     // and return once the have all ok'd, else return if incorrect reply is
     // received and transition into error state.
 }
