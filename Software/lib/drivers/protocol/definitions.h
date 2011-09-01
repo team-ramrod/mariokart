@@ -1,0 +1,42 @@
+#ifndef PROTOCOL_DEFINITIONS_H
+#define PROTOCOL_DEFINITIONS_H
+
+/**
+ * See
+ *     https://github.com/team-ramrod/mariokart/wiki/Protocol
+ * for a more in-depth decription of the protocol.
+ */
+
+// Needs to be only 8 bit
+typedef enum {
+    ADDR_ERROR_RX     = 0x0,
+    ADDR_BROADCAST_RX = 0x1,
+    ADDR_BROADCAST_TX = 0x2,
+    ADDR_BRAKE        = 0x3,
+    ADDR_COMMS        = 0x4,
+    ADDR_STEERING     = 0x5,
+    ADDR_MOTOR        = 0x6,
+    ADDR_SENSOR       = 0x7,
+} address_t;
+
+// Needs to be only 8 bit
+typedef enum {
+    CMD_NONE  = 0x0,
+    CMD_GET   = 0x1,
+    CMD_REPLY = 0x2,
+    CMD_SET   = 0x3,
+} command_t;
+
+typedef enum {
+    VAR_SPEED = 0x1,
+} variable_t;
+
+typedef struct {
+    address_t     from,
+                  to;
+    command_t     command;
+    unsigned char len;
+    unsigned char data[5];
+} message_t;
+
+#endif
