@@ -12,4 +12,11 @@ float speed_output;
  */
 void speed_init(void);
 
+/**
+ *updates time since speed sensor last triggered
+ * called inside a interrupt triggered by a timer
+ * @param timer_res the resolution in ms of the timer calling this function
+ */
+void speed_update_time(int timer_res);
+
 #endif	/* SPEED_SENSOR_H */
