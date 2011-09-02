@@ -174,10 +174,7 @@ int main(void)
                  
         while(1) {
             
-            for (int i = 0; packet.status != CAN_STATUS_SUCCESS; i = (i + 1) % 8) {
-                packet = BCAN_Read(0,i);
-            }
-            // wait answer
+            packet = BCAN_ReadAndClearAny(0);
             
             while( BCAN_IsInIdle(0) ) {
                 TRACE_INFO("CAN is in idle\n\r");
@@ -241,7 +238,7 @@ int main(void)
                     DisplayMenu();    
                 }
             }
-            if( CharReceive == '3' ) {
+            if (packet.size > 0) {
                 printf("Data (Low/High): %llX\n\r", 
                     packet.data);
                     CharReceive = -1;
