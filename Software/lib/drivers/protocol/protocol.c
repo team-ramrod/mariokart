@@ -186,18 +186,23 @@ message_t proto_read() {
  * Attempts a write and returns status code (success == 0)
  */
 int proto_write(message_t msg) {
-    unsigned long long can_data = 0;
+    unsigned int can_data_low = 0, can_data_high;
     int can_num = 0;
 
     TRACE_INFO("Proto Transmit to: %02d - Command: %d\n\r",
             msg.to,
             msg.command);
 
-    for (int i = 0; i < msg.data_len; i++) {
-        can_data |= (msg.data[i] << (i*8));
-    }
+    can_data_high = ((msg.to & 0xFF) << 0x18)
+                  | ((msg.from & 0xFF) << 0x10)
+                  | (msg.data[0] << 0x08)
+                  |  msg.data[1];
+    can_data_low  = (msg.data[2] << 0x18)
+                  | (msg.data[3] << 0x10)
+                  | (msg.data[4] << 0x08)
+                  |  msg.data[5];
 
-    return BCAN_Write(can_num, msg.to, can_data, msg.data_len + 3);
+    return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
 }
 
 /**
@@ -207,30 +212,6 @@ void proto_refresh() {
     wait_timer = 0;
 }
 
-/**
- * Blocks until all other boards are ready.
- * To be used before and after calibration routine.
- * On exit the board may be in error state so check state after this
- * method returns.
- */
-void proto_wait() {
-    //TODO: depending on the current state, wait on the correct signal from comms
-    //if another signal is received then transition to error state and return
-    int ready_count = 0; // May be better of as a bit mask or something else
-    state = WAITING;
-    while (ready_count < 5) {
-        //listen for waiting messages and note how many are ready
-    }
-}
-
-/**
- * TODO: a seperate function for the comms board to wait on other boards
- */
-void proto_comms_wait() {
-    // TODO: Depending on the current state, transmit state to client boards
-    // and return once the have all ok'd, else return if incorrect reply is
-    // received and transition into error state.
-}
 
 /**
  * A getter for the can handler's state

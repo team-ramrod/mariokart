@@ -65,7 +65,8 @@ typedef struct
 
 typedef struct {
     unsigned int mailbox;
-    unsigned long long data;
+    unsigned int data_low;
+    unsigned int data_high;
     unsigned int size;
 } CAN_Packet;
 
@@ -99,7 +100,7 @@ unsigned int BCAN_IsInIdle(unsigned int can_number);
 
 unsigned int BCAN_Write(
     unsigned int can_number, unsigned int mailbox,
-    unsigned long long data, unsigned int size
+    unsigned int data_high, unsigned int data_low, unsigned int size
 );
 
 /**

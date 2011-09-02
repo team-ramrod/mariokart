@@ -16,12 +16,12 @@ typedef enum {
 
 // MOT: Mailbox Object Type
 typedef enum {
-    CAN_MOT_DISABLE   = 0x1,
-    CAN_MOT_RECEPT    = 0x2,
-    CAN_MOT_RECEPT_OW = 0x3,
-    CAN_MOT_TRANSMIT  = 0x4,
-    CAN_MOT_CONSUMER  = 0x5,
-    CAN_MOT_PRODUCER  = 0x6
+    CAN_MOT_DISABLE   = 0x0,
+    CAN_MOT_RECEPT    = 0x1,
+    CAN_MOT_RECEPT_OW = 0x2,
+    CAN_MOT_TRANSMIT  = 0x3,
+    CAN_MOT_CONSUMER  = 0x4,
+    CAN_MOT_PRODUCER  = 0x5
 } CAN_mot_t;
 
 
@@ -30,7 +30,7 @@ typedef struct {
     CAN_mot_t mot;
     unsigned long long data;
     unsigned int size;
-    unsigned int test_status;
+    volatile unsigned int test_status;
     unsigned int mailbox_number;
     unsigned int active_mailboxes;
 } CAN_t;
@@ -188,7 +188,8 @@ static void BCAN_Handler(unsigned int can_number) {
 
                     TRACE_DEBUG("can_number %d\n\r", can_number);
                     BCAN_Received_Packets[can_number][numMailbox].mailbox = numMailbox;
-                    BCAN_Received_Packets[can_number][numMailbox].data = ((unsigned long long)mailbox->CAN_MB_MDH << 32) + mailbox->CAN_MB_MDL; 
+                    BCAN_Received_Packets[can_number][numMailbox].data_low = mailbox->CAN_MB_MDL; 
+                    BCAN_Received_Packets[can_number][numMailbox].data_high = mailbox->CAN_MB_MDH;
                     BCAN_Received_Packets[can_number][numMailbox].size = (can_msr >> 16) & 0x0F; 
                     can->state = CAN_IDLE;
                     // Message Data has been received
@@ -216,13 +217,13 @@ static void BCAN_Handler(unsigned int can_number) {
     }
 }
 
-static void CAN0_Handler(void)
+static void BCAN0_Handler(void)
 {
     BCAN_Handler( 0 );
 }
 
 #if defined AT91C_BASE_CAN1
-static void CAN1_Handler(void)
+static void BCAN1_Handler(void)
 {
     BCAN_Handler( 1 );
 }
@@ -252,6 +253,8 @@ void BCAN_InitMailboxRegisters(
             break;
     }
 
+    base_can->CAN_IDR = (1 << mailbox_number);
+
     // MailBox Control Register
     CAN_Mailbox->CAN_MB_MCR = 0x0;
     // MailBox Mode Register
@@ -274,11 +277,9 @@ void BCAN_InitMailboxRegisters(
     // MailBox Control Register
     CAN_Mailbox->CAN_MB_MCR = control_reg;
 
-    if ( ((mode_reg & AT91C_CAN_MOT_RXOVERWRITE) == AT91C_CAN_MOT_RXOVERWRITE)
-      || ((mode_reg & AT91C_CAN_MOT_RX) == AT91C_CAN_MOT_RX)) {
+    if ( ((mode_reg & AT91C_CAN_MOT) == AT91C_CAN_MOT_RXOVERWRITE)
+      || ((mode_reg & AT91C_CAN_MOT) == AT91C_CAN_MOT_RX)) {
         base_can->CAN_IER = (1 << mailbox_number);
-    } else {
-        base_can->CAN_IDR = (1 << mailbox_number);
     }
 }
 
@@ -346,7 +347,7 @@ static unsigned char BCAN_Synchronisation( unsigned int syncCan1 ) {
 
 unsigned int BCAN_Write(
         unsigned int can_number, unsigned int mailbox_number,
-        unsigned long long data, unsigned int size
+        unsigned int data_high, unsigned int data_low, unsigned int size
 ) {
     CAN_t *can;
     AT91PS_CAN base_can;
@@ -368,19 +369,17 @@ unsigned int BCAN_Write(
             break;
     }
 
-    if (can->state != CAN_IDLE)  {
+    mailbox = CAN_Mailboxes[can_number][mailbox_number];
+
+    if (! (mailbox->CAN_MB_MSR & AT91C_CAN_MRDY)) {
         return CAN_STATUS_LOCKED;
     }
 
-    mailbox = CAN_Mailboxes[can_number][mailbox_number];
-
-    mailbox->CAN_MB_MDL = data >> 0x20;
-    mailbox->CAN_MB_MDH = data & 0x20;
-    mailbox->CAN_MB_MCR = (size & 0xF) << 0x10;
-
     TRACE_DEBUG("CAN_Write\n\r");
     can->state = CAN_SENDING;
-    base_can->CAN_TCR = (1 << mailbox_number);
+    mailbox->CAN_MB_MDL = data_low;
+    mailbox->CAN_MB_MDH = data_high;
+    mailbox->CAN_MB_MCR = ((size << 0x10) & AT91C_CAN_MDLC) | AT91C_CAN_MTCR;
     base_can->CAN_IER = (1 << mailbox_number);
 
     return CAN_STATUS_SUCCESS;
@@ -404,7 +403,8 @@ CAN_Packet BCAN_ReadAny(unsigned int can_number) {
 CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox) {
     CAN_Packet packet = BCAN_Received_Packets[can_number][mailbox];
     BCAN_Received_Packets[can_number][mailbox].mailbox = 0;
-    BCAN_Received_Packets[can_number][mailbox].data = 0;
+    BCAN_Received_Packets[can_number][mailbox].data_low = 0;
+    BCAN_Received_Packets[can_number][mailbox].data_high = 0;
     BCAN_Received_Packets[can_number][mailbox].size = 0;
     return packet;
 }
@@ -415,7 +415,8 @@ CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number) {
         if (packet.size > 0 && BCAN_Received_Packets[can_number][i].size > 0) {
             packet = BCAN_Received_Packets[can_number][i];
             BCAN_Received_Packets[can_number][i].mailbox = 0;
-            BCAN_Received_Packets[can_number][i].data = 0;
+            BCAN_Received_Packets[can_number][i].data_low = 0;
+            BCAN_Received_Packets[can_number][i].data_high = 0;
             BCAN_Received_Packets[can_number][i].size = 0;
         }
     }
@@ -611,7 +612,7 @@ unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1)
 #endif
 
     // Configure the AIC for CAN interrupts
-    IRQ_ConfigureIT(AT91C_ID_CAN0, 0x7, CAN0_Handler);
+    IRQ_ConfigureIT(AT91C_ID_CAN0, 0x7, BCAN0_Handler);
 
     // Enable the interrupt on the interrupt controller
     IRQ_EnableIT(AT91C_ID_CAN0);
@@ -631,7 +632,7 @@ unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1)
         AT91C_BASE_CAN1->CAN_IDR = 0x1FFFFFFF;
 
         // Configure the AIC for CAN interrupts
-        IRQ_ConfigureIT(AT91C_ID_CAN1, 0x7, CAN1_Handler);
+        IRQ_ConfigureIT(AT91C_ID_CAN1, 0x7, BCAN1_Handler);
 
         // Enable the interrupt on the interrupt controller
         IRQ_EnableIT(AT91C_ID_CAN1);

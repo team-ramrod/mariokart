@@ -13,11 +13,9 @@ void main(void) {
     while (1) {
         switch (proto_state()) {
             case WAITING: // waiting for comms board to give the go ahead to calibrate
-                proto_wait();
                 break;
             case INITIALISING: // Waiting for all boards to finish calibration
-                // run calibration routine();
-                proto_comms_wait();
+                // run a loop of the calibration routine();
                 break;
             case RUNNING: // Normal state
                 // if (incoming data) {

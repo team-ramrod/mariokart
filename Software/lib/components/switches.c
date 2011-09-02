@@ -50,7 +50,7 @@ bool switches_pressed(unsigned int switch_no) {
     else {
         TRACE_WARNING("An incorrect switch number was passed\n\r");
     }
-    return return_val;
+    return !return_val;
 }
 
 void switches_init(){

@@ -49,10 +49,10 @@ static void char_display_clear() {
     PIO_Clear(&pinCharDisplayEnable);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
-    PIO_Clear(&pinCharDisplaySelectLeft);
+    PIO_Set(&pinCharDisplaySelectLeft);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
-    PIO_Clear(&pinCharDisplaySelectRight);
+    PIO_Set(&pinCharDisplaySelectRight);
 #endif
 }
 
@@ -79,11 +79,11 @@ static void char_display_show(char_display_side side) {
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
     if (side == CHAR_DISPLAY_LEFT)
-        PIO_Set(&pinCharDisplaySelectLeft);
+        PIO_Clear(&pinCharDisplaySelectLeft);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
     if (side == CHAR_DISPLAY_RIGHT)
-        PIO_Set(&pinCharDisplaySelectRight);
+        PIO_Clear(&pinCharDisplaySelectRight);
 #endif
 }
 
@@ -103,8 +103,8 @@ void char_display_right(unsigned int number) {
 }
 
 void char_display_number(unsigned int number) {
-    char_display_left(number % 10);
-    char_display_right((number / 10) < 1 ? 0x10 : number / 10);
+    char_display_left((number / 10) < 1 ? 0x10 : number / 10);
+    char_display_right(number % 10);
 }
 
 void char_display_tick() {
