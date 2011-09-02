@@ -201,7 +201,7 @@ void message_handler(CAN_Packet packet) {
     msg.data[3] = (packet.data_low >> 0x08) & 0xFF;
     msg.data[4] =  packet.data_low          & 0xFF;
     
-    msg.data_len = packet.msg_len;
+    msg.data_len = packet.size;
 
     switch (state) {
         case STARTUP:
@@ -220,10 +220,12 @@ void message_handler(CAN_Packet packet) {
         case CALIBRATING:
             switch(msg.command) {
                 case CMD_REQ_CALIBRATE:
+                    /*
                     if (ready_to_run) 
-                        //send CMD_ACK_RUN
+                      //send CMD_ACK_RUN
                     else 
                         //send CMD_NO
+                    */
                     break;
                 case CMD_RUN:
                     state = RUNNING;
