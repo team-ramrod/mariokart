@@ -10,10 +10,10 @@ void main(void) {
 
     
     switch (proto_state()) {
-        case WAITING: // waiting for all boards to acknowledge startup state
+        case CALIBRATING: // waiting for all boards to acknowledge startup state
             proto_comms_wait();
             break;
-        case INITIALISING: // Waiting for all boards to finish calibration
+        case STARTUP: // Waiting for all boards to finish calibration
             proto_comms_wait();
             break;
         case RUNNING: // Normal state
@@ -33,7 +33,7 @@ void main(void) {
                 //send ERROR signal through USB
                 // If reset signal received through USB
                 // then broadcast it, pause momentarily
-                // abd transition to WAITING state.
+                // abd transition to CALIBRATING state.
                 // (If boards still aren't ready it will send
                 // us straight back to here)
             }

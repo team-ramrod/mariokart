@@ -12,9 +12,9 @@ void main(void) {
 
     while (1) {
         switch (proto_state()) {
-            case WAITING: // waiting for comms board to give the go ahead to calibrate
+            case CALIBRATING: // waiting for comms board to give the go ahead to calibrate
                 break;
-            case INITIALISING: // Waiting for all boards to finish calibration
+            case STARTUP: // Waiting for all boards to finish calibration
                 // run a loop of the calibration routine();
                 break;
             case RUNNING: // Normal state
@@ -32,7 +32,7 @@ void main(void) {
             default: // ERROR
                 //broadcast ERROR signal
                 // If reset signal received 
-                // then transition to WAITING state.
+                // then transition to CALIBRATING state.
                 break;
         }
     }

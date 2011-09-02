@@ -105,7 +105,7 @@ void ConfigureTc(void)
  */
 void proto_init(address_t board_address) {
     TRACE_INFO("Running proto_init\n\r");
-    state = INITIALISING;
+    state = STARTUP;
 
     // Init incoming mailbox
     BCAN_Init(BAUD_RATE, 0); // 0 for no CAN1
@@ -179,6 +179,12 @@ message_t proto_read() {
         msg = proto_msg_buff_pop();
     }
     return msg;
+}
+
+void message_handler(message_t msg) {
+    switch (state) {
+
+    }
 }
 
 
