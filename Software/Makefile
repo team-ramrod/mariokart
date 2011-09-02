@@ -5,7 +5,7 @@
 MCU = arm7tdmi
 CHIP = at91sam7xc256
 BOARD = mariokartv1
-MEMORY ?= sram
+MEMORY ?= flash
 
 # Trace level used for compilation
 # (can be overriden by adding TRACE_LEVEL=#number to the command-line)
@@ -61,7 +61,8 @@ INCLUDES += -Ilib/usb/device/cdc-serial
 
 CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
-CFLAGS += -Os
+#CFLAGS += -Os
+CFLAGS += -g
 CFLAGS += -D$(CHIP)
 CFLAGS += -D$(MEMORY)
 CFLAGS += -DTRACE_LEVEL=$(TRACE_LEVEL)
@@ -70,7 +71,8 @@ CFLAGS += $(INCLUDES)
 # Generate dependency information
 CFLAGS += -MD -MP -MF .dep/$(subst /,-,$@).d
 
-ASFLAGS += -Os
+#ASFLAGS += -Os
+ASFLAGS += -g
 ASFLAGS += -D$(CHIP)
 ASFLAGS += -D$(MEMORY)
 ASFLAGS += -D__ASSEMBLY__
