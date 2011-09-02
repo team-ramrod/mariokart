@@ -1,7 +1,6 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include <peripherals/can/can.h>
 #include <board.h>
 #include <pio/pio.h>
 #include <irq/irq.h>
@@ -19,10 +18,7 @@ typedef void(*error_callback)( void );
 /**
  * Initialises the protocol handler and the can bus. 
  * 
- * Make sure when giving any of the masks you put the identifier in the lowest
- * 11 bits.
- *
- * @param host boards address
+ * @param host boards address e.g. ADDR_SENSOR
  */
 void proto_init(address_t board_address);
 
@@ -59,6 +55,11 @@ void proto_comms_wait();
  * A getter for the can handler's state
  */
 state_t proto_state();
+
+/**
+ * Set the callback function that is called when error state is set
+ */
+void proto_set_error_callback(error_callback callback);
 
 /**
  * Drop the can handler into error state then calls the error state callback
