@@ -29,7 +29,7 @@ typedef enum {
     CMD_ACK_CALIBRATE = 0x05,
     CMD_REQ_RUN = 0x06,
     CMD_ACK_RUN = 0x07,
-    CMD_NO = 0x08,
+    CMD_NO = 0x08,              // CMD_NO_MEANS_NO ??
     CMD_RUN = 0x09,
     CMD_CALIBRATE = 0x0A,
 } command_t;
