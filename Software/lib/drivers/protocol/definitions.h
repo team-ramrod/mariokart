@@ -25,6 +25,13 @@ typedef enum {
     CMD_GET   = 0x1,
     CMD_REPLY = 0x2,
     CMD_SET   = 0x3,
+    CMD_REQ_CALIBRATE = 0x04,
+    CMD_ACK_CALIBRATE = 0x05,
+    CMD_REQ_RUN = 0x06,
+    CMD_ACK_RUN = 0x07,
+    CMD_NO = 0x08,
+    CMD_RUN = 0x09,
+    CMD_CALIBRATE = 0x0A,
 } command_t;
 
 typedef enum {

@@ -21,6 +21,8 @@ static volatile int wait_timer = 0;
 
 static error_callback error_callback_function = NULL;
 
+static bool ready_to_run = false;
+
 //------------------------------------------------------------------------------
 /// Interrupt handler for TC0 interrupt.
 //------------------------------------------------------------------------------
@@ -181,12 +183,70 @@ message_t proto_read() {
     return msg;
 }
 
-void message_handler(message_t msg) {
-    switch (state) {
+/**
+ * To be called asynchronously when a new can frame is
+ * received. Decodes packets and intercepts state transition
+ * commands.
+ */
+void message_handler(CAN_Packet packet) {
+    message_t msg = {
+        .from    = (packet.data_high >> 0x18) & 0xFF,
+        .to      = (packet.data_high >> 0x10) & 0xFF,
+        .command = (packet.data_high >> 0x08) & 0xFF,
+        .data    = {0x0}
+    };
+    msg.data[0] = packet.data_high & 0xFF;
+    msg.data[1] = (packet.data_low >> 0x18) & 0xFF;
+    msg.data[2] = (packet.data_low >> 0x10) & 0xFF;
+    msg.data[3] = (packet.data_low >> 0x08) & 0xFF;
+    msg.data[4] =  packet.data_low          & 0xFF;
+    
+    msg.data_len = packet.msg_len;
 
+    switch (state) {
+        case STARTUP:
+            switch (msg.command) {
+                case CMD_REQ_CALIBRATE:
+                    //send CMD_ACK_CALIBRATE
+                    break;
+                case CMD_CALIBRATE:
+                    state = CALIBRATING;
+                    break;
+                default:
+                    state = ERROR;
+                    break;
+            }
+            break;
+        case CALIBRATING:
+            switch(msg.command) {
+                case CMD_REQ_CALIBRATE:
+                    if (ready_to_run) 
+                        //send CMD_ACK_RUN
+                    else 
+                        //send CMD_NO
+                    break;
+                case CMD_RUN:
+                    state = RUNNING;
+                    break;
+                default:
+                    state = ERROR;
+                    break;
+            }
+            break;
+        case RUNNING:
+            proto_msg_buff_push(msg);
+            break;
+        case ERROR:
+            break;
+        default:
+            state = ERROR;
+            break;
     }
 }
 
+void proto_calibration_complete() {
+    ready_to_run = true;
+}   
 
 /**
  * Attempts a write and returns status code (success == 0)
@@ -201,12 +261,12 @@ int proto_write(message_t msg) {
 
     can_data_high = ((msg.to & 0xFF) << 0x18)
                   | ((msg.from & 0xFF) << 0x10)
-                  | (msg.data[0] << 0x08)
-                  |  msg.data[1];
-    can_data_low  = (msg.data[2] << 0x18)
-                  | (msg.data[3] << 0x10)
-                  | (msg.data[4] << 0x08)
-                  |  msg.data[5];
+                  | ((msg.command & 0xFF) << 0x08)
+                  |  msg.data[0];
+    can_data_low  = (msg.data[1] << 0x18)
+                  | (msg.data[2] << 0x10)
+                  | (msg.data[3] << 0x08)
+                  |  msg.data[4];
 
     return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
 }
