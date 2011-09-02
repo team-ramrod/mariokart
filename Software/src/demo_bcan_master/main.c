@@ -35,12 +35,12 @@ int main(void)
 
     if (! BCAN_Init(1000, 0)) {
         printf("INIT FAIL");
-        LED_Set(0);
+        LED_Set(1);
         return 1;
     }
 
     printf("INIT OK\n\r");
-    LED_Set(1);
+    LED_Set(0);
 
     BCAN_InitMailboxRegisters( 0, 1, 0x0, (0x5AC << 18), AT91C_CAN_MOT_TX, 0x0);
 
