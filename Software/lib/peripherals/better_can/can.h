@@ -71,16 +71,22 @@ typedef struct {
 } CAN_Packet;
 
 /**
+ * Return one if the packet has been dealt with and should be deleted.
+ */
+typedef unsigned int (*CAN_Callback)(CAN_Packet);
+
+/**
  * Initialises the CAN peripheral(s)
  *
  * @param baudrate  Baudrate value (kB/s)
  *                  allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
  * @param initCan1  Whether to initialise CAN1 if it exists.
+ * @param callback  A callback that will be run whenever a message is received.
  *
  * @return 1 if CAN perpherial(s) have good baudrates and are synchronised,
  *         otherwise 0
  */
-unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1);
+unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1, CAN_Callback callback);
 
 /**
  * Disable CAN and enter low power mode.

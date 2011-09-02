@@ -33,6 +33,7 @@ typedef struct {
     volatile unsigned int test_status;
     unsigned int mailbox_number;
     unsigned int active_mailboxes;
+    CAN_Callback callback;
 } CAN_t;
 
 static CAN_t can0;
@@ -188,12 +189,19 @@ static void BCAN_Handler(unsigned int can_number) {
 
                     TRACE_DEBUG("can_number %d\n\r", can_number);
                     BCAN_Received_Packets[can_number][numMailbox].mailbox = numMailbox;
-                    BCAN_Received_Packets[can_number][numMailbox].data_low = mailbox->CAN_MB_MDL; 
+                    BCAN_Received_Packets[can_number][numMailbox].data_low = mailbox->CAN_MB_MDL;
                     BCAN_Received_Packets[can_number][numMailbox].data_high = mailbox->CAN_MB_MDH;
-                    BCAN_Received_Packets[can_number][numMailbox].size = (can_msr >> 16) & 0x0F; 
+                    BCAN_Received_Packets[can_number][numMailbox].size = (can_msr >> 16) & 0x0F;
                     can->state = CAN_IDLE;
                     // Message Data has been received
                     mailbox->CAN_MB_MCR = AT91C_CAN_MTCR;
+                    if (can->callback && can->callback(BCAN_Received_Packets[can_number][numMailbox])) {
+                        BCAN_Received_Packets[can_number][numMailbox].mailbox = 0;
+                        BCAN_Received_Packets[can_number][numMailbox].data_low = 0;
+                        BCAN_Received_Packets[can_number][numMailbox].data_high = 0;
+                        BCAN_Received_Packets[can_number][numMailbox].size = 0;
+                    }
+
                     break;
                 case CAN_MOT_TRANSMIT:
                 case CAN_MOT_CONSUMER:
@@ -466,14 +474,14 @@ void BCAN_disable() {
 #endif
 
     // Disable clock for CAN PIO
-#if defined(AT91C_ID_PIOA)    
+#if defined(AT91C_ID_PIOA)
     AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_PIOA);
 #elif defined(AT91C_ID_PIOABCD)
     AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_PIOABCD);
 #elif defined(AT91C_ID_PIOABCDE)
     AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_PIOABCDE);
 #endif
-    
+
     // Disable the CAN0 controller peripheral clock
     AT91C_BASE_PMC->PMC_PCDR = (1 << AT91C_ID_CAN0);
 }
@@ -485,7 +493,7 @@ void BCAN_disable() {
 ///                 allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
 /// \return return 1 in success, otherwise return 0
 //------------------------------------------------------------------------------
-static unsigned char BCAN_BaudRateCalculate( AT91PS_CAN   base_CAN, 
+static unsigned char BCAN_BaudRateCalculate( AT91PS_CAN   base_CAN,
                                      unsigned int baudrate )
 {
     unsigned int BRP;
@@ -567,8 +575,9 @@ static unsigned char BCAN_BaudRateCalculate( AT91PS_CAN   base_CAN,
 
 }
 
-unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1)
-{
+unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1, CAN_Callback callback) {
+    can0.callback = callback;
+
     // CAN Transmit Serial Data
 #if defined (PINS_CAN_TRANSCEIVER_TXD)
     PIO_Configure(pins_can_transceiver_txd, PIO_LISTSIZE(pins_can_transceiver_txd));
@@ -587,7 +596,7 @@ unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1)
 #endif
 
     // Enable clock for CAN PIO
-#if defined(AT91C_ID_PIOA)    
+#if defined(AT91C_ID_PIOA)
     AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOA);
 #elif defined(AT91C_ID_PIOABCD)
     AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_PIOABCD);
@@ -625,6 +634,7 @@ unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1)
 
 #if defined AT91C_BASE_CAN1
     if (initCan1) {
+        can1.callback = callback;
         // Enable CAN1 Clocks
         AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_CAN1);
 

@@ -165,7 +165,7 @@ int main(void)
     PIO_Configure(&s3, 1);
     PIO_InitializeInterrupts(0); 
 
-    if( BCAN_Init( 1000, 0 ) == 1 ) {
+    if( BCAN_Init( 1000, 0, NULL ) == 1 ) {
         printf("INIT OK\n\r");
 
         InitCANInRecept();
