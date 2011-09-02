@@ -101,6 +101,8 @@ void ConfigureTc(void)
     TC_Start(AT91C_BASE_TC0);
 }
 
+unsigned int message_handler(CAN_Packet packet);
+
 /**
  * Initialises the protocol handler and the can bus.
  *
@@ -110,7 +112,7 @@ void proto_init(address_t board_address) {
     state = STARTUP;
 
     // Init incoming mailbox
-    BCAN_Init(BAUD_RATE, 0); // 0 for no CAN1
+    BCAN_Init(BAUD_RATE, 0, message_handler); // 0 for no CAN1
 
     // Init Error rx mailbox
     proto_set_rx_mailbox(ADDR_ERROR_RX);
@@ -188,18 +190,17 @@ message_t proto_read() {
  * received. Decodes packets and intercepts state transition
  * commands.
  */
-void message_handler(CAN_Packet packet) {
+unsigned int message_handler(CAN_Packet packet) {
     message_t msg = {
         .from    = (packet.data_high >> 0x18) & 0xFF,
         .to      = (packet.data_high >> 0x10) & 0xFF,
         .command = (packet.data_high >> 0x08) & 0xFF,
-        .data    = {0x0}
+        .data[0] = packet.data_high & 0xFF,
+        .data[1] = (packet.data_low >> 0x18) & 0xFF,
+        .data[2] = (packet.data_low >> 0x10) & 0xFF,
+        .data[3] = (packet.data_low >> 0x08) & 0xFF,
+        .data[4] =  packet.data_low          & 0xFF,
     };
-    msg.data[0] = packet.data_high & 0xFF;
-    msg.data[1] = (packet.data_low >> 0x18) & 0xFF;
-    msg.data[2] = (packet.data_low >> 0x10) & 0xFF;
-    msg.data[3] = (packet.data_low >> 0x08) & 0xFF;
-    msg.data[4] =  packet.data_low          & 0xFF;
     
     msg.data_len = packet.size;
 
@@ -244,6 +245,7 @@ void message_handler(CAN_Packet packet) {
             state = ERROR;
             break;
     }
+    return 1;
 }
 
 void proto_calibration_complete() {
