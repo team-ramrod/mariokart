@@ -90,8 +90,6 @@ void BCAN_disable();
 
 void BCAN_ResetAllMailbox( void );
 
-void BCAN_ResetTransfer( CanTransfer *pTransfer );
-
 void BCAN_InitMailboxRegisters(
     unsigned int can_number, unsigned int mailbox_number,
     unsigned int acceptance_mask, unsigned int identifier,
