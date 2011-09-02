@@ -15,10 +15,8 @@ int main(void)
 
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
     char_display_init();
-    unsigned int zero = 0;
-    unsigned int one = 1;
-    LED_Configure(zero);
-    LED_Configure(one);
+    LED_Configure(0);
+    LED_Configure(1);
 
     if (! BCAN_Init(1000, 0)) {
         printf("INIT FAIL");
