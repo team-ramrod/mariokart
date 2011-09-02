@@ -1,10 +1,10 @@
+#include <aic/aic.h>
+#include <better_can/can.h>
 #include <board.h>
+#include <char_display.h>
+#include <debug.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
-#include <aic/aic.h>
-#include <debug.h>
-#include <better_can/can.h>
-#include <char_display.h>
 #include <utility/led.h>
 
 #define SOFTWARE_NAME "Demo BCAN client"
@@ -15,17 +15,19 @@ int main(void)
 
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
     char_display_init();
-    LED_Configure(0);
-    LED_Configure(1);
+    unsigned int zero = 0;
+    unsigned int one = 1;
+    LED_Configure(zero);
+    LED_Configure(one);
 
     if (! BCAN_Init(1000, 0)) {
         printf("INIT FAIL");
-        LED_Set(0);
+        LED_Set(1);
         return 1;
     }
 
     printf("INIT OK\n\r");
-    LED_Set(1);
+    LED_Set(0);
 
     BCAN_InitMailboxRegisters( 0, 2, AT91C_CAN_MIDvA, (0x5AC << 18), AT91C_CAN_MOT_RX, 0x0);
 

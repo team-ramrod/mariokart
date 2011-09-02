@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     timer_init();
     speed_init();
 
-    proto_wait();
+    //proto_wait();
 
     for (;;) {
         // Need to add a delay to aim for ~100 Hz here.
