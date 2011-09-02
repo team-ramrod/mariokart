@@ -212,30 +212,6 @@ void proto_refresh() {
     wait_timer = 0;
 }
 
-/**
- * Blocks until all other boards are ready.
- * To be used before and after calibration routine.
- * On exit the board may be in error state so check state after this
- * method returns.
- */
-void proto_wait() {
-    //TODO: depending on the current state, wait on the correct signal from comms
-    //if another signal is received then transition to error state and return
-    int ready_count = 0; // May be better of as a bit mask or something else
-    state = WAITING;
-    while (ready_count < 5) {
-        //listen for waiting messages and note how many are ready
-    }
-}
-
-/**
- * TODO: a seperate function for the comms board to wait on other boards
- */
-void proto_comms_wait() {
-    // TODO: Depending on the current state, transmit state to client boards
-    // and return once the have all ok'd, else return if incorrect reply is
-    // received and transition into error state.
-}
 
 /**
  * A getter for the can handler's state
