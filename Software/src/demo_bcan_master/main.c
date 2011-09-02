@@ -36,7 +36,7 @@ int main(void)
     if (! BCAN_Init(1000, 0)) {
         printf("INIT FAIL");
         LED_Set(0);
-        return;
+        return 1;
     }
 
     printf("INIT OK\n\r");

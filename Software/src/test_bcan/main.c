@@ -71,10 +71,10 @@ void Test_TransmitWithAccMask(
     BCAN_InitMailboxRegisters(0, mailboxNumber, AT91C_CAN_MIDvA & (1<<(18+5)),
             AT91C_CAN_MIDvA & (1<<(18+5)), AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR, 0x0);
     while( CAN_STATUS_SUCCESS !=
-            BCAN_Write(0, mailboxNumber, ((long long)dataHigh << 32) + dataLow, 0x8)){
+            BCAN_Write(0, mailboxNumber, dataHigh, dataLow, 0x8)){
     }
     // wait answer
-    while( CAN_IsInIdle(0) ) {}
+    while( BCAN_IsInIdle(0) ) {}
     // return in recept
     BCAN_InitMailboxRegisters(0, mailboxNumber, 0,
             AT91C_CAN_MIDvA & (0x0B<<18), AT91C_CAN_MOT_RX, 0x0);
@@ -97,10 +97,10 @@ void Test_TransmitWithoutAccMask(
     BCAN_InitMailboxRegisters(0, mailboxNumber, 0x0,
             AT91C_CAN_MIDvA & (0xB<<18), AT91C_CAN_MOT_TX | AT91C_CAN_PRIOR, 0x0);
     while( CAN_STATUS_SUCCESS !=
-            BCAN_Write(0, mailboxNumber, ((long long)dataHigh << 32) + dataLow, 0x8)){
+            BCAN_Write(0, mailboxNumber, dataHigh, dataLow, 0x8)){
     }
     // wait answer
-    while( CAN_IsInIdle(0) ) {}
+    while( BCAN_IsInIdle(0) ) {}
     // return in recept for all mailbox
     InitCANInRecept();
 }                   
@@ -239,8 +239,8 @@ int main(void)
                 }
             }
             if (packet.size > 0) {
-                printf("Data (Low/High): %llX\n\r", 
-                    packet.data);
+                printf("Data (Low/High): %8X%8X\n\r", 
+                    packet.data_low,packet.data_high);
                     CharReceive = -1;
             }
         }

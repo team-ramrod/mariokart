@@ -186,18 +186,23 @@ message_t proto_read() {
  * Attempts a write and returns status code (success == 0)
  */
 int proto_write(message_t msg) {
-    unsigned long long can_data = 0;
+    unsigned int can_data_low = 0, can_data_high;
     int can_num = 0;
 
     TRACE_INFO("Proto Transmit to: %02d - Command: %d\n\r",
             msg.to,
             msg.command);
 
-    for (int i = 0; i < msg.data_len; i++) {
-        can_data |= (msg.data[i] << (i*8));
-    }
+    can_data_high = ((msg.to & 0xFF) << 0x18)
+                  | ((msg.from & 0xFF) << 0x10)
+                  | (msg.data[0] << 0x08)
+                  |  msg.data[1];
+    can_data_low  = (msg.data[2] << 0x18)
+                  | (msg.data[3] << 0x10)
+                  | (msg.data[4] << 0x08)
+                  |  msg.data[5];
 
-    return BCAN_Write(can_num, msg.to, can_data, msg.data_len + 3);
+    return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
 }
 
 /**
