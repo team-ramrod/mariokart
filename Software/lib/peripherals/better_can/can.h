@@ -64,7 +64,7 @@ typedef struct
 } CanTransfer;
 
 typedef struct {
-    unsigned int status;
+    unsigned int mailbox;
     unsigned long long data;
     unsigned int size;
 } CAN_Packet;
@@ -114,5 +114,8 @@ unsigned int BCAN_Write(
  *          or {CAN_STATUS_SUCCESS,data,size}.
  */
 CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox);
+CAN_Packet BCAN_ReadAny(unsigned int can_number);
 
+CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox);
+CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number);
 #endif /* BCAN_H */

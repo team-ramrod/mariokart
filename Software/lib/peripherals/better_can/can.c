@@ -32,6 +32,7 @@ typedef struct {
     unsigned int size;
     unsigned int test_status;
     unsigned int mailbox_number;
+    unsigned int active_mailboxes;
 } CAN_t;
 
 static CAN_t can0;
@@ -80,6 +81,8 @@ static AT91PS_CAN_MB CAN_Mailboxes[2][NUM_MAILBOX_MAX] = {
     },
 #endif /* AT91C_BASE_CAN1 */
 };
+
+static CAN_Packet BCAN_Received_Packets[2][NUM_MAILBOX_MAX];
 
 static void BCAN_ErrorHandling( unsigned int status, unsigned char can_number)
 {
@@ -133,18 +136,17 @@ static void BCAN_ErrorHandling( unsigned int status, unsigned char can_number)
 
 static void BCAN_Handler(unsigned int can_number) {
     CAN_t *can;
+    AT91PS_CAN base_can;
     unsigned int status;
 
     switch (can_number) {
     case 0:
-        status = (AT91C_BASE_CAN0->CAN_SR) & (AT91C_BASE_CAN0->CAN_IMR);
-        AT91C_BASE_CAN0->CAN_IDR = status;
+        base_can = AT91C_BASE_CAN0;
         can = &can0;
         break;
 #ifdef AT91C_BASE_CAN1
     case 1:
-        status = (AT91C_BASE_CAN1->CAN_SR) & (AT91C_BASE_CAN1->CAN_IMR);
-        AT91C_BASE_CAN1->CAN_IDR = status;
+        base_can = AT91C_BASE_CAN1;
         can = &can1;
         break;
 #endif
@@ -153,10 +155,13 @@ static void BCAN_Handler(unsigned int can_number) {
         break;
     }
 
+    status = (base_can->CAN_SR) & (base_can->CAN_IMR);
+
     TRACE_DEBUG("CAN%d status=0x%X\n\r", can_number, status);
     if (status & AT91C_CAN_WAKEUP) {
         can->test_status = AT91C_TEST_OK;
         can->state = CAN_IDLE;
+        base_can->CAN_IDR = status;
     }
     // Mailbox event ?
     else if (status & 0x0000FFFF) {
@@ -182,12 +187,10 @@ static void BCAN_Handler(unsigned int can_number) {
                     TRACE_DEBUG("CAN_MB_MID 0x%X\n\r", (mailbox->CAN_MB_MID & AT91C_CAN_MIDvA) >> 18);
 
                     TRACE_DEBUG("can_number %d\n\r", can_number);
-                    if( can_number == 0 ) {
-                        can->data = ((unsigned long long)mailbox->CAN_MB_MDH << 32) + mailbox->CAN_MB_MDL;
-                        can->size = (can_msr >> 16) & 0x0F;
-                        can->mailbox_number = numMailbox;
-                        can->state = CAN_IDLE;
-                    }
+                    BCAN_Received_Packets[can_number][numMailbox].mailbox = numMailbox;
+                    BCAN_Received_Packets[can_number][numMailbox].data = ((unsigned long long)mailbox->CAN_MB_MDH << 32) + mailbox->CAN_MB_MDL; 
+                    BCAN_Received_Packets[can_number][numMailbox].size = (can_msr >> 16) & 0x0F; 
+                    can->state = CAN_IDLE;
                     // Message Data has been received
                     mailbox->CAN_MB_MCR = AT91C_CAN_MTCR;
                     break;
@@ -197,6 +200,7 @@ static void BCAN_Handler(unsigned int can_number) {
                     TRACE_DEBUG("Length 0x%X\n\r", (can_msr>>16)&0xF);
                     TRACE_DEBUG("can_number %d\n\r", can_number);
                     can->state = CAN_IDLE;
+                    base_can->CAN_IDR = (1 << numMailbox);
                     break;
                 default:
                     TRACE_ERROR("Error in MOT\n\r");
@@ -208,6 +212,7 @@ static void BCAN_Handler(unsigned int can_number) {
 
     if (status & 0xFFCF0000) {
         BCAN_ErrorHandling(status, can_number);
+        base_can->CAN_IDR = status & 0xFFCF0000;
     }
 }
 
@@ -231,6 +236,22 @@ void BCAN_InitMailboxRegisters(
 ) {
     AT91PS_CAN_MB CAN_Mailbox = CAN_Mailboxes[can_number][mailbox_number];
 
+    AT91PS_CAN base_can;
+
+    switch (can_number) {
+        case 0:
+            base_can = AT91C_BASE_CAN0;
+            break;
+#ifdef AT91_BASE_CAN1
+        case 1:
+            base_can = AT91C_BASE_CAN1;
+            break;
+#endif
+        default:
+            TRACE_ERROR("Unknown CAN: %X\n\r", can_number);
+            break;
+    }
+
     // MailBox Control Register
     CAN_Mailbox->CAN_MB_MCR = 0x0;
     // MailBox Mode Register
@@ -252,6 +273,13 @@ void BCAN_InitMailboxRegisters(
     CAN_Mailbox->CAN_MB_MMR = mode_reg;
     // MailBox Control Register
     CAN_Mailbox->CAN_MB_MCR = control_reg;
+
+    if ( ((mode_reg & AT91C_CAN_MOT_RXOVERWRITE) == AT91C_CAN_MOT_RXOVERWRITE)
+      || ((mode_reg & AT91C_CAN_MOT_RX) == AT91C_CAN_MOT_RX)) {
+        base_can->CAN_IER = (1 << mailbox_number);
+    } else {
+        base_can->CAN_IDR = (1 << mailbox_number);
+    }
 }
 
 
@@ -340,10 +368,6 @@ unsigned int BCAN_Write(
             break;
     }
 
-    if (can->state == CAN_RECIEVING)  {
-        can->state = CAN_IDLE;
-    }
-
     if (can->state != CAN_IDLE)  {
         return CAN_STATUS_LOCKED;
     }
@@ -352,6 +376,7 @@ unsigned int BCAN_Write(
 
     mailbox->CAN_MB_MDL = data >> 0x20;
     mailbox->CAN_MB_MDH = data & 0x20;
+    mailbox->CAN_MB_MCR = (size & 0xF) << 0x10;
 
     TRACE_DEBUG("CAN_Write\n\r");
     can->state = CAN_SENDING;
@@ -363,48 +388,37 @@ unsigned int BCAN_Write(
 
 
 CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox) {
-    CAN_t *can;
-    AT91PS_CAN base_can;
-    CAN_Packet packet = {
-        .status = CAN_STATUS_LOCKED,
-        .data   = 0x0,
-        .size   = 0x0
-    };
+    return BCAN_Received_Packets[can_number][mailbox];
+}
 
-    switch (can_number) {
-        case 0:
-            can = &can0;
-            base_can = AT91C_BASE_CAN0;
-            break;
-#ifdef AT91_BASE_CAN1
-        case 1:
-            can = &can1;
-            base_can = AT91C_BASE_CAN1;
-            break;
-#endif
-        default:
-            TRACE_ERROR("Unknown CAN: %X\n\r", can_number);
-            break;
+CAN_Packet BCAN_ReadAny(unsigned int can_number) {
+    CAN_Packet packet = { 0 };
+    for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
+        if (BCAN_Received_Packets[can_number][i].size > 0) {
+            packet = BCAN_Received_Packets[can_number][i];
+        }
     }
+    return packet;
+}
 
-    if (can->state != CAN_IDLE)  {
-        return packet;
+CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox) {
+    CAN_Packet packet = BCAN_Received_Packets[can_number][mailbox];
+    BCAN_Received_Packets[can_number][mailbox].mailbox = 0;
+    BCAN_Received_Packets[can_number][mailbox].data = 0;
+    BCAN_Received_Packets[can_number][mailbox].size = 0;
+    return packet;
+}
+
+CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number) {
+    CAN_Packet packet = { 0 };
+    for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
+        if (BCAN_Received_Packets[can_number][i].size > 0) {
+            packet = BCAN_Received_Packets[can_number][i];
+            BCAN_Received_Packets[can_number][i].mailbox = 0;
+            BCAN_Received_Packets[can_number][i].data = 0;
+            BCAN_Received_Packets[can_number][i].size = 0;
+        }
     }
-
-    TRACE_DEBUG("CAN_Read\n\r");
-    can->state = CAN_RECIEVING;
-
-    // enable interrupt
-    base_can->CAN_IER = (1 << mailbox);
-
-    while (can->state != CAN_IDLE && can->mailbox_number != mailbox) {
-        // Wait
-    }
-
-    packet.status = CAN_STATUS_SUCCESS;
-    packet.data = can->data;
-    packet.size = can->size;
-
     return packet;
 }
 
