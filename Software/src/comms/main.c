@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
@@ -35,14 +34,6 @@ int main(int argc, char *argv[]) {
     //Main initialisations
     char_display_init();
     switches_init();
-
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
 
     while(1) {
         char_display_tick();
