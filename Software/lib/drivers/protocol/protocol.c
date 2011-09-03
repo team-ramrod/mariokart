@@ -13,6 +13,7 @@
 #define PROTO_ADDR_PRIORITY 0x0001
 #define PROTO_ADDR_SUFFEX 0x1000
 
+#define ACK_TIMEOUT 500
 
 // The current state as per our state diagram
 static state_t state;
@@ -184,7 +185,9 @@ void reply_to_comms(command_t cmd) { // TODO return type
         .data_len = 0,
     };
 
-    while (CAN_STATUS_LOCKED == proto_write(reply)); // TODO: timeout
+    wait_timer = 0;
+
+    while (CAN_STATUS_SUCCESS =! proto_write(reply) && wait_timer < ACK_TIMEOUT); // TODO: timeout
 }
 
 /**
