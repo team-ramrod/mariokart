@@ -8,7 +8,6 @@
 //         Headers
 //------------------------------------------------------------------------------
 #include <actuator_driver.h>
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
@@ -29,8 +28,6 @@
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
-
 //minimum angle wheel can be turned to in degrees
 int steering_min_angle;
 
@@ -48,7 +45,7 @@ const Pin pin_lim_down = LIM_SW_DOWN;
 //         Interrupt Handlers
 //------------------------------------------------------------------------------
 //triggers error on limit switches (ISR must not be set till after calibration)
-void LIMIT_ISR(void) {
+void LIMIT_ISR(const Pin *pin) {
     if (!PIO_Get(&pin_lim_up) || !PIO_Get(&pin_lim_down)) {
         //something wrong with steering so stops motor
         act_driver_drive(0);
@@ -93,8 +90,8 @@ int get_steering_desired_pos(void) {
 void steering_limit_sw_init(void) {
 
     // Initialize interrupts
-    PIO_ConfigureIt(&pin_lim_up, (void (*)(const Pin *)) LIMIT_ISR);
-    PIO_ConfigureIt(&pin_lim_down, (void (*)(const Pin *)) LIMIT_ISR);
+    PIO_ConfigureIt(&pin_lim_up, LIMIT_ISR);
+    PIO_ConfigureIt(&pin_lim_down, LIMIT_ISR);
     PIO_EnableIt(&pin_lim_up);
     PIO_EnableIt(&pin_lim_down);
 
@@ -181,14 +178,6 @@ int main(int argc, char *argv[]) {
     encoder_init();
     act_driver_init();
 
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
-
     //sets pins as inputs
     PIO_Configure(&pin_lim_up, 1);
     PIO_Configure(&pin_lim_down, 1);
@@ -203,11 +192,10 @@ int main(int argc, char *argv[]) {
     set_steering(200);
 
     TRACE_INFO("Steering board initialization completed\n\r");
-
-    //infinite loop running PID controller
     while (1) {
         int speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
         act_driver_drive(speed);
+        
     }
 
     return 0;

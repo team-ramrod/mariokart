@@ -13,6 +13,8 @@
 #define PROTO_ADDR_PRIORITY 0x0001
 #define PROTO_ADDR_SUFFEX 0x1000
 
+#define ACK_TIMEOUT 500
+
 // The current state as per our state diagram
 static state_t state;
 
@@ -22,6 +24,8 @@ static volatile int wait_timer = 0;
 static error_callback error_callback_function = NULL;
 
 static bool ready_to_run = false;
+
+static address_t local_address;
 
 //------------------------------------------------------------------------------
 /// Interrupt handler for TC0 interrupt.
@@ -33,8 +37,8 @@ void ISR_Tc0(void)
 
     wait_timer += 250;
 
-    if (wait_timer >= TIMEOUT) {
-        state = ERROR;
+    if (wait_timer >= TIMEOUT && state == RUNNING) {
+        proto_state_error();
     }
 }
 
@@ -101,86 +105,8 @@ void ConfigureTc(void)
     TC_Start(AT91C_BASE_TC0);
 }
 
-/**
- * Depending on demand this function may need a different
- * signature. For now it is designed to pop an int off the end of a queue
- * or return 0 if no data has been receieved
- */
-message_t proto_read() {
-    message_t msg = {
-        .from    = 0x0,
-        .to      = 0x0,
-        .command = CMD_NONE,
-        .data    = {0x0}
-    };
-    if (proto_msg_buff_length()) {
-        msg = proto_msg_buff_pop();
-    }
-    return msg;
-}
+unsigned int message_handler(CAN_Packet packet);
 
-/**
- * To be called asynchronously when a new can frame is
- * received. Decodes packets and intercepts state transition
- * commands.
- */
-void message_handler(CAN_Packet packet) {
-    message_t msg = {
-        .from    = (packet.data_high >> 0x18) & 0xFF,
-        .to      = (packet.data_high >> 0x10) & 0xFF,
-        .command = (packet.data_high >> 0x08) & 0xFF,
-        .data    = {0x0}
-    };
-    msg.data[0] = packet.data_high & 0xFF;
-    msg.data[1] = (packet.data_low >> 0x18) & 0xFF;
-    msg.data[2] = (packet.data_low >> 0x10) & 0xFF;
-    msg.data[3] = (packet.data_low >> 0x08) & 0xFF;
-    msg.data[4] =  packet.data_low          & 0xFF;
-    
-    msg.data_len = packet.size;
-
-    switch (state) {
-        case STARTUP:
-            switch (msg.command) {
-                case CMD_REQ_CALIBRATE:
-                    //send CMD_ACK_CALIBRATE
-                    break;
-                case CMD_CALIBRATE:
-                    state = CALIBRATING;
-                    break;
-                default:
-                    state = ERROR;
-                    break;
-            }
-            break;
-        case CALIBRATING:
-            switch(msg.command) {
-                case CMD_REQ_CALIBRATE:
-                    /*
-                    if (ready_to_run) 
-                      //send CMD_ACK_RUN
-                    else 
-                        //send CMD_NO
-                    */
-                    break;
-                case CMD_RUN:
-                    state = RUNNING;
-                    break;
-                default:
-                    state = ERROR;
-                    break;
-            }
-            break;
-        case RUNNING:
-            proto_msg_buff_push(msg);
-            break;
-        case ERROR:
-            break;
-        default:
-            state = ERROR;
-            break;
-    }
-}
 
 /**
  * Initialises the protocol handler and the can bus.
@@ -189,6 +115,8 @@ void message_handler(CAN_Packet packet) {
 void proto_init(address_t board_address) {
     TRACE_INFO("Running proto_init\n\r");
     state = STARTUP;
+
+    local_address = board_address;
 
     // Init incoming mailbox
     BCAN_Init(BAUD_RATE, 0, message_handler); // 0 for no CAN1
@@ -246,9 +174,103 @@ void proto_init(address_t board_address) {
     ConfigureTc();
 }
 
+/**
+ * Sends a command without data back to the comms board.
+ * Times out and clears sending buffer if connection unavailable
+ */
+void reply_to_comms(command_t cmd) { // TODO return type
+    message_t reply = {
+        .from     = local_address,
+        .to       = ADDR_COMMS,
+        .command  = cmd,
+        .data_len = 0,
+    };
+
+    wait_timer = 0;
+
+    while (CAN_STATUS_SUCCESS != proto_write(reply) && wait_timer < ACK_TIMEOUT); // TODO: timeout
+}
+
+message_t proto_read() {
+    message_t msg = {
+        .from    = 0x0,
+        .to      = 0x0,
+        .command = CMD_NONE,
+        .data    = {0x0}
+    };
+    if (proto_msg_buff_length()) {
+        msg = proto_msg_buff_pop();
+    }
+    return msg;
+}
+
+/**
+ * To be called asynchronously when a new can frame is
+ * received. Decodes packets and intercepts state transition
+ * commands.
+ */
+unsigned int message_handler(CAN_Packet packet) {
+    message_t msg = {
+        .from     = (packet.data_high >> 0x18) & 0xFF,
+        .to       = (packet.data_high >> 0x10) & 0xFF,
+        .command  = (packet.data_high >> 0x08) & 0xFF,
+        .data_len = packet.size,
+        .data[0]  = packet.data_high & 0xFF,
+        .data[1]  = (packet.data_low >> 0x18) & 0xFF,
+        .data[2]  = (packet.data_low >> 0x10) & 0xFF,
+        .data[3]  = (packet.data_low >> 0x08) & 0xFF,
+        .data[4]  =  packet.data_low          & 0xFF,
+    };
+    
+    switch (state) {
+        case STARTUP:
+            switch (msg.command) {
+                case CMD_REQ_CALIBRATE:
+                    reply_to_comms(CMD_ACK_CALIBRATE);
+    
+                    break;
+                case CMD_CALIBRATE:
+                    state = CALIBRATING;
+                    break;
+                default:
+                    proto_state_error();
+                    break;
+            }
+            break;
+        case CALIBRATING:
+            switch(msg.command) {
+                case CMD_REQ_CALIBRATE:
+                    if (ready_to_run)
+                        reply_to_comms(CMD_ACK_RUN);
+                    else 
+                        reply_to_comms(CMD_NO);
+                    break;
+                case CMD_RUN:
+                    proto_refresh();
+                    state = RUNNING;
+                    break;
+                default:
+                    proto_state_error();
+                    break;
+            }
+            break;
+        case RUNNING:
+            proto_msg_buff_push(msg);
+            break;
+        case ERROR:
+            break;
+        default:
+            proto_state_error();
+            break;
+    }
+    return 1;
+}
+
+
 void proto_calibration_complete() {
     ready_to_run = true;
 }   
+
 
 /**
  * Attempts a write and returns status code (success == 0)
@@ -300,6 +322,7 @@ void proto_set_error_callback(error_callback callback) {
  */
 void proto_state_error() {
     state = ERROR;
+    //TODO bcan_clear_send_buffer();
     if (error_callback_function != NULL) {
         error_callback_function();
     }

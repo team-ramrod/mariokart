@@ -7,10 +7,10 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
+#include <protocol/protocol.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 
@@ -22,7 +22,6 @@
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -37,13 +36,7 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
 
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
+    proto_init(ADDR_COMMS);
 
     while(1) {
         char_display_tick();
@@ -52,3 +45,36 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+/*
+    
+    switch (proto_state()) {
+        case CALIBRATING: // waiting for all boards to acknowledge startup state
+            proto_comms_wait();
+            break;
+        case STARTUP: // Waiting for all boards to finish calibration
+            proto_comms_wait();
+            break;
+        case RUNNING: // Normal state
+            while (1) {
+                // Read USB input
+                // Send set points
+                // Check for acks
+                // Receive data from sensor
+                // Forward sensor data to latptop
+                proto_refresh();
+                // Any issues => state = ERROR; break;
+            }
+            break;
+        default: // ERROR
+            while(1) {
+                //broadcast ERROR signal
+                //send ERROR signal through USB
+                // If reset signal received through USB
+                // then broadcast it, pause momentarily
+                // abd transition to CALIBRATING state.
+                // (If boards still aren't ready it will send
+                // us straight back to here)
+            }
+            break;
+    }
+*/

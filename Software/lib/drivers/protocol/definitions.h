@@ -3,7 +3,7 @@
 
 /**
  * See
- *     https://github.com/team-ramrod/mariokart/wiki/Protocol
+ * https://github.com/team-ramrod/mariokart/wiki/Protocol
  * for a more in-depth decription of the protocol.
  */
 
