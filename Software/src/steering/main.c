@@ -45,7 +45,7 @@ const Pin pin_lim_down = LIM_SW_DOWN;
 //         Interrupt Handlers
 //------------------------------------------------------------------------------
 //triggers error on limit switches (ISR must not be set till after calibration)
-void LIMIT_ISR(void) {
+void LIMIT_ISR(const Pin *pin) {
     if (!PIO_Get(&pin_lim_up) || !PIO_Get(&pin_lim_down)) {
         //something wrong with steering so stops motor
         act_driver_drive(0);
@@ -90,8 +90,8 @@ int get_steering_desired_pos(void) {
 void steering_limit_sw_init(void) {
 
     // Initialize interrupts
-    PIO_ConfigureIt(&pin_lim_up, (void (*)(const Pin *)) LIMIT_ISR);
-    PIO_ConfigureIt(&pin_lim_down, (void (*)(const Pin *)) LIMIT_ISR);
+    PIO_ConfigureIt(&pin_lim_up, LIMIT_ISR);
+    PIO_ConfigureIt(&pin_lim_down, LIMIT_ISR);
     PIO_EnableIt(&pin_lim_up);
     PIO_EnableIt(&pin_lim_down);
 
@@ -192,11 +192,10 @@ int main(int argc, char *argv[]) {
     set_steering(200);
 
     TRACE_INFO("Steering board initialization completed\n\r");
-
-    //infinite loop running PID controller
     while (1) {
         int speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
         act_driver_drive(speed);
+        
     }
 
     return 0;
