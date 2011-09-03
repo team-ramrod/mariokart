@@ -11,6 +11,8 @@
 #include <components/debug.h>
 #include <components/switches.h>
 #include <protocol/protocol.h>
+#include <tc/tc.h>
+#include <aic/aic.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 
@@ -48,7 +50,7 @@ int main(int argc, char *argv[]) {
             case STARTUP:
                 if (timeout) {
                     timeout = false;
-                    response_count = 0;
+                    responses = 0;
                     // broadcast CMD_REQ_CALIBRATION 
                 } 
 
@@ -105,7 +107,7 @@ void ISR_Tc1(void)
 //------------------------------------------------------------------------------
 /// Configure Timer Counter 1 to generate an interrupt every 100ms.
 //------------------------------------------------------------------------------
-void ConfigureTc(void)
+void ConfigureTimer(void)
 {
     unsigned int div;
     unsigned int tcclks;
