@@ -38,24 +38,13 @@ int main(int argc, char *argv[]) {
 
     proto_init(ADDR_COMMS);
 
-    while(1) {
-        char_display_tick();
-    }
-
-    return 0;
-}
-
-/*
-    
-    switch (proto_state()) {
-        case CALIBRATING: // waiting for all boards to acknowledge startup state
-            proto_comms_wait();
-            break;
-        case STARTUP: // Waiting for all boards to finish calibration
-            proto_comms_wait();
-            break;
-        case RUNNING: // Normal state
-            while (1) {
+    while(1) {    
+        switch (proto_state()) {
+            case STARTUP: // waiting for all boards to acknowledge startup state
+                break;
+            case CALIBRATING: // Waiting for all boards to finish calibration
+                break;
+            case RUNNING: // Normal state
                 // Read USB input
                 // Send set points
                 // Check for acks
@@ -63,10 +52,8 @@ int main(int argc, char *argv[]) {
                 // Forward sensor data to latptop
                 proto_refresh();
                 // Any issues => state = ERROR; break;
-            }
-            break;
-        default: // ERROR
-            while(1) {
+                break;
+            default: // ERROR
                 //broadcast ERROR signal
                 //send ERROR signal through USB
                 // If reset signal received through USB
@@ -74,7 +61,12 @@ int main(int argc, char *argv[]) {
                 // abd transition to CALIBRATING state.
                 // (If boards still aren't ready it will send
                 // us straight back to here)
-            }
-            break;
+                break;
+        }
     }
+
+    return 0;
+}
+
+/*
 */
