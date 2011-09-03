@@ -13,9 +13,6 @@
 #define PROTO_ADDR_PRIORITY 0x0001
 #define PROTO_ADDR_SUFFEX 0x1000
 
-#ifndef BOARD_ADDRESS
-    #define BOARD_ADDRESS ADDR_MOTOR
-#endif // TODO: DELETEME, define in client file
 
 // The current state as per our state diagram
 static state_t state;
@@ -26,6 +23,8 @@ static volatile int wait_timer = 0;
 static error_callback error_callback_function = NULL;
 
 static bool ready_to_run = false;
+
+static address_t local_address;
 
 //------------------------------------------------------------------------------
 /// Interrupt handler for TC0 interrupt.
@@ -38,7 +37,7 @@ void ISR_Tc0(void)
     wait_timer += 250;
 
     if (wait_timer >= TIMEOUT && state == RUNNING) {
-        state = ERROR;
+        proto_state_error();
     }
 }
 
@@ -115,6 +114,8 @@ void proto_init(address_t board_address) {
     TRACE_INFO("Running proto_init\n\r");
     state = STARTUP;
 
+    local_address = board_address;
+
     // Init incoming mailbox
     BCAN_Init(BAUD_RATE, 0, message_handler); // 0 for no CAN1
 
@@ -177,7 +178,7 @@ void proto_init(address_t board_address) {
  */
 void reply_to_comms(command_t cmd) { // TODO return type
     message_t reply = {
-        .from     = BOARD_ADDRESS,
+        .from     = local_address,
         .to       = ADDR_COMMS,
         .command  = cmd,
         .data_len = 0,
@@ -233,7 +234,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     state = CALIBRATING;
                     break;
                 default:
-                    state = ERROR;
+                    proto_state_error();
                     break;
             }
             break;
@@ -250,7 +251,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     state = RUNNING;
                     break;
                 default:
-                    state = ERROR;
+                    proto_state_error();
                     break;
             }
             break;
@@ -260,7 +261,7 @@ unsigned int message_handler(CAN_Packet packet) {
         case ERROR:
             break;
         default:
-            state = ERROR;
+            proto_state_error();
             break;
     }
     return 1;
@@ -321,6 +322,7 @@ void proto_set_error_callback(error_callback callback) {
  */
 void proto_state_error() {
     state = ERROR;
+    //TODO bcan_clear_send_buffer();
     if (error_callback_function != NULL) {
         error_callback_function();
     }
