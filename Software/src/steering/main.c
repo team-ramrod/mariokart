@@ -23,7 +23,7 @@
 //angle in degrees that the wheel may come within the end of its travel
 //due to some round processes in converting from pulses to degrees this 
 //must not be set to 0
-#define SAFTEY_MARGIN 10
+#define SAFETY_MARGIN 10
 
 //------------------------------------------------------------------------------
 //         Local variables
@@ -63,10 +63,10 @@ void set_steering(int angle) {
 
     angle = angle + ((steering_max_angle - steering_min_angle) / 2) + steering_min_angle;
 
-    if (angle > steering_max_angle - SAFTEY_MARGIN) {
-        angle = steering_max_angle - SAFTEY_MARGIN;
-    } else if (angle < steering_min_angle + SAFTEY_MARGIN) {
-        angle = steering_min_angle + SAFTEY_MARGIN;
+    if (angle > steering_max_angle - SAFETY_MARGIN) {
+        angle = steering_max_angle - SAFETY_MARGIN;
+    } else if (angle < steering_min_angle + SAFETY_MARGIN) {
+        angle = steering_min_angle + SAFETY_MARGIN;
     }
 
     //convert angle to pulses and account for any offset
@@ -77,7 +77,7 @@ void set_steering(int angle) {
 //gets the steering wheels current position in degrees
 int get_steering_pos(void) {
     return (((encoder_position_output * 360.0) / ENCODER_PULSES_PER_REV)) -
-            ((steering_max_angle - steering_min_angle) / 2) - steering_min_angle;
+        ((steering_max_angle - steering_min_angle) / 2) - steering_min_angle;
 }
 
 //gets where the steering wheel is moving to in degrees
@@ -182,22 +182,40 @@ int main(int argc, char *argv[]) {
     PIO_Configure(&pin_lim_up, 1);
     PIO_Configure(&pin_lim_down, 1);
 
-    //calibrate steering (commented out till limit switches in place)
-    cal_steering();
-
-    //now steering is calibrated active limit switch interrupts
-    steering_limit_sw_init();
-
     //sets positon to turn wheel to in degrees (used until can bus in place)
     set_steering(200);
 
-    TRACE_INFO("Steering board initialization completed\n\r");
-    while (1) {
-        int speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
-        act_driver_drive(speed);
-        
-    }
+    proto_init(ADDR_STEERING);
 
+    TRACE_INFO("Steering board initialization completed\n\r");
+
+    while (1) {
+        switch (proto_state()) {
+            case STARTUP:
+                break;
+            case CALIBRATING: 
+                //ideally this would run one iteration and return
+                //however that isn't necessary
+                cal_steering(); 
+                steering_limit_sw_init();
+                break;
+            case RUNNING: // Normal state
+                // if (incoming data) {
+                //     if (data is valid) {
+                //         setpoint = data;
+                //         proto_refresh();
+                //     } else {
+                //         proto_set_error();
+                //     }
+                // }
+                int speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
+                act_driver_drive(speed);
+                break;
+            default: // ERROR
+                //broadcast ERROR signal
+                break;
+        }
+    }
     return 0;
 }
 
