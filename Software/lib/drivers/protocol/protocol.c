@@ -30,6 +30,8 @@ static bool ready_to_run = false;
 // The address of current board
 static address_t local_address;
 
+static message_t error_message;
+
 /**
  * Interrupt handler for TC0, increments a counter and checks
  * to see if the the program has timed out. Sends the board into
@@ -42,9 +44,12 @@ void ISR_Tc0(void)
 
     wait_timer += 250;
 
-    if (wait_timer >= TIMEOUT && state == RUNNING) {
+    if (wait_timer >= TIMEOUT && state == RUNNING) 
         proto_state_error();
-    }
+
+    // broadcast the error message
+    if (state == ERROR) 
+        proto_write(error_message);
 }
 
 /*
@@ -134,6 +139,12 @@ void proto_init(address_t board_address) {
 
     // Init ADDR_BROADCAST_TX mailbox
     proto_set_tx_mailbox(ADDR_BROADCAST_TX,ADDR_BROADCAST_RX);
+
+    // Set up the error broadcast message
+    error_message.from     = board_address;
+    error_message.to       = ADDR_ERROR_RX;
+    error_message.command  = CMD_ERROR;
+    error_message.data_len = 0;
 
     switch (board_address) {
         case ADDR_BRAKE:
