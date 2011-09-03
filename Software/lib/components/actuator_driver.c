@@ -183,7 +183,7 @@ void act_driver_drive(int speed) {
     if(new_duty < 10){
         new_duty = 10;
     }
-
+    
     //if changing directions switch PWM pins
     if ((prev_speed >= 0) && (speed <= 0)) {
         //disables PWM channel
@@ -212,13 +212,13 @@ void act_driver_drive(int speed) {
         //enables the other channel
         PWMC_EnableChannel(ACT_DRIVER_CHANNEL_CLOCKWISE);
     }
-
+    
     //sets the duty cycle
     if (speed > 0) {
         PWMC_SetDutyCycle(ACT_DRIVER_CHANNEL_CLOCKWISE, new_duty);
     } else {
         PWMC_SetDutyCycle(ACT_DRIVER_CHANNEL_ANTICLOCKWISE, new_duty);
     }
-
+    
     prev_speed = speed;
 }

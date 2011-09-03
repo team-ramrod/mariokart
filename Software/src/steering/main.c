@@ -192,11 +192,10 @@ int main(int argc, char *argv[]) {
     set_steering(200);
 
     TRACE_INFO("Steering board initialization completed\n\r");
-
-    //infinite loop running PID controller
     while (1) {
         int speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
         act_driver_drive(speed);
+        
     }
 
     return 0;
