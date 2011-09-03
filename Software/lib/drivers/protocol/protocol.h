@@ -41,20 +41,17 @@ int proto_write(message_t msg);
  */
 void proto_refresh();
 
-/**
- * Blocks until comms board gives the OK.
- */
-void proto_wait();
-
-/**
- * Blocks until all other boards are ready.
- */
-void proto_comms_wait();
 
 /**
  * A getter for the can handler's state
  */
 state_t proto_state();
+
+/**
+ * To be called by the client when it is ready to move
+ * past the calibration state.
+ */
+void proto_calibration_complete();
 
 /**
  * Set the callback function that is called when error state is set

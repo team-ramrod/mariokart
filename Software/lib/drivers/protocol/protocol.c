@@ -21,15 +21,20 @@ static state_t state;
 // The watchdog timer
 static volatile int wait_timer = 0;
 
+// The client function to call when entering the error state 
 static error_callback error_callback_function = NULL;
 
+// Set by the client when it is finished calibration
 static bool ready_to_run = false;
 
+// The address of current board
 static address_t local_address;
 
-//------------------------------------------------------------------------------
-/// Interrupt handler for TC0 interrupt.
-//------------------------------------------------------------------------------
+/**
+ * Interrupt handler for TC0, increments a counter and checks
+ * to see if the the program has timed out. Sends the board into
+ * and error state if this happens.
+ */
 void ISR_Tc0(void)
 {
     // Clear status bit to acknowledge interrupt
@@ -42,9 +47,9 @@ void ISR_Tc0(void)
     }
 }
 
-//------------------------------------------------------------------------------
-/// Internal function for setting up a tx mailbox
-//------------------------------------------------------------------------------
+/*
+ * Internal function for setting up a tx mailbox
+ */
 void proto_set_tx_mailbox(address_t from_address, address_t dest_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
@@ -62,9 +67,9 @@ void proto_set_tx_mailbox(address_t from_address, address_t dest_address) {
             mode_reg, control_reg);
 }
 
-//------------------------------------------------------------------------------
-/// Internal function for setting up a rx mailbox
-//------------------------------------------------------------------------------
+/**
+ * Internal function for setting up a rx mailbox
+ */
 void proto_set_rx_mailbox(address_t rx_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
@@ -80,10 +85,10 @@ void proto_set_rx_mailbox(address_t rx_address) {
     BCAN_InitMailboxRegisters(can_number, mailbox_number, acceptance_mask, identifier, mode_reg, control_reg);
 }
 
-//------------------------------------------------------------------------------
-/// Configure Timer Counter 0 to generate an interrupt every 250ms.
-// TODO: change this to a higher frequency for better accuracy
-//------------------------------------------------------------------------------
+/**
+ * Configure Timer Counter 0 to generate an interrupt every 250ms.
+ * TODO: change this to a higher frequency for better accuracy
+ */
 void ConfigureTc(void)
 {
     unsigned int div;
@@ -178,7 +183,7 @@ void proto_init(address_t board_address) {
  * Sends a command without data back to the comms board.
  * Times out and clears sending buffer if connection unavailable
  */
-void reply_to_comms(command_t cmd) { // TODO return type
+unsigned int reply_to_comms(command_t cmd) { 
     message_t reply = {
         .from     = local_address,
         .to       = ADDR_COMMS,
@@ -187,8 +192,8 @@ void reply_to_comms(command_t cmd) { // TODO return type
     };
 
     wait_timer = 0;
-
-    while (CAN_STATUS_SUCCESS != proto_write(reply) && wait_timer < ACK_TIMEOUT); // TODO: timeout
+    while (CAN_STATUS_SUCCESS != proto_write(reply) && wait_timer < ACK_TIMEOUT);
+    return (wait_timer > ACK_TIMEOUT) ? CAN_STATUS_ABORTED : CAN_STATUS_SUCCESS;
 }
 
 message_t proto_read() {
@@ -226,8 +231,9 @@ unsigned int message_handler(CAN_Packet packet) {
         case STARTUP:
             switch (msg.command) {
                 case CMD_REQ_CALIBRATE:
-                    reply_to_comms(CMD_ACK_CALIBRATE);
-    
+                    if (CAN_STATUS != reply_to_comms(CMD_ACK_CALIBRATE)) 
+                        proto_state_error();
+
                     break;
                 case CMD_CALIBRATE:
                     state = CALIBRATING;
@@ -240,10 +246,14 @@ unsigned int message_handler(CAN_Packet packet) {
         case CALIBRATING:
             switch(msg.command) {
                 case CMD_REQ_CALIBRATE:
+                    unsigned int result;
                     if (ready_to_run)
-                        reply_to_comms(CMD_ACK_RUN);
+                        result = reply_to_comms(CMD_ACK_RUN);
                     else 
-                        reply_to_comms(CMD_NO);
+                        result = reply_to_comms(CMD_NO);
+
+                    if (CAN_STATUS_SUCCESS != result) 
+                        proto_state_error();
                     break;
                 case CMD_RUN:
                     proto_refresh();
@@ -266,7 +276,10 @@ unsigned int message_handler(CAN_Packet packet) {
     return 1;
 }
 
-
+/**
+ * Called by the client once they are
+ * ready to move past the calibration state.
+ */
 void proto_calibration_complete() {
     ready_to_run = true;
 }   
@@ -284,13 +297,13 @@ int proto_write(message_t msg) {
             msg.command);
 
     can_data_high = ((msg.to & 0xFF) << 0x18)
-                  | ((msg.from & 0xFF) << 0x10)
-                  | ((msg.command & 0xFF) << 0x08)
-                  |  msg.data[0];
+        | ((msg.from & 0xFF) << 0x10)
+        | ((msg.command & 0xFF) << 0x08)
+        |  msg.data[0];
     can_data_low  = (msg.data[1] << 0x18)
-                  | (msg.data[2] << 0x10)
-                  | (msg.data[3] << 0x08)
-                  |  msg.data[4];
+        | (msg.data[2] << 0x10)
+        | (msg.data[3] << 0x08)
+        |  msg.data[4];
 
     return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
 }
@@ -322,7 +335,7 @@ void proto_set_error_callback(error_callback callback) {
  */
 void proto_state_error() {
     state = ERROR;
-    //TODO bcan_clear_send_buffer();
+    BCAN_AbortAllTransfers(0);
     if (error_callback_function != NULL) {
         error_callback_function();
     }
