@@ -196,6 +196,7 @@ unsigned int reply_to_comms(command_t cmd) {
     return (wait_timer > ACK_TIMEOUT) ? CAN_STATUS_ABORTED : CAN_STATUS_SUCCESS;
 }
 
+
 message_t proto_read() {
     message_t msg = {
         .from    = 0x0,
