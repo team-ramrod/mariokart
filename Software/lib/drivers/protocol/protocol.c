@@ -107,6 +107,7 @@ void ConfigureTc(void)
 
 unsigned int message_handler(CAN_Packet packet);
 
+
 /**
  * Initialises the protocol handler and the can bus.
  *
