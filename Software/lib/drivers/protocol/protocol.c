@@ -187,7 +187,7 @@ void reply_to_comms(command_t cmd) { // TODO return type
 
     wait_timer = 0;
 
-    while (CAN_STATUS_SUCCESS =! proto_write(reply) && wait_timer < ACK_TIMEOUT); // TODO: timeout
+    while (CAN_STATUS_SUCCESS != proto_write(reply) && wait_timer < ACK_TIMEOUT); // TODO: timeout
 }
 
 /**
