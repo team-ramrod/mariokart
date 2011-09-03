@@ -20,7 +20,7 @@
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Comms"
-#define ALL_CLIENTS 1<<ADDR_SENSOR | 1<<ADDR_STEERING | 1<<ADDR_BRAKE | 1<<ADDR_MOTOR
+#define ALL_CLIENTS ((1<<ADDR_SENSOR) | (1<<ADDR_STEERING) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR))
 
 //------------------------------------------------------------------------------
 //         Local variables
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
                 if (0) { //new message  
                     if (0) { //command =! CMD_ACK_CALIBRATION 
-                        proto_error_state();
+                        proto_state_error();
                         break;
                     } else {
                         responses |= 0; // |= sender address
