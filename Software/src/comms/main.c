@@ -18,10 +18,12 @@
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Comms"
+#define ALL_CLIENTS 1<<ADDR_SENSOR | 1<<ADDR_STEERING | 1<<ADDR_BRAKE | 1<<ADDR_MOTOR
 
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
+volatile bool timeout = false;
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -38,9 +40,32 @@ int main(int argc, char *argv[]) {
 
     proto_init(ADDR_COMMS);
 
+    unsigned int responses;
+    
+    //TODO protocol needs it's own message handler, one that just decodes and passes on messages
     while(1) {    
         switch (proto_state()) {
-            case STARTUP: // waiting for all boards to acknowledge startup state
+            case STARTUP:
+                if (timeout) {
+                    timeout = false;
+                    response_count = 0;
+                    // broadcast CMD_REQ_CALIBRATION 
+                } 
+
+                if (0) { //new message  
+                    if (0) { //command =! CMD_ACK_CALIBRATION 
+                        proto_error_state();
+                        break;
+                    } else {
+                        responses |= 0; // |= sender address
+                    }
+                }
+
+                if (responses == ALL_CLIENTS) {
+                    //broadcast CMD_CALIBRATE
+                    // set state = CALIBRATE
+                }
+
                 break;
             case CALIBRATING: // Waiting for all boards to finish calibration
                 break;
@@ -68,5 +93,35 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-/*
-*/
+//------------------------------------------------------------------------------
+/// Interrupt handler for TC1 interrupt.
+//------------------------------------------------------------------------------
+void ISR_Tc1(void)
+{
+    AT91C_BASE_TC1->TC_SR;
+    timeout = true;
+}
+
+//------------------------------------------------------------------------------
+/// Configure Timer Counter 1 to generate an interrupt every 100ms.
+//------------------------------------------------------------------------------
+void ConfigureTc(void)
+{
+    unsigned int div;
+    unsigned int tcclks;
+
+    // Enable peripheral clock
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
+
+    // Configure TC for a 4Hz frequency and trigger on RC compare
+    TC_FindMckDivisor(10, BOARD_MCK, &div, &tcclks);
+    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
+    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 10; // timerFreq / desiredFreq
+
+    // Configure and enable interrupt on RC compare
+    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, ISR_Tc1);
+    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
+    AIC_EnableIT(AT91C_ID_TC1);
+
+    TC_Start(AT91C_BASE_TC1);
+}
