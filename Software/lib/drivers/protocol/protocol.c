@@ -227,11 +227,12 @@ unsigned int message_handler(CAN_Packet packet) {
         .data[4]  =  packet.data_low          & 0xFF,
     };
     
+    unsigned int result;
     switch (state) {
         case STARTUP:
             switch (msg.command) {
                 case CMD_REQ_CALIBRATE:
-                    if (CAN_STATUS != reply_to_comms(CMD_ACK_CALIBRATE)) 
+                    if (CAN_STATUS_SUCCESS != reply_to_comms(CMD_ACK_CALIBRATE)) 
                         proto_state_error();
 
                     break;
@@ -246,7 +247,6 @@ unsigned int message_handler(CAN_Packet packet) {
         case CALIBRATING:
             switch(msg.command) {
                 case CMD_REQ_CALIBRATE:
-                    unsigned int result;
                     if (ready_to_run)
                         result = reply_to_comms(CMD_ACK_RUN);
                     else 
