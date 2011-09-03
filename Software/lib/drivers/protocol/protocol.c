@@ -13,6 +13,10 @@
 #define PROTO_ADDR_PRIORITY 0x0001
 #define PROTO_ADDR_SUFFEX 0x1000
 
+#ifndef BOARD_ADDRESS
+    #define BOARD_ADDRESS ADDR_MOTOR
+#endif // TODO: DELETEME, define in client file
+
 // The current state as per our state diagram
 static state_t state;
 
@@ -33,7 +37,7 @@ void ISR_Tc0(void)
 
     wait_timer += 250;
 
-    if (wait_timer >= TIMEOUT) {
+    if (wait_timer >= TIMEOUT && state == RUNNING) {
         state = ERROR;
     }
 }
@@ -168,6 +172,21 @@ void proto_init(address_t board_address) {
 }
 
 /**
+ * Sends a command without data back to the comms board.
+ * Times out and clears sending buffer if connection unavailable
+ */
+void reply_to_comms(command_t cmd) { // TODO return type
+    message_t reply = {
+        .from     = BOARD_ADDRESS,
+        .to       = ADDR_COMMS,
+        .command  = cmd,
+        .data_len = 0,
+    };
+
+    while (CAN_STATUS_LOCKED == proto_write(reply)); // TODO: timeout
+}
+
+/**
  * Depending on demand this function may need a different
  * signature. For now it is designed to pop an int off the end of a queue
  * or return 0 if no data has been receieved
@@ -192,23 +211,23 @@ message_t proto_read() {
  */
 unsigned int message_handler(CAN_Packet packet) {
     message_t msg = {
-        .from    = (packet.data_high >> 0x18) & 0xFF,
-        .to      = (packet.data_high >> 0x10) & 0xFF,
-        .command = (packet.data_high >> 0x08) & 0xFF,
-        .data[0] = packet.data_high & 0xFF,
-        .data[1] = (packet.data_low >> 0x18) & 0xFF,
-        .data[2] = (packet.data_low >> 0x10) & 0xFF,
-        .data[3] = (packet.data_low >> 0x08) & 0xFF,
-        .data[4] =  packet.data_low          & 0xFF,
+        .from     = (packet.data_high >> 0x18) & 0xFF,
+        .to       = (packet.data_high >> 0x10) & 0xFF,
+        .command  = (packet.data_high >> 0x08) & 0xFF,
+        .data_len = packet.size,
+        .data[0]  = packet.data_high & 0xFF,
+        .data[1]  = (packet.data_low >> 0x18) & 0xFF,
+        .data[2]  = (packet.data_low >> 0x10) & 0xFF,
+        .data[3]  = (packet.data_low >> 0x08) & 0xFF,
+        .data[4]  =  packet.data_low          & 0xFF,
     };
     
-    msg.data_len = packet.size;
-
     switch (state) {
         case STARTUP:
             switch (msg.command) {
                 case CMD_REQ_CALIBRATE:
-                    //send CMD_ACK_CALIBRATE
+                    reply_to_comms(CMD_ACK_CALIBRATE);
+    
                     break;
                 case CMD_CALIBRATE:
                     state = CALIBRATING;
@@ -221,14 +240,13 @@ unsigned int message_handler(CAN_Packet packet) {
         case CALIBRATING:
             switch(msg.command) {
                 case CMD_REQ_CALIBRATE:
-                    /*
-                    if (ready_to_run) 
-                      //send CMD_ACK_RUN
+                    if (ready_to_run)
+                        reply_to_comms(CMD_ACK_RUN);
                     else 
-                        //send CMD_NO
-                    */
+                        reply_to_comms(CMD_NO);
                     break;
                 case CMD_RUN:
+                    proto_refresh();
                     state = RUNNING;
                     break;
                 default:
@@ -251,6 +269,7 @@ unsigned int message_handler(CAN_Packet packet) {
 void proto_calibration_complete() {
     ready_to_run = true;
 }   
+
 
 /**
  * Attempts a write and returns status code (success == 0)
