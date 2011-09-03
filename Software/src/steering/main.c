@@ -8,7 +8,6 @@
 //         Headers
 //------------------------------------------------------------------------------
 #include <actuator_driver.h>
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
@@ -29,8 +28,6 @@
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
-
 //minimum angle wheel can be turned to in degrees
 int steering_min_angle;
 
@@ -180,14 +177,6 @@ int main(int argc, char *argv[]) {
     switches_init();
     encoder_init();
     act_driver_init();
-
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
 
     //sets pins as inputs
     PIO_Configure(&pin_lim_up, 1);

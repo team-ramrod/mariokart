@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
