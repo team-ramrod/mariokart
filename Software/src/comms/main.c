@@ -43,6 +43,12 @@ int main(int argc, char *argv[]) {
     proto_init(ADDR_COMMS);
 
     unsigned int responses;
+
+    message_t broadcast_message;
+    broadcast_message.from     = ADDR_COMMS;
+    broadcast_message.to       = ADDR_BROADCAST_RX;
+    broadcast_message.command  = CMD_NONE;
+    broadcast_message.data_len = 0;
     
     //TODO protocol needs it's own message handler, one that just decodes and passes on messages
     while(1) {    
@@ -51,7 +57,8 @@ int main(int argc, char *argv[]) {
                 if (timeout) {
                     timeout = false;
                     responses = 0;
-                    // broadcast CMD_REQ_CALIBRATION 
+                    broadcast_message.command = CMD_REQ_CALIBRATION;
+                    proto_send(broadcast_message);
                 } 
 
                 if (0) { //new message  
@@ -64,7 +71,8 @@ int main(int argc, char *argv[]) {
                 }
 
                 if (responses == ALL_CLIENTS) {
-                    //broadcast CMD_CALIBRATE
+                    broadcast_message.command = CMD_CALIBRATE;
+                    proto_send(broadcast_message);
                     // set state = CALIBRATE
                 }
 
