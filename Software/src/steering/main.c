@@ -12,6 +12,7 @@
 #include <components/debug.h>
 #include <components/switches.h>
 #include <encoder.h>
+#include <protocol/protocol.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 
@@ -187,6 +188,8 @@ int main(int argc, char *argv[]) {
 
     proto_init(ADDR_STEERING);
 
+    int speed;
+
     TRACE_INFO("Steering board initialization completed\n\r");
 
     while (1) {
@@ -208,7 +211,7 @@ int main(int argc, char *argv[]) {
                 //         proto_set_error();
                 //     }
                 // }
-                int speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
+                speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
                 act_driver_drive(speed);
                 break;
             default: // ERROR
