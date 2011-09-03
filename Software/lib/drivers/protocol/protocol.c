@@ -102,70 +102,6 @@ void ConfigureTc(void)
 }
 
 /**
- * Initialises the protocol handler and the can bus.
- *
- */
-void proto_init(address_t board_address) {
-    TRACE_INFO("Running proto_init\n\r");
-    state = STARTUP;
-
-    // Init incoming mailbox
-    BCAN_Init(BAUD_RATE, 0); // 0 for no CAN1
-
-    // Init Error rx mailbox
-    proto_set_rx_mailbox(ADDR_ERROR_RX);
-
-    // Init ADDR_BROADCAST_RX mailbox
-    proto_set_rx_mailbox(ADDR_BROADCAST_RX);
-
-    // Init ADDR_BROADCAST_TX mailbox
-    proto_set_tx_mailbox(ADDR_BROADCAST_TX,ADDR_BROADCAST_RX);
-
-    switch (board_address) {
-        case ADDR_BRAKE:
-            proto_set_rx_mailbox(ADDR_BRAKE);
-            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
-            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
-            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
-            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
-            break;
-        case ADDR_COMMS:
-            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
-            proto_set_rx_mailbox(ADDR_COMMS);
-            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
-            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
-            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
-            break;
-        case ADDR_STEERING:
-            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
-            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
-            proto_set_rx_mailbox(ADDR_STEERING);
-            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
-            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
-            break;
-        case ADDR_MOTOR:
-            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
-            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
-            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
-            proto_set_rx_mailbox(ADDR_MOTOR);
-            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
-            break;
-        case ADDR_SENSOR:
-            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
-            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
-            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
-            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
-            proto_set_rx_mailbox(ADDR_SENSOR);
-            break;
-        default:
-            TRACE_WARNING("An incorrect address was passed to proto_init();\n\r");
-            break;
-    }
-
-    ConfigureTc();
-}
-
-/**
  * Depending on demand this function may need a different
  * signature. For now it is designed to pop an int off the end of a queue
  * or return 0 if no data has been receieved
@@ -244,6 +180,70 @@ void message_handler(CAN_Packet packet) {
             state = ERROR;
             break;
     }
+}
+
+/**
+ * Initialises the protocol handler and the can bus.
+ *
+ */
+void proto_init(address_t board_address) {
+    TRACE_INFO("Running proto_init\n\r");
+    state = STARTUP;
+
+    // Init incoming mailbox
+    BCAN_Init(BAUD_RATE, 0, message_handler); // 0 for no CAN1
+
+    // Init Error rx mailbox
+    proto_set_rx_mailbox(ADDR_ERROR_RX);
+
+    // Init ADDR_BROADCAST_RX mailbox
+    proto_set_rx_mailbox(ADDR_BROADCAST_RX);
+
+    // Init ADDR_BROADCAST_TX mailbox
+    proto_set_tx_mailbox(ADDR_BROADCAST_TX,ADDR_BROADCAST_RX);
+
+    switch (board_address) {
+        case ADDR_BRAKE:
+            proto_set_rx_mailbox(ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_COMMS:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_rx_mailbox(ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_STEERING:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_rx_mailbox(ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_MOTOR:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_rx_mailbox(ADDR_MOTOR);
+            proto_set_tx_mailbox(ADDR_SENSOR,ADDR_SENSOR);
+            break;
+        case ADDR_SENSOR:
+            proto_set_tx_mailbox(ADDR_BRAKE,ADDR_BRAKE);
+            proto_set_tx_mailbox(ADDR_COMMS,ADDR_COMMS);
+            proto_set_tx_mailbox(ADDR_STEERING,ADDR_STEERING);
+            proto_set_tx_mailbox(ADDR_MOTOR,ADDR_MOTOR);
+            proto_set_rx_mailbox(ADDR_SENSOR);
+            break;
+        default:
+            TRACE_WARNING("An incorrect address was passed to proto_init();\n\r");
+            break;
+    }
+
+    ConfigureTc();
 }
 
 void proto_calibration_complete() {
