@@ -31,8 +31,6 @@ void main(void) {
                 break;
             default: // ERROR
                 //broadcast ERROR signal
-                // If reset signal received 
-                // then transition to CALIBRATING state.
                 break;
         }
     }

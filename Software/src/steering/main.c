@@ -13,6 +13,7 @@
 #include <components/switches.h>
 #include <encoder.h>
 #include <protocol/protocol.h>
+#include <protocol/proto_msg_buff.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 
@@ -189,6 +190,7 @@ int main(int argc, char *argv[]) {
     proto_init(ADDR_STEERING);
 
     int speed;
+    message_t msg;
 
     TRACE_INFO("Steering board initialization completed\n\r");
 
@@ -198,24 +200,25 @@ int main(int argc, char *argv[]) {
                 break;
             case CALIBRATING: 
                 //ideally this would run one iteration and return
-                //however that isn't necessary
+                //however that isn't a necessity
                 cal_steering(); 
                 steering_limit_sw_init();
                 break;
-            case RUNNING: // Normal state
-                // if (incoming data) {
-                //     if (data is valid) {
-                //         setpoint = data;
-                //         proto_refresh();
-                //     } else {
-                //         proto_set_error();
-                //     }
-                // }
+            case RUNNING: 
+                if (proto_msg_buff_length()) {
+                    msg = proto_msg_buff_pop();
+                    if (msg.command == CMD_SET) {
+                        set_steering(msg.data[0]);
+                        proto_refresh();
+                    } else {
+                        proto_state_error();
+                    }
+                }
                 speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
                 act_driver_drive(speed);
                 break;
             default: // ERROR
-                //broadcast ERROR signal
+                // do error stuff
                 break;
         }
     }
