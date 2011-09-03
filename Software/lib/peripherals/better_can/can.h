@@ -109,6 +109,8 @@ unsigned int BCAN_Write(
     unsigned int data_high, unsigned int data_low, unsigned int size
 );
 
+void BCAN_AbortTransfer(unsigned int can_number, unsigned int mailbox);
+void BCAN_AbortAllTransfers(unsigned int can_number);
 /**
  * Reads a value from the mailbox specified.
  *

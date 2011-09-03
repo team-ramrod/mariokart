@@ -431,6 +431,16 @@ CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number) {
     return packet;
 }
 
+void BCAN_AbortTransfer(unsigned int can_number, unsigned int mailbox) {
+    CAN_Mailboxes[can_number][mailbox]->CAN_MB_MCR = AT91C_CAN_MACR;
+}
+
+void BCAN_AbortAllTransfers(unsigned int can_number) {
+    for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
+        BCAN_AbortTransfer(can_number, i);
+    }
+}
+
 unsigned int BCAN_IsInIdle(unsigned int can_number) {
     CAN_t *can;
     switch (can_number) {
@@ -572,7 +582,6 @@ static unsigned char BCAN_BaudRateCalculate( AT91PS_CAN   base_CAN,
                      + (AT91C_CAN_BRP    & (BRP << 16))
                      + (AT91C_CAN_SMP    & (0 << 24));
     return 1;
-
 }
 
 unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1, CAN_Callback callback) {
