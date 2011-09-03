@@ -5,7 +5,7 @@
 MCU = arm7tdmi
 CHIP = at91sam7xc256
 BOARD = mariokartv1
-MEMORY ?= sram
+MEMORY ?= flash
 
 # Trace level used for compilation
 # (can be overriden by adding TRACE_LEVEL=#number to the command-line)
