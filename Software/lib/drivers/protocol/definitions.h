@@ -9,9 +9,9 @@
 
 // Needs to be only 3 bit
 typedef enum {
-    ADDR_ERROR_RX     = 0,
-    ADDR_BROADCAST_RX = 1,
-    ADDR_BROADCAST_TX = 2,
+    ADDR_ERROR_RX     = 0x0,
+    ADDR_BROADCAST_RX = 0x1,
+    ADDR_BROADCAST_TX = 0x2,
     ADDR_BRAKE        = 0x3,
     ADDR_COMMS        = 0x4,
     ADDR_STEERING     = 0x5,
