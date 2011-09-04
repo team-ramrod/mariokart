@@ -78,11 +78,11 @@ static void char_display_show(char_display_side side) {
         PIO_Set(&pinCharDisplayEnable);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
-    if (side == CHAR_DISPLAY_LEFT)
+    if (side == CHAR_DISPLAY_LEFT && char_display_values[side] < 0x10)
         PIO_Clear(&pinCharDisplaySelectLeft);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
-    if (side == CHAR_DISPLAY_RIGHT)
+    if (side == CHAR_DISPLAY_RIGHT && char_display_values[side] < 0x10)
         PIO_Clear(&pinCharDisplaySelectRight);
 #endif
 }
