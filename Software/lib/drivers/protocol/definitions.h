@@ -1,3 +1,8 @@
+/**
+ * This header is automatically included as part of `protocol.h`, do not include
+ * it yourself.
+ */
+
 #ifndef PROTOCOL_DEFINITIONS_H
 #define PROTOCOL_DEFINITIONS_H
 

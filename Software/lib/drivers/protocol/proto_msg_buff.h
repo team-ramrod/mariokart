@@ -1,9 +1,15 @@
+/**
+ * This is part of the internal implementation of the protocol.
+ *
+ * DO NOT INCLUDE.
+ *
+ */
 #ifndef PROTO_MSG_BUFF_H
 #define PROTO_MSG_BUFF_H
 
 #include <stdbool.h>
 
-#include "protocol.h"
+#include "definitions.h"
 
 /**
  * A simple ring buffer used to store recieved messages until they are read.

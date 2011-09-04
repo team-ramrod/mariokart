@@ -13,7 +13,6 @@
 #include <components/switches.h>
 #include <encoder.h>
 #include <protocol/protocol.h>
-#include <protocol/proto_msg_buff.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 
