@@ -51,7 +51,6 @@ int main(int argc, char *argv[]) {
     broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
     
-    //TODO protocol needs it's own message handler, one that just decodes and passes on messages
     while(1) {    
         switch (proto_state()) {
             case STARTUP:
@@ -62,7 +61,7 @@ int main(int argc, char *argv[]) {
                     proto_write(broadcast_message);
                 } 
 
-                if (0) { //new message  
+                if (proto_msg_buff_length()) { //new message  
                     if (0) { //command =! CMD_ACK_CALIBRATION 
                         proto_state_error();
                         break;
