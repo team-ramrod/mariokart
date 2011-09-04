@@ -66,6 +66,7 @@ CFLAGS += -g
 CFLAGS += -D$(CHIP)
 CFLAGS += -D$(MEMORY)
 CFLAGS += -DTRACE_LEVEL=$(TRACE_LEVEL)
+CFLAGS += -mthumb-interwork
 CFLAGS += $(INCLUDES)
 
 # Generate dependency information
@@ -76,6 +77,7 @@ ASFLAGS += -g
 ASFLAGS += -D$(CHIP)
 ASFLAGS += -D$(MEMORY)
 ASFLAGS += -D__ASSEMBLY__
+ASFLAGS += -mthumb-interwork
 ASFLAGS += $(INCLUDES)
 
 LINK_SCRIPT = -T"lib/boards/$(BOARD)/$(CHIP)/$(MEMORY).lds"
