@@ -16,17 +16,16 @@ void main(void) {
                 break;
             case CALIBRATING:
                 break;
-            case RUNNING: // Normal state
-                // if (incoming data) {
-                //     if (data is valid) {
-                //         setpoint = data;
-                //         proto_refresh();
-                //     } else {
-                //         proto_set_error();
-                //     }
-                // }
-                // run iteration of PID loop using setpoint
-                // Any issues => state = ERROR; break;
+            case RUNNING: 
+                if (proto_msg_buff_length()) {
+                    msg = proto_msg_buff_pop();
+                    if (msg.command == CMD_SET) {
+                        set_steering(msg.data[0]);
+                        proto_refresh();
+                    } else {
+                        proto_state_error();
+                    }
+                }
                 break;
             default: // ERROR
                 //broadcast ERROR signal

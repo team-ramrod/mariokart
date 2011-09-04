@@ -241,7 +241,7 @@ unsigned int message_handler(CAN_Packet packet) {
 
     // Short circuit the message handling for the comms board.
     // This could be done better.
-    if (local_board == ADDR_COMMS) {
+    if (local_address == ADDR_COMMS) {
         proto_msg_buff_push(msg);
         return 1;
     }
