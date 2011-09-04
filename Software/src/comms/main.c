@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
                 if (responses == ALL_CLIENTS) {
                     broadcast_message.command = CMD_CALIBRATE;
-                    proto_send(broadcast_message);
+                    proto_write(broadcast_message);
                     // set state = CALIBRATE
                 }
 
