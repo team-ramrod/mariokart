@@ -53,14 +53,16 @@ int main(int argc, char *argv[]) {
             case CALIBRATING:
                 break;
             case RUNNING: 
-                if (proto_msg_buff_length()) {
-                    msg = proto_msg_buff_pop();
-                    if (msg.command == CMD_SET) {
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_SET:
                         set_motor(msg.data[0]);
                         proto_refresh();
-                    } else {
-                        proto_state_error();
-                    }
+                    case CMD_NONE:
+                        break;
+                    default:
+                        break; //ERROR
+
                 }
                 char_display_tick();
                 break;

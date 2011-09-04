@@ -129,16 +129,18 @@ int main(int argc, char *argv[]) {
                 proto_calibration_complete();
                 break;
             case RUNNING: 
-                if (proto_msg_buff_length()) {
-                    msg = proto_msg_buff_pop();
-                    if (msg.command == CMD_GET) {
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_GET:
                         proto_refresh();
                         id = msg.data[0];
                         var = msg.data[1];
                         send_data(msg.from, id, var);
-                    } else {
-                        proto_state_error();
-                    }
+                        break;
+                    case CMD_NONE:
+                        break;
+                    default:
+                        break; //Go to error state  
                 }
                 char_display_tick();
                 break;

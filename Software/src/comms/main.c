@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 
     unsigned int responses;
 
-    message_t broadcast_message;
+    message_t broadcast_message, msg;
     broadcast_message.from     = ADDR_COMMS;
     broadcast_message.to       = ADDR_BROADCAST_RX;
     broadcast_message.command  = CMD_NONE;
@@ -60,13 +60,14 @@ int main(int argc, char *argv[]) {
                     proto_write(broadcast_message);
                 } 
 
-                if (proto_msg_buff_length()) { //new message  
-                    if (0) { //command =! CMD_ACK_CALIBRATION 
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_ACK_CALIBRATE:
+                        responses |= 1 << msg.from; 
+                        break;
+                    default:
                         proto_state_error();
                         break;
-                    } else {
-                        responses |= 0; // |= sender address
-                    }
                 }
 
                 if (responses == ALL_CLIENTS) {

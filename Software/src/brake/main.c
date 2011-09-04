@@ -82,20 +82,21 @@ int main(int argc, char *argv[]) {
                 // return to off position here?
                 break;
             case RUNNING: 
-                if (proto_msg_buff_length()) {
-                    msg = proto_msg_buff_pop();
-                    if (msg.command == CMD_SET) {
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_SET:
                         set_act(msg.data[0]);
                         proto_refresh();
-                    } else {
-                        proto_state_error();
-                    }
+                    case CMD_NONE:
+                        break;
+                    default:
+                        break;//ERROR
                 }
                 speed = act_driver_pid(brake_location_in_adc, pot_current_value);
                 act_driver_drive(speed);
                 break;
             default: // ERROR
-                // put the brake on
+                //TODO put the brake on
                 break;
         }
     }
