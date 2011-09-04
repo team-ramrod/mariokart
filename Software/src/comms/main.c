@@ -89,13 +89,14 @@ void send_messages(void) {
             break;
     }
 }
+/*
 
 void ISR_Pit(void)
 {
     // Check to see if it has got to PIV
-    if (PIT_GetStatus() & AT91C_PITC_PITS) {
-        send_messages();
-    }
+    //if (PIT_GetStatus() & AT91C_PITC_PITS) {
+    //    send_messages();
+    //}
 }
 
 void ConfigurePit(void)
@@ -103,15 +104,17 @@ void ConfigurePit(void)
     // Initialize the PIT to the desired frequency
     PIT_Init(PIT_PERIOD, BOARD_MCK / 10000000);
 
+    // Enable the pit
+    PIT_Enable();
+
     // Configure interrupt on PIT
     AIC_DisableIT(AT91C_ID_SYS);
     AIC_ConfigureIT(AT91C_ID_SYS, AT91C_AIC_PRIOR_LOWEST, ISR_Pit);
     AIC_EnableIT(AT91C_ID_SYS);
     PIT_EnableIT();
-
-    // Enable the pit
-    PIT_Enable();
 }
+*/
+void ConfigureTimer1();
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -123,7 +126,7 @@ int main(int argc, char *argv[]) {
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
 
     milisecond_counter = 0;
-    ConfigurePit();
+    ConfigureTimer1();
 
     //Main initialisations
     char_display_init();
@@ -157,6 +160,8 @@ int main(int argc, char *argv[]) {
                 switch(msg.command) {
                     case CMD_ACK_CALIBRATE:
                         responses |= 1 << msg.from; 
+                        break;
+                    case CMD_NONE:
                         break;
                     default:
                         proto_state_error();
@@ -230,7 +235,7 @@ void ISR_Tc1(void)
 //------------------------------------------------------------------------------
 /// Configure Timer Counter 1 to generate an interrupt every 100ms.
 //------------------------------------------------------------------------------
-void ConfigureTimer(void)
+void ConfigureTimer1(void)
 {
     unsigned int div;
     unsigned int tcclks;

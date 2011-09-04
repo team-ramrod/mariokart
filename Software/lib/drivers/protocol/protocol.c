@@ -42,10 +42,11 @@ void ISR_Tc0(void)
     // Clear status bit to acknowledge interrupt
     AT91C_BASE_TC0->TC_SR;
 
-    wait_timer += 250;
-
-    if (wait_timer >= TIMEOUT && state == RUNNING) 
-        proto_state_error();
+    if (state == RUNNING) {
+            wait_timer += 250;
+            if (wait_timer >= TIMEOUT ) 
+                proto_state_error();
+    }
 
     // broadcast the error message
     if (state == ERROR) 
