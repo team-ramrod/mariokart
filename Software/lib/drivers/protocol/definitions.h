@@ -44,6 +44,7 @@ typedef enum {STARTUP, CALIBRATING, RUNNING, ERROR} state_t;
 
 typedef enum {
     VAR_SPEED = 0x1,
+    VAR_BRK_POS = 0x2,
 } variable_t;
 
 typedef struct {
