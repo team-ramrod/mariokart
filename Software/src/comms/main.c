@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
                 if (timeout) {
                     timeout = false;
                     responses = 0;
-                    broadcast_message.command = CMD_REQ_CALIBRATION;
+                    broadcast_message.command = CMD_REQ_CALIBRATE;
                     proto_write(broadcast_message);
                 } 
 
