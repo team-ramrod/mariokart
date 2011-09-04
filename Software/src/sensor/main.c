@@ -11,7 +11,7 @@
 #include <components/debug.h>
 #include <components/switches.h>
 #include <protocol/protocol.h>
-#include <protocol/protocol/proto_msg_buff.h>
+#include <protocol/proto_msg_buff.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <peripherals/tc/tc.h>
