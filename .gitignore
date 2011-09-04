@@ -26,3 +26,7 @@ local.mk
 *.o
 .dep
 *.a
+
+#Modeling
+pan*
+*.trail
