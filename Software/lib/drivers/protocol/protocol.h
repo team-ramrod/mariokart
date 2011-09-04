@@ -49,7 +49,7 @@ state_t proto_state();
 
 /**
  * To be called by the client when it is ready to move
- * past the calibration state.
+ * past the calibration state. Nilpotent.
  */
 void proto_calibration_complete();
 
