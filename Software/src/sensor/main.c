@@ -144,7 +144,6 @@ int main(int argc, char *argv[]) {
                 char_display_tick();
                 break;
             default: // ERROR
-                set_motor(0);
                 break;
         }
     }
