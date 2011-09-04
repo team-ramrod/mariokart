@@ -12,6 +12,8 @@
 #include <debug.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
+#include <protocol/protocol.h>
+#include <protocol/proto_msg_buff.h>
 #include <potentiometer.h>
 #include <switches.h>
 
@@ -39,7 +41,6 @@ int brake_location_in_adc = 0;
 //------------------------------------------------------------------------------
 //sets actuator to a distance (in mm) between min_distance and max_distance
 void set_act(int distance){
-
     if(distance > brake_max_distance){
         distance = brake_max_distance;
     }
@@ -68,13 +69,37 @@ int main(int argc, char *argv[]) {
 
     //drives the actuator out 30mm
     set_act(30);
+    int speed;
 
-    //infinite loop running PID controller
-    while(1){
-        int speed = act_driver_pid(brake_location_in_adc, pot_current_value);
-        act_driver_drive(speed);
+    message_t msg;
+
+    proto_init(ADDR_BRAKE);
+
+    while (1) {
+        switch (proto_state()) {
+            case STARTUP:
+                break;
+            case CALIBRATING:
+                // return to off position here?
+                break;
+            case RUNNING: 
+                if (proto_msg_buff_length()) {
+                    msg = proto_msg_buff_pop();
+                    if (msg.command == CMD_SET) {
+                        set_act(msg.data[0]);//may need more ?
+                        proto_refresh();
+                    } else {
+                        proto_state_error();
+                    }
+                }
+                speed = act_driver_pid(brake_location_in_adc, pot_current_value);
+                act_driver_drive(speed);
+                break;
+            default: // ERROR
+                // put the brake on
+                break;
+        }
     }
-
     return 0;
 }
 
