@@ -238,6 +238,13 @@ unsigned int message_handler(CAN_Packet packet) {
         .data[3]  = (packet.data_low >> 0x08) & 0xFF,
         .data[4]  =  packet.data_low          & 0xFF,
     };
+
+    // Short circuit the message handling for the comms board.
+    // This could be done better.
+    if (local_board == ADDR_COMMS) {
+        proto_msg_buff_push(msg);
+        return 1;
+    }
     
     unsigned int result;
     switch (state) {

@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
                 if (proto_msg_buff_length()) {
                     msg = proto_msg_buff_pop();
                     if (msg.command == CMD_SET) {
-                        set_act(msg.data[0]);//may need more ?
+                        set_act(msg.data[0]);
                         proto_refresh();
                     } else {
                         proto_state_error();
