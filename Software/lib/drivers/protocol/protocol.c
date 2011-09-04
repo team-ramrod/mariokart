@@ -222,6 +222,14 @@ message_t proto_read() {
 }
 
 /**
+ * A setter function for the master to drive state changes.
+ * Only available through protocol_master.h
+ */
+void proto_state_transition(state_t new_state) {
+    state = new_state;
+}
+
+/**
  * To be called asynchronously when a new can frame is
  * received. Decodes packets and intercepts state transition
  * commands.
@@ -240,7 +248,6 @@ unsigned int message_handler(CAN_Packet packet) {
     };
 
     // Short circuit the message handling for the comms board.
-    // This could be done better.
     if (local_address == ADDR_COMMS) {
         proto_msg_buff_push(msg);
         return 1;

@@ -73,11 +73,37 @@ int main(int argc, char *argv[]) {
                 if (responses == ALL_CLIENTS) {
                     broadcast_message.command = CMD_CALIBRATE;
                     proto_write(broadcast_message);
-                    // set state = CALIBRATE
+                    proto_state_transition(CALIBRATING);
+                    responses = 0;
                 }
 
                 break;
             case CALIBRATING: // Waiting for all boards to finish calibration
+                if (timeout) {
+                    responses = 0;
+                    broadcast_message.command = CMD_REQ_RUN;
+                    proto_write(broadcast_message);
+                    timeout = false;
+                } 
+
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_ACK_RUN:
+                        responses |= 1 << msg.from; 
+                        break;
+                    case CMD_NO:
+                        break;// A board is refusing the transition
+                    default:
+                        proto_state_error();
+                        break;
+                }
+
+                if (responses == ALL_CLIENTS) {
+                    broadcast_message.command = CMD_RUN;
+                    proto_write(broadcast_message);
+                    proto_state_transition(RUNNING);
+                }
+
                 break;
             case RUNNING: // Normal state
                 // Read USB input
@@ -91,11 +117,6 @@ int main(int argc, char *argv[]) {
             default: // ERROR
                 //broadcast ERROR signal
                 //send ERROR signal through USB
-                // If reset signal received through USB
-                // then broadcast it, pause momentarily
-                // abd transition to CALIBRATING state.
-                // (If boards still aren't ready it will send
-                // us straight back to here)
                 break;
         }
     }

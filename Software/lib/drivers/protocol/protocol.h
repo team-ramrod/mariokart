@@ -10,7 +10,6 @@
 #define BAUD_RATE 1000 // allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
 #define TIMEOUT 2000 // May be replaced by a variable
 
-typedef enum {STARTUP, CALIBRATING, RUNNING, ERROR} state_t;
 
 // For error state callback
 typedef void(*error_callback)( void );
