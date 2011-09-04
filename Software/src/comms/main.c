@@ -11,6 +11,7 @@
 #include <components/debug.h>
 #include <components/switches.h>
 #include <protocol/protocol.h>
+#include <protocol/definitions.h>
 #include <tc/tc.h>
 #include <aic/aic.h>
 #include <pio/pio.h>
@@ -58,7 +59,7 @@ int main(int argc, char *argv[]) {
                     timeout = false;
                     responses = 0;
                     broadcast_message.command = CMD_REQ_CALIBRATION;
-                    proto_send(broadcast_message);
+                    proto_write(broadcast_message);
                 } 
 
                 if (0) { //new message  
