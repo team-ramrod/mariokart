@@ -42,17 +42,17 @@ typedef enum {
 } char_display_side;
 
 static void char_display_clear() {
-#ifdef PIN_CHAR_DISPLAY_VALUE
-    PIO_Clear(&pinCharDisplayValue);
-#endif
-#ifdef PIN_CHAR_DISPLAY_ENABLE
-    PIO_Clear(&pinCharDisplayEnable);
-#endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
     PIO_Set(&pinCharDisplaySelectLeft);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
     PIO_Set(&pinCharDisplaySelectRight);
+#endif
+#ifdef PIN_CHAR_DISPLAY_VALUE
+    PIO_Clear(&pinCharDisplayValue);
+#endif
+#ifdef PIN_CHAR_DISPLAY_ENABLE
+    PIO_Clear(&pinCharDisplayEnable);
 #endif
 }
 
