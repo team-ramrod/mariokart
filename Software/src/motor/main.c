@@ -43,6 +43,8 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
 
+    message_t msg;
+
     proto_init(ADDR_MOTOR);
 
     while (1) {
