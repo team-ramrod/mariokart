@@ -12,7 +12,7 @@
 #include <debug.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
-#include <protocol/protocol.h>
+#include <protocol/protocol_master.h>
 #include <potentiometer.h>
 #include <switches.h>
 
@@ -73,15 +73,20 @@ int main(int argc, char *argv[]) {
     message_t msg;
 
     proto_init(ADDR_BRAKE);
+    char_display_number(0);
 
     while (1) {
+        char_display_tick();
         switch (proto_state()) {
             case STARTUP:
+                char_display_number(11);
                 break;
             case CALIBRATING:
+                char_display_number(22);
                 // return to off position here?
                 break;
             case RUNNING: 
+                char_display_number(33);
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_SET:
@@ -96,6 +101,7 @@ int main(int argc, char *argv[]) {
                 act_driver_drive(speed);
                 break;
             default: // ERROR
+                char_display_number(44);
                 //TODO put the brake on
                 break;
         }

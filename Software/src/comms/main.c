@@ -10,7 +10,7 @@
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
-#include <protocol/protocol.h>
+#include <protocol/protocol_master.h>
 #include <tc/tc.h>
 #include <aic/aic.h>
 #include <pio/pio.h>
@@ -20,7 +20,7 @@
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Comms"
-#define ALL_CLIENTS ((1<<ADDR_SENSOR) | (1<<ADDR_STEERING) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR))
+#define ALL_CLIENTS (1<<ADDR_BRAKE)//((1<<ADDR_SENSOR) | (1<<ADDR_STEERING) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR))
 
 //------------------------------------------------------------------------------
 //         Local variables
@@ -49,10 +49,13 @@ int main(int argc, char *argv[]) {
     broadcast_message.to       = ADDR_BROADCAST_RX;
     broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
-    
+    char_display_number(0);
+
     while(1) {    
+        char_display_tick();
         switch (proto_state()) {
             case STARTUP:
+                char_display_number(11);
                 if (timeout) {
                     timeout = false;
                     responses = 0;
@@ -79,6 +82,7 @@ int main(int argc, char *argv[]) {
 
                 break;
             case CALIBRATING: // Waiting for all boards to finish calibration
+                char_display_number(22);
                 if (timeout) {
                     responses = 0;
                     broadcast_message.command = CMD_REQ_RUN;
@@ -106,6 +110,7 @@ int main(int argc, char *argv[]) {
 
                 break;
             case RUNNING: // Normal state
+                char_display_number(33);
                 // Read USB input
                 // Send set points
                 // Check for acks
@@ -115,6 +120,7 @@ int main(int argc, char *argv[]) {
                 // Any issues => state = ERROR; break;
                 break;
             default: // ERROR
+                char_display_number(44);
                 //broadcast ERROR signal
                 //send ERROR signal through USB
                 break;
