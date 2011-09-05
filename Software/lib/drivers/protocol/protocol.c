@@ -4,6 +4,7 @@
  */
 
 #include "protocol.h"
+#include <char_display.h> //TODO deleteme
 #include "proto_msg_buff.h"
 #include <better_can/can.h>
 #include <tc/tc.h>
@@ -42,10 +43,11 @@ void ISR_Tc0(void)
     // Clear status bit to acknowledge interrupt
     AT91C_BASE_TC0->TC_SR;
 
-    wait_timer += 250;
-
-    if (wait_timer >= TIMEOUT && state == RUNNING) 
-        proto_state_error();
+    if (state == RUNNING) {
+            wait_timer += 250;
+            if (wait_timer >= TIMEOUT ) 
+                proto_state_error();
+    }
 
     // broadcast the error message
     if (state == ERROR) 
@@ -229,6 +231,8 @@ void proto_state_transition(state_t new_state) {
     state = new_state;
 }
 
+volatile int handler_counter = 70;
+
 /**
  * To be called asynchronously when a new can frame is
  * received. Decodes packets and intercepts state transition
@@ -236,16 +240,17 @@ void proto_state_transition(state_t new_state) {
  */
 unsigned int message_handler(CAN_Packet packet) {
     message_t msg = {
-        .from     = (packet.data_high >> 0x18) & 0xFF,
-        .to       = (packet.data_high >> 0x10) & 0xFF,
+        .from     = (packet.data_high >> 0x10) & 0xFF,
+        .to       = (packet.data_high >> 0x18) & 0xFF,
         .command  = (packet.data_high >> 0x08) & 0xFF,
-        .data_len = packet.size,
+        .data_len = packet.size - 3,
         .data[0]  = packet.data_high & 0xFF,
         .data[1]  = (packet.data_low >> 0x18) & 0xFF,
         .data[2]  = (packet.data_low >> 0x10) & 0xFF,
         .data[3]  = (packet.data_low >> 0x08) & 0xFF,
         .data[4]  =  packet.data_low          & 0xFF,
     };
+
 
     // Short circuit the message handling for the comms board.
     if (local_address == ADDR_COMMS) {
@@ -266,6 +271,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     state = CALIBRATING;
                     break;
                 default:
+    char_display_number(msg.command);
                     proto_state_error();
                     break;
             }
@@ -322,16 +328,34 @@ int proto_write(message_t msg) {
             msg.to,
             msg.command);
 
-    can_data_high = ((msg.to & 0xFF) << 0x18)
-        | ((msg.from & 0xFF) << 0x10)
-        | ((msg.command & 0xFF) << 0x08)
+    can_data_high =
+          ((msg.from & 0xFF)     << 0x10)
+        | ((msg.to & 0xFF)       << 0x18)
+        | ((msg.command & 0xFF)  << 0x08)
         |  msg.data[0];
     can_data_low  = (msg.data[1] << 0x18)
-        | (msg.data[2] << 0x10)
-        | (msg.data[3] << 0x08)
+        | (msg.data[2]           << 0x10)
+        | (msg.data[3]           << 0x08)
         |  msg.data[4];
+/*
+    message_t msg = {
+        .from     = (packet.data_high >> 0x10) & 0xFF,
+        .to       = (packet.data_high >> 0x18) & 0xFF,
+        .command  = (packet.data_high >> 0x08) & 0xFF,
+        .data_len = packet.size - 3,
+        .data[0]  = packet.data_high & 0xFF,
+        .data[1]  = (packet.data_low >> 0x18) & 0xFF,
+        .data[2]  = (packet.data_low >> 0x10) & 0xFF,
+        .data[3]  = (packet.data_low >> 0x08) & 0xFF,
+        .data[4]  =  packet.data_low          & 0xFF,
+    };
+*/
 
     return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
+}
+
+void proto_debug_send(unsigned int high, unsigned int low) {
+    BCAN_Write(0, ADDR_BRAKE, high, low, 8);
 }
 
 /**

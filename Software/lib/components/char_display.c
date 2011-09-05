@@ -1,5 +1,6 @@
 #include "char_display.h"
 
+#include <utility/interrupts.h>
 #include <board.h>
 #include <pio/pio.h>
 
@@ -78,11 +79,11 @@ static void char_display_show(char_display_side side) {
         PIO_Set(&pinCharDisplayEnable);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_LEFT
-    if (side == CHAR_DISPLAY_LEFT)
+    if (side == CHAR_DISPLAY_LEFT && char_display_values[side] < 0x10)
         PIO_Clear(&pinCharDisplaySelectLeft);
 #endif
 #ifdef PIN_CHAR_DISPLAY_SELECT_RIGHT
-    if (side == CHAR_DISPLAY_RIGHT)
+    if (side == CHAR_DISPLAY_RIGHT && char_display_values[side] < 0x10)
         PIO_Clear(&pinCharDisplaySelectRight);
 #endif
 }
@@ -113,7 +114,9 @@ void char_display_tick() {
 
     next = (current == CHAR_DISPLAY_LEFT) ? CHAR_DISPLAY_RIGHT
                                           : CHAR_DISPLAY_LEFT;
+    disable_interrupts();
     char_display_clear();
     char_display_show(current);
+    enable_interrupts();
     current = next;
 }

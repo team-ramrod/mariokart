@@ -35,6 +35,9 @@ message_t proto_read();
  */
 int proto_write(message_t msg);
 
+// TODO deleteme
+void proto_debug_send(unsigned int high, unsigned int low);
+
 /**
  * To be called when an arbitrary 'heartbeat' message is received
  */

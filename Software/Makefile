@@ -169,13 +169,18 @@ ocd%: openocd%.cfg
 
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	@echo "\n"\
-		"======================================" "\n"\
-		"  Programming is not yet implemented  " "\n"\
-		"                                      " "\n"\
-		"  Use \`make debug-$*\` to start GDB  " "\n"\
-		"  then enter \`continue\` in GDB.     " "\n"\
-		"======================================" "\n"
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x program.gdb $< \
+		) \
+	fi
 
 
 # Uses the check file to ensure that OpenOCD has
@@ -191,6 +196,36 @@ debug-%: $(OUTPUT_FOLDER)/%.elf
 				"==============================" "\n"\
 		) else ( \
 			$(GDB) -x debug.gdb $< \
+		) \
+	fi
+
+
+enable-flash-boot:
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x enable_flash_boot.gdb \
+		) \
+	fi
+
+
+disable-flash-boot:
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x disable_flash_boot.gdb \
 		) \
 	fi
 
