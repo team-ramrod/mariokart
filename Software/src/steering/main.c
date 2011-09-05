@@ -122,22 +122,34 @@ void cal_steering(cal_state* cal) {
     switch (*cal) {
         case UNCALIBRATED:
 
+            char_display_number(11);
+                char_display_tick();
+
             printf("Steering calibration started\n\r");
             *cal = FINDING_ANTICLOCK;
             break;
 
         case FINDING_ANTICLOCK:
             //drive steering anticlockwise until limit hit
+            
             act_driver_drive(-50);
+
+            char_display_number(22);
+                char_display_tick();
+
             if (PIO_Get(&pin_lim_down)) {
                 //stop motor
                 act_driver_drive(0);
+
+                char_display_number(33);
+                char_display_tick();
 
                 //record value in degrees
                 steering_min_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
                 printf("Anticlockwise limit found at %i degrees\n\r", steering_min_angle);
                 *cal = FINDING_CLOCK;
             }
+                break;
 
         case FINDING_CLOCK:
             //drive steering clockwise until limit hit
@@ -183,6 +195,7 @@ void cal_steering(cal_state* cal) {
         case SETTING_SWITCHES:
             steering_limit_sw_init();
             *cal = CALIBRATED;
+            break;
         default:
             proto_state_error();
             break;
@@ -226,7 +239,7 @@ int main(int argc, char *argv[]) {
     char_display_tick();
 
     while (1) {
-        switch (proto_state()) {
+        switch (CALIBRATING) {//proto_state()) {
             case STARTUP:
                 break;
             case CALIBRATING:
