@@ -90,6 +90,10 @@ void send_messages(void) {
             break;
     }
 }
+
+void UsbHandler(unsigned char data[], unsigned int length) {
+}
+
 void ConfigureTimer1();
 
 //------------------------------------------------------------------------------
@@ -108,6 +112,8 @@ int main(int argc, char *argv[]) {
     //Main initialisations
     char_display_init();
     switches_init();
+
+    CDCDSerialDriver_Initialize();
     VBus_Configure();
 
     proto_init(ADDR_COMMS);
@@ -191,7 +197,7 @@ int main(int argc, char *argv[]) {
             case RUNNING: // Normal state
                 
                 char_display_number(33);
-                // Read USB input
+                CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
                 // Send set points
                 // Check for acks
                 // Receive data from sensor
