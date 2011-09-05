@@ -46,6 +46,7 @@ void ISR_Tc0(void)
     if (state == RUNNING) {
             wait_timer += 250;
             if (wait_timer >= TIMEOUT ) 
+                TRACE_ERROR("Timeout while running");
                 proto_state_error();
     }
 
@@ -263,16 +264,18 @@ unsigned int message_handler(CAN_Packet packet) {
         case STARTUP:
             switch (msg.command) {
                 case CMD_REQ_CALIBRATE:
-                    if (CAN_STATUS_SUCCESS != reply_to_comms(CMD_ACK_CALIBRATE)) 
+                    if (CAN_STATUS_SUCCESS != reply_to_comms(CMD_ACK_CALIBRATE)) {
+                        TRACE_ERROR("Failed to ack CMD_REQ_CALIBRATE");
                         proto_state_error();
+                    }
 
                     break;
                 case CMD_CALIBRATE:
                     state = CALIBRATING;
                     break;
                 default:
-    char_display_number(msg.command);
-                    proto_state_error();
+                    TRACE_ERROR("Unknown command %i during startup", msg.command);
+                        proto_state_error();
                     break;
             }
             break;
@@ -285,14 +288,16 @@ unsigned int message_handler(CAN_Packet packet) {
                         result = reply_to_comms(CMD_NO);
 
                     if (CAN_STATUS_SUCCESS != result) 
-                        proto_state_error();
+                        TRACE_ERROR("Failed to ack/deny CMD_REQ_CALIBRATE");
+                            proto_state_error();
                     break;
                 case CMD_RUN:
                     proto_refresh();
                     state = RUNNING;
                     break;
                 default:
-                    proto_state_error();
+                    TRACE_ERROR("Unknown command %i during calibration", msg.command);
+                        proto_state_error();
                     break;
             }
             break;
@@ -302,6 +307,7 @@ unsigned int message_handler(CAN_Packet packet) {
         case ERROR:
             break;
         default:
+            TRACE_ERROR("Unknown state");
             proto_state_error();
             break;
     }
@@ -329,7 +335,7 @@ int proto_write(message_t msg) {
             msg.command);
 
     can_data_high =
-          ((msg.from & 0xFF)     << 0x10)
+        ((msg.from & 0xFF)     << 0x10)
         | ((msg.to & 0xFF)       << 0x18)
         | ((msg.command & 0xFF)  << 0x08)
         |  msg.data[0];
@@ -337,19 +343,19 @@ int proto_write(message_t msg) {
         | (msg.data[2]           << 0x10)
         | (msg.data[3]           << 0x08)
         |  msg.data[4];
-/*
-    message_t msg = {
-        .from     = (packet.data_high >> 0x10) & 0xFF,
-        .to       = (packet.data_high >> 0x18) & 0xFF,
-        .command  = (packet.data_high >> 0x08) & 0xFF,
-        .data_len = packet.size - 3,
-        .data[0]  = packet.data_high & 0xFF,
-        .data[1]  = (packet.data_low >> 0x18) & 0xFF,
-        .data[2]  = (packet.data_low >> 0x10) & 0xFF,
-        .data[3]  = (packet.data_low >> 0x08) & 0xFF,
-        .data[4]  =  packet.data_low          & 0xFF,
-    };
-*/
+    /*
+       message_t msg = {
+       .from     = (packet.data_high >> 0x10) & 0xFF,
+       .to       = (packet.data_high >> 0x18) & 0xFF,
+       .command  = (packet.data_high >> 0x08) & 0xFF,
+       .data_len = packet.size - 3,
+       .data[0]  = packet.data_high & 0xFF,
+       .data[1]  = (packet.data_low >> 0x18) & 0xFF,
+       .data[2]  = (packet.data_low >> 0x10) & 0xFF,
+       .data[3]  = (packet.data_low >> 0x08) & 0xFF,
+       .data[4]  =  packet.data_low          & 0xFF,
+       };
+       */
 
     return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
 }

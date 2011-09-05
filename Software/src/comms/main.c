@@ -126,15 +126,11 @@ int main(int argc, char *argv[]) {
         switch (proto_state()) {
             case STARTUP:
                 if (timeout) {
-                    //char_display_number(11);
                     timeout = false;
                     responses = 0;
-                    broadcast_message.command = 4;//CMD_REQ_CALIBRATE;
-                    proto_debug_send(12,34);
-//                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
-//                        char_display_number(i++);
-//                        if (i ==100) i = 0;
-//                    }
+                    broadcast_message.command = CMD_REQ_CALIBRATE;
+                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
+                    }
                 } 
 
                 msg = proto_read();
@@ -146,6 +142,7 @@ int main(int argc, char *argv[]) {
                     case CMD_NONE:
                         break;
                     default:
+                        TRACE_ERROR("Invalid command %i received in startup state", msg.command);
                         proto_state_error();
                         break;
                 }
@@ -175,7 +172,7 @@ int main(int argc, char *argv[]) {
                     case CMD_NO:
                         break;// A board is refusing the transition
                     default:
-                        proto_state_error();
+                        proto_state_error("Invalid command %i received in calibrating state", msg.command);
                         break;
                 }
 
