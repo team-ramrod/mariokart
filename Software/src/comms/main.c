@@ -172,7 +172,8 @@ int main(int argc, char *argv[]) {
                     case CMD_NO:
                         break;// A board is refusing the transition
                     default:
-                        proto_state_error("Invalid command %i received in calibrating state", msg.command);
+                        TRACE_ERROR("Invalid command %i received in calibrating state", msg.command);
+                        proto_state_error();
                         break;
                 }
 
