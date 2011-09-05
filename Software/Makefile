@@ -169,13 +169,18 @@ ocd%: openocd%.cfg
 
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	@echo "\n"\
-		"======================================" "\n"\
-		"  Programming is not yet implemented  " "\n"\
-		"                                      " "\n"\
-		"  Use \`make debug-$*\` to start GDB  " "\n"\
-		"  then enter \`continue\` in GDB.     " "\n"\
-		"======================================" "\n"
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x program.gdb $< \
+		) \
+	fi
 
 
 # Uses the check file to ensure that OpenOCD has
