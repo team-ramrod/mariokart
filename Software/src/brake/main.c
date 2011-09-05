@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
                 break;
             case CALIBRATING:
                 char_display_number(22);
+                proto_calibration_complete();
                 // return to off position here?
                 break;
             case RUNNING: 

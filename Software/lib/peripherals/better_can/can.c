@@ -4,6 +4,7 @@
 #include <irq/irq.h>
 #include "can.h"
 
+#define QUIT_CAN
 
 // CAN state
 typedef enum {
