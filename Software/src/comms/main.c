@@ -166,6 +166,8 @@ int main(int argc, char *argv[]) {
 
                 msg = proto_read();
                 switch(msg.command) {
+                    case CMD_NONE:
+                        break;
                     case CMD_ACK_RUN:
                         responses |= 1 << msg.from; 
                         break;
