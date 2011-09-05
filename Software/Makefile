@@ -200,6 +200,36 @@ debug-%: $(OUTPUT_FOLDER)/%.elf
 	fi
 
 
+enable-flash-boot:
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x enable_flash_boot.gdb \
+		) \
+	fi
+
+
+disable-flash-boot:
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x disable_flash_boot.gdb \
+		) \
+	fi
+
+
 clean:
 	rm -rf $(OUTPUT_FOLDER)/*
 	rm -rf .dep/*
