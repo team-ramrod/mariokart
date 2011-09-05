@@ -20,6 +20,7 @@
 #include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
 #include <utility/trace.h>
 #include <pit/pit.h>
+#include <better_can/can.h>
 
 #include "usb.c"
 
@@ -139,26 +140,31 @@ int main(int argc, char *argv[]) {
 
     message_t broadcast_message, msg;
     broadcast_message.from     = ADDR_COMMS;
-    broadcast_message.to       = ADDR_BROADCAST_RX;
-    broadcast_message.command  = CMD_NONE;
+    broadcast_message.to       = ADDR_BRAKE;
+    broadcast_message.command  = 3;//CMD_NONE;
     broadcast_message.data_len = 0;
     char_display_number(0);
+    int i = 50;
+   
 
     while(1) {    
-        char_display_tick();
         switch (proto_state()) {
             case STARTUP:
-                char_display_number(11);
                 if (timeout) {
+                    //char_display_number(11);
                     timeout = false;
                     responses = 0;
-                    broadcast_message.command = CMD_REQ_CALIBRATE;
-                    proto_write(broadcast_message);
+                    broadcast_message.command = 4;//CMD_REQ_CALIBRATE;
+                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
+                        char_display_number(i++);
+                        if (i ==100) i = 0;
+                    }
                 } 
 
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_ACK_CALIBRATE:
+                        char_display_number(23);
                         responses |= 1 << msg.from; 
                         break;
                     case CMD_NONE:
@@ -169,6 +175,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 if (responses == ALL_CLIENTS) {
+                    char_display_number(24);
                     broadcast_message.command = CMD_CALIBRATE;
                     proto_write(broadcast_message);
                     proto_state_transition(CALIBRATING);
@@ -177,7 +184,6 @@ int main(int argc, char *argv[]) {
 
                 break;
             case CALIBRATING: // Waiting for all boards to finish calibration
-                char_display_number(22);
                 if (timeout) {
                     responses = 0;
                     broadcast_message.command = CMD_REQ_RUN;
@@ -228,8 +234,12 @@ int main(int argc, char *argv[]) {
 //------------------------------------------------------------------------------
 void ISR_Tc1(void)
 {
+    static int i = 0;
+
+    char_display_tick();
     AT91C_BASE_TC1->TC_SR;
-    timeout = true;
+    if (i++ > 10)
+        timeout = true;
 }
 
 //------------------------------------------------------------------------------
@@ -244,9 +254,9 @@ void ConfigureTimer1(void)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
 
     // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor(10, BOARD_MCK, &div, &tcclks);
+    TC_FindMckDivisor(100, BOARD_MCK, &div, &tcclks);
     TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 10; // timerFreq / desiredFreq
+    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 100; // timerFreq / desiredFreq
 
     // Configure and enable interrupt on RC compare
     AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, ISR_Tc1);

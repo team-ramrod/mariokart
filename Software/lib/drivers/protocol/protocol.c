@@ -230,6 +230,8 @@ void proto_state_transition(state_t new_state) {
     state = new_state;
 }
 
+volatile int handler_counter = 70;
+
 /**
  * To be called asynchronously when a new can frame is
  * received. Decodes packets and intercepts state transition
@@ -247,6 +249,7 @@ unsigned int message_handler(CAN_Packet packet) {
         .data[3]  = (packet.data_low >> 0x08) & 0xFF,
         .data[4]  =  packet.data_low          & 0xFF,
     };
+
 
     // Short circuit the message handling for the comms board.
     if (local_address == ADDR_COMMS) {
@@ -267,6 +270,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     state = CALIBRATING;
                     break;
                 default:
+    char_display_number(msg.command);
                     proto_state_error();
                     break;
             }

@@ -1,5 +1,6 @@
 #include "char_display.h"
 
+#include <utility/interrupts.h>
 #include <board.h>
 #include <pio/pio.h>
 
@@ -113,7 +114,9 @@ void char_display_tick() {
 
     next = (current == CHAR_DISPLAY_LEFT) ? CHAR_DISPLAY_RIGHT
                                           : CHAR_DISPLAY_LEFT;
+    disable_interrupts();
     char_display_clear();
     char_display_show(current);
+    enable_interrupts();
     current = next;
 }

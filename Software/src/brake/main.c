@@ -73,13 +73,12 @@ int main(int argc, char *argv[]) {
     message_t msg;
 
     proto_init(ADDR_BRAKE);
-    char_display_number(0);
+    char_display_number(11);
 
     while (1) {
         char_display_tick();
         switch (proto_state()) {
             case STARTUP:
-                char_display_number(11);
                 break;
             case CALIBRATING:
                 char_display_number(22);
@@ -101,7 +100,7 @@ int main(int argc, char *argv[]) {
                 act_driver_drive(speed);
                 break;
             default: // ERROR
-                char_display_number(44);
+                //char_display_number(44);
                 //TODO put the brake on
                 break;
         }
