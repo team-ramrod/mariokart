@@ -7,10 +7,10 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
+#include <protocol/protocol.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 
@@ -22,7 +22,12 @@
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-CanTransfer canTransfer; //Can transfer structure
+
+
+
+void set_motor(unsigned char setpoint) {
+
+}
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -37,16 +42,34 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
 
-    //Init CAN Bus
-    /* The third pram in CAN_Init is if you have two CAN controllers */
-    if( CAN_Init( CAN_BUS_SPEED, &canTransfer, NULL ) != 1 ) {
-        TRACE_ERROR("CAN Bus did not init\n\r");
-    }
-    TRACE_INFO("CAN Init OK\n\r");
-    CAN_ResetTransfer(&canTransfer);
+    message_t msg;
 
-    while(1) {
-        char_display_tick();
+    proto_init(ADDR_MOTOR);
+
+    while (1) {
+        switch (proto_state()) {
+            case STARTUP:
+                break;
+            case CALIBRATING:
+                break;
+            case RUNNING: 
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_SET:
+                        set_motor(msg.data[0]);
+                        proto_refresh();
+                    case CMD_NONE:
+                        break;
+                    default:
+                        break; //ERROR
+
+                }
+                char_display_tick();
+                break;
+            default: // ERROR
+                set_motor(0);
+                break;
+        }
     }
 
     return 0;

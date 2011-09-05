@@ -7,7 +7,6 @@
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
-#include <can/can.h>
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
@@ -29,7 +28,6 @@
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-
 void send_data(address_t to, unsigned char id, variable_t var) {
     unsigned char speed;
 
@@ -121,24 +119,34 @@ int main(int argc, char *argv[]) {
     timer_init();
     speed_init();
 
-    proto_wait();
+    proto_init(ADDR_SENSOR);
 
-    for (;;) {
-        // Need to add a delay to aim for ~100 Hz here.
-        msg = proto_read();
-
-        switch (msg.command) {
-            case CMD_GET:
-                id = msg.data[0];
-                var = msg.data[1];
-                send_data(msg.from, id, var);
+    while (1) {
+        switch (proto_state()) {
+            case STARTUP:
                 break;
-            default:
+            case CALIBRATING:
+                proto_calibration_complete();
+                break;
+            case RUNNING: 
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_GET:
+                        proto_refresh();
+                        id = msg.data[0];
+                        var = msg.data[1];
+                        send_data(msg.from, id, var);
+                        break;
+                    case CMD_NONE:
+                        break;
+                    default:
+                        break; //Go to error state  
+                }
+                char_display_tick();
+                break;
+            default: // ERROR
                 break;
         }
-
-        char_display_tick();
-        proto_refresh();
     }
 
     return 0;

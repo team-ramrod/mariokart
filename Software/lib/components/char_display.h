@@ -1,5 +1,5 @@
-#ifndef LED_H
-#define LED_H
+#ifndef CHAR_H
+#define CHAR_H
 
 /**
  * Initialises the char_display module.

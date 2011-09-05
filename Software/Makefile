@@ -73,6 +73,7 @@ CFLAGS += -g
 CFLAGS += -D$(CHIP)
 CFLAGS += -D$(MEMORY)
 CFLAGS += -DTRACE_LEVEL=$(TRACE_LEVEL)
+CFLAGS += -mthumb-interwork
 CFLAGS += $(INCLUDES)
 
 # Generate dependency information
@@ -83,6 +84,7 @@ ASFLAGS += -g
 ASFLAGS += -D$(CHIP)
 ASFLAGS += -D$(MEMORY)
 ASFLAGS += -D__ASSEMBLY__
+ASFLAGS += -mthumb-interwork
 ASFLAGS += $(INCLUDES)
 
 LINK_SCRIPT = -T"lib/boards/$(BOARD)/$(CHIP)/$(MEMORY).lds"
@@ -103,6 +105,7 @@ C_FILES += $(wildcard lib/usb/device/core/*.c)
 
 C_FILES += lib/boards/$(BOARD)/board_memories.c
 C_FILES += lib/boards/$(BOARD)/board_lowlevel.c
+C_FILES += lib/boards/$(BOARD)/board_powermode.c
 
 #steering files (I dont know much about makefiles so this probably needs changing)
 C_FILES += $(wildcard src/steering/*.c)
@@ -173,13 +176,18 @@ ocd%: openocd%.cfg
 
 
 program-%: $(OUTPUT_FOLDER)/%.elf
-	@echo "\n"\
-		"======================================" "\n"\
-		"  Programming is not yet implemented  " "\n"\
-		"                                      " "\n"\
-		"  Use \`make debug-$*\` to start GDB  " "\n"\
-		"  then enter \`continue\` in GDB.     " "\n"\
-		"======================================" "\n"
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x program.gdb $< \
+		) \
+	fi
 
 
 # Uses the check file to ensure that OpenOCD has
@@ -195,6 +203,36 @@ debug-%: $(OUTPUT_FOLDER)/%.elf
 				"==============================" "\n"\
 		) else ( \
 			$(GDB) -x debug.gdb $< \
+		) \
+	fi
+
+
+enable-flash-boot:
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x enable_flash_boot.gdb \
+		) \
+	fi
+
+
+disable-flash-boot:
+	@if [ ! -e $(OCD_CHECK_FILE) ] ; \
+		then ( \
+			echo "\n"\
+			  "==============================" "\n"\
+				" OpenOCD not running          " "\n"\
+				"                              " "\n"\
+				" Use \`make ocd\` to start it." "\n"\
+				"==============================" "\n"\
+		) else ( \
+			$(GDB) -batch -x disable_flash_boot.gdb \
 		) \
 	fi
 

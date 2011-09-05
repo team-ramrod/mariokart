@@ -12,27 +12,23 @@ void main(void) {
 
     while (1) {
         switch (proto_state()) {
-            case WAITING: // waiting for comms board to give the go ahead to calibrate
+            case STARTUP:
                 break;
-            case INITIALISING: // Waiting for all boards to finish calibration
-                // run a loop of the calibration routine();
+            case CALIBRATING:
                 break;
-            case RUNNING: // Normal state
-                // if (incoming data) {
-                //     if (data is valid) {
-                //         setpoint = data;
-                //         proto_refresh();
-                //     } else {
-                //         proto_set_error();
-                //     }
-                // }
-                // run iteration of PID loop using setpoint
-                // Any issues => state = ERROR; break;
+            case RUNNING: 
+                if (proto_msg_buff_length()) {
+                    msg = proto_msg_buff_pop();
+                    if (msg.command == CMD_SET) {
+                        set_steering(msg.data[0]);
+                        proto_refresh();
+                    } else {
+                        proto_state_error();
+                    }
+                }
                 break;
             default: // ERROR
                 //broadcast ERROR signal
-                // If reset signal received 
-                // then transition to WAITING state.
                 break;
         }
     }

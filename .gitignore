@@ -27,3 +27,7 @@ local.mk
 .dep
 .graphs
 *.a
+
+#Modeling
+pan*
+*.trail

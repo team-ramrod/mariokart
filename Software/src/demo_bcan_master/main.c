@@ -33,14 +33,14 @@ int main(void)
     LED_Configure(0);
     LED_Configure(1);
 
-    if (! BCAN_Init(1000, 0)) {
+    if (! BCAN_Init(1000, 0, NULL)) {
         printf("INIT FAIL");
-        LED_Set(0);
+        LED_Set(1);
         return 1;
     }
 
     printf("INIT OK\n\r");
-    LED_Set(1);
+    LED_Set(0);
 
     BCAN_InitMailboxRegisters( 0, 1, 0x0, (0x5AC << 18), AT91C_CAN_MOT_TX, 0x0);
 

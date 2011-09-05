@@ -48,9 +48,34 @@
 // Track and hold Acquisition Time min (in ns)
 #define ADC_TRACK_HOLD_TIME_MIN   600
 
+/**
+ * Constants describing several characteristics (controller type, D+ pull-up
+ * type, etc.) of the USB device controller of the chip/board.
+ *
+ * These need to be verified, they are mostly a copy of the ones from the usb
+ * example project.
+ */
+
+// Chip has a UDP controller.
+#define BOARD_USB_UDP
+
+// Indicates the D+ pull-up is always connected.
+#define BOARD_USB_PULLUP_ALWAYSON
+
+// Number of endpoints in the USB controller.
+#define BOARD_USB_NUMENDPOINTS                  6
+
+// Returns the maximum packet size of the given endpoint.
+#define BOARD_USB_ENDPOINTS_MAXPACKETSIZE(i)    ((((i) == 4) || ((i) == 5)) ? 256 : (((i) == 0) ? 8 : 64))
+
+// Returns the number of FIFO banks for the given endpoint.
+#define BOARD_USB_ENDPOINTS_BANKS(i)            ((((i) == 0) || ((i) == 3)) ? 1 : 2)
 
 // USB attributes configuration descriptor (bus or self powered, remote wakeup)
 #define BOARD_USB_BMATTRIBUTES                  USBConfigurationDescriptor_BUSPOWERED_NORWAKEUP
+
+// USB pin for usb connector detection
+#define PIN_USB_VBUS                            {1 << 9, AT91C_BASE_PIOB, AT91C_ID_PIOB, PIO_INPUT, PIO_DEFAULT}
 
 /*
  * This pages lists all the pio definitions contained in board.h. The constants
@@ -239,4 +264,3 @@
 #define PINS_CAN_TRANSCEIVER_RXD  {1<<19, AT91C_BASE_PIOA, AT91C_ID_PIOA, PIO_PERIPH_A, PIO_DEFAULT}
 
 #endif //#ifndef BOARD_H
-

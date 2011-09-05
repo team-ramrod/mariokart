@@ -10,7 +10,6 @@
 #define BAUD_RATE 1000 // allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
 #define TIMEOUT 2000 // May be replaced by a variable
 
-typedef enum {INITIALISING, WAITING, RUNNING, ERROR} state_t;
 
 // For error state callback
 typedef void(*error_callback)( void );
@@ -36,25 +35,23 @@ message_t proto_read();
  */
 int proto_write(message_t msg);
 
+
 /**
  * To be called when an arbitrary 'heartbeat' message is received
  */
 void proto_refresh();
 
-/**
- * Blocks until comms board gives the OK.
- */
-void proto_wait();
-
-/**
- * Blocks until all other boards are ready.
- */
-void proto_comms_wait();
 
 /**
  * A getter for the can handler's state
  */
 state_t proto_state();
+
+/**
+ * To be called by the client when it is ready to move
+ * past the calibration state. Nilpotent.
+ */
+void proto_calibration_complete();
 
 /**
  * Set the callback function that is called when error state is set
