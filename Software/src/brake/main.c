@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
                 break;
             case RUNNING: 
                 char_display_number(33);
+                proto_refresh();
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_SET:

@@ -258,6 +258,16 @@ unsigned int message_handler(CAN_Packet packet) {
         return 1;
     }
     
+    TRACE_DEBUG("Incoming Packet\n\r\n\r"
+                "from\t%i\n\r" 
+                "to\t%i\n\r"
+                "command\t%i\n\r"
+                "data_len\t%i\n\r"
+                "packet-hi\t%i\n\r"
+                "packet-low\t%i\n\r\n\r",
+                  msg.from, msg.to, msg.command, msg.data_len,
+                  packet.data_high,packet.data_low);
+
     unsigned int result;
     switch (state) {
         case STARTUP:
@@ -271,7 +281,6 @@ unsigned int message_handler(CAN_Packet packet) {
                     state = CALIBRATING;
                     break;
                 default:
-    char_display_number(msg.command);
                     proto_state_error();
                     break;
             }
@@ -337,21 +346,8 @@ int proto_write(message_t msg) {
         | (msg.data[2]           << 0x10)
         | (msg.data[3]           << 0x08)
         |  msg.data[4];
-/*
-    message_t msg = {
-        .from     = (packet.data_high >> 0x10) & 0xFF,
-        .to       = (packet.data_high >> 0x18) & 0xFF,
-        .command  = (packet.data_high >> 0x08) & 0xFF,
-        .data_len = packet.size - 3,
-        .data[0]  = packet.data_high & 0xFF,
-        .data[1]  = (packet.data_low >> 0x18) & 0xFF,
-        .data[2]  = (packet.data_low >> 0x10) & 0xFF,
-        .data[3]  = (packet.data_low >> 0x08) & 0xFF,
-        .data[4]  =  packet.data_low          & 0xFF,
-    };
-*/
 
-    return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, msg.data_len + 3);
+    return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, 8);
 }
 
 void proto_debug_send(unsigned int high, unsigned int low) {

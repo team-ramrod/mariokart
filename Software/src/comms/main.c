@@ -98,6 +98,7 @@ void ConfigureTimer1();
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
 
+
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
 
@@ -116,25 +117,20 @@ int main(int argc, char *argv[]) {
     message_t broadcast_message, msg;
     broadcast_message.from     = ADDR_COMMS;
     broadcast_message.to       = ADDR_BRAKE;
-    broadcast_message.command  = 3;//CMD_NONE;
+    broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
-    char_display_number(0);
-//    int i = 50;
+    char_display_number(11);
    
 
     while(1) {    
         switch (proto_state()) {
             case STARTUP:
                 if (timeout) {
-                    //char_display_number(11);
                     timeout = false;
                     responses = 0;
-                    broadcast_message.command = 4;//CMD_REQ_CALIBRATE;
-                    proto_debug_send(12,34);
-//                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
-//                        char_display_number(i++);
-//                        if (i ==100) i = 0;
-//                    }
+                    broadcast_message.command = CMD_REQ_CALIBRATE;
+                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
+                    }
                 } 
 
                 msg = proto_read();
@@ -180,6 +176,8 @@ int main(int argc, char *argv[]) {
                 }
 
                 if (responses == ALL_CLIENTS) {
+                    char_display_number(72);
+                    while(1);
                     broadcast_message.command = CMD_RUN;
                     proto_write(broadcast_message);
                     proto_state_transition(RUNNING);
@@ -187,6 +185,7 @@ int main(int argc, char *argv[]) {
 
                 break;
             case RUNNING: // Normal state
+                
                 char_display_number(33);
                 // Read USB input
                 // Send set points
@@ -214,8 +213,10 @@ void ISR_Tc1(void)
 
     char_display_tick();
     AT91C_BASE_TC1->TC_SR;
-    if (i++ > 10)
+    if (i++ > 10) {
         timeout = true;
+        i = 0;
+    }
 }
 
 //------------------------------------------------------------------------------
