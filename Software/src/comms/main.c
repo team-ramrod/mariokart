@@ -90,31 +90,6 @@ void send_messages(void) {
             break;
     }
 }
-/*
-
-void ISR_Pit(void)
-{
-    // Check to see if it has got to PIV
-    //if (PIT_GetStatus() & AT91C_PITC_PITS) {
-    //    send_messages();
-    //}
-}
-
-void ConfigurePit(void)
-{
-    // Initialize the PIT to the desired frequency
-    PIT_Init(PIT_PERIOD, BOARD_MCK / 10000000);
-
-    // Enable the pit
-    PIT_Enable();
-
-    // Configure interrupt on PIT
-    AIC_DisableIT(AT91C_ID_SYS);
-    AIC_ConfigureIT(AT91C_ID_SYS, AT91C_AIC_PRIOR_LOWEST, ISR_Pit);
-    AIC_EnableIT(AT91C_ID_SYS);
-    PIT_EnableIT();
-}
-*/
 void ConfigureTimer1();
 
 //------------------------------------------------------------------------------
@@ -144,7 +119,7 @@ int main(int argc, char *argv[]) {
     broadcast_message.command  = 3;//CMD_NONE;
     broadcast_message.data_len = 0;
     char_display_number(0);
-    int i = 50;
+//    int i = 50;
    
 
     while(1) {    
@@ -155,10 +130,11 @@ int main(int argc, char *argv[]) {
                     timeout = false;
                     responses = 0;
                     broadcast_message.command = 4;//CMD_REQ_CALIBRATE;
-                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
-                        char_display_number(i++);
-                        if (i ==100) i = 0;
-                    }
+                    proto_debug_send(12,34);
+//                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
+//                        char_display_number(i++);
+//                        if (i ==100) i = 0;
+//                    }
                 } 
 
                 msg = proto_read();
