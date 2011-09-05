@@ -4,6 +4,7 @@
  */
 
 #include "protocol.h"
+#include <char_display.h> //TODO deleteme
 #include "proto_msg_buff.h"
 #include <better_can/can.h>
 #include <tc/tc.h>
@@ -355,6 +356,7 @@ int proto_write(message_t msg) {
 
 void proto_debug_send(unsigned int high, unsigned int low) {
     BCAN_Write(0, ADDR_BRAKE, high, low, 8);
+}
 
 /**
  * To be called when an arbitrary 'heartbeat' message is received
