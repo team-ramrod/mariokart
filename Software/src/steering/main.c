@@ -42,10 +42,20 @@ int steering_loc_in_pulses = 0;
 const Pin pin_lim_up = LIM_SW_UP;
 const Pin pin_lim_down = LIM_SW_DOWN;
 
+typedef enum {
+    UNCALIBRATED,
+    FINDING_ANTICLOCK,
+    FINDING_CLOCK,
+    CENTERING,
+    SETTING_SWITCHES,
+    CALIBRATED
+} cal_state;
+
 //------------------------------------------------------------------------------
 //         Interrupt Handlers
 //------------------------------------------------------------------------------
 //triggers error on limit switches (ISR must not be set till after calibration)
+
 void LIMIT_ISR(const Pin *pin) {
     if (!PIO_Get(&pin_lim_up) || !PIO_Get(&pin_lim_down)) {
         //something wrong with steering so stops motor
@@ -60,6 +70,7 @@ void LIMIT_ISR(const Pin *pin) {
 //         Local Functions
 //------------------------------------------------------------------------------
 //sets steering to an angle (in degrees) between min_angle and max_angle
+
 void set_steering(int angle) {
 
     angle = angle + ((steering_max_angle - steering_min_angle) / 2) + steering_min_angle;
@@ -76,18 +87,21 @@ void set_steering(int angle) {
 }
 
 //gets the steering wheels current position in degrees
+
 int get_steering_pos(void) {
     return (((encoder_position_output * 360.0) / ENCODER_PULSES_PER_REV)) -
-        ((steering_max_angle - steering_min_angle) / 2) - steering_min_angle;
+            ((steering_max_angle - steering_min_angle) / 2) - steering_min_angle;
 }
 
 //gets where the steering wheel is moving to in degrees
+
 int get_steering_desired_pos(void) {
     return (((steering_loc_in_pulses * 360.0) / ENCODER_PULSES_PER_REV) -
-            ((steering_max_angle - steering_min_angle) / 2)) - steering_min_angle;
+            ((steering_max_angle - steering_min_angle) / 2)) -steering_min_angle;
 }
 
 //sets up the limit swiches interrupts
+
 void steering_limit_sw_init(void) {
 
     // Initialize interrupts
@@ -102,70 +116,97 @@ void steering_limit_sw_init(void) {
 
 //calibrates steering position by finding locaiton of limit switches and
 //assuming straight ahead is halfway between them
-void cal_steering(void) {
 
-    printf("Steering calibration started\n\r");
+void cal_steering(cal_state* cal) {
 
-    //drive steering anticlockwise until limit hit
-    act_driver_drive(-50);
-    while (!PIO_Get(&pin_lim_down)) {
-        continue;
+    switch (*cal) {
+        case UNCALIBRATED:
+
+            char_display_number(11);
+                char_display_tick();
+
+            printf("Steering calibration started\n\r");
+            *cal = FINDING_ANTICLOCK;
+            break;
+
+        case FINDING_ANTICLOCK:
+            //drive steering anticlockwise until limit hit
+            
+            act_driver_drive(-50);
+
+            char_display_number(22);
+                char_display_tick();
+
+            if (PIO_Get(&pin_lim_down)) {
+                //stop motor
+                act_driver_drive(0);
+
+                char_display_number(33);
+                char_display_tick();
+
+                //record value in degrees
+                steering_min_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
+                printf("Anticlockwise limit found at %i degrees\n\r", steering_min_angle);
+                *cal = FINDING_CLOCK;
+            }
+                break;
+
+        case FINDING_CLOCK:
+            //drive steering clockwise until limit hit
+            act_driver_drive(50);
+            if (PIO_Get(&pin_lim_up)) {
+                //stop motor
+                act_driver_drive(0);
+
+                //record value in degrees
+                steering_max_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
+                printf("Clockwise limit found at %i degrees\n\r", steering_max_angle);
+
+                //set starting position to center position
+                set_steering(0);
+
+                //check motor direction and enter error state if required
+                if (steering_max_angle < steering_min_angle) {
+                    printf("ERROR MOTOR SPINNING BACKWARDS\n\r");
+
+                    //implement error state
+                    proto_state_error();
+                }
+                printf("Center offset found to be %i degrees\r\n",
+                        ((steering_max_angle - steering_min_angle) / 2) + steering_min_angle);
+
+                //dont return until motor driven back to center
+                printf("desired location %i, current location %i\r\n", get_steering_desired_pos(), get_steering_pos());
+                act_driver_drive(-50);
+
+                *cal = CENTERING;
+            }
+            break;
+
+        case CENTERING:
+            if (get_steering_pos() <= get_steering_desired_pos()) {
+                //stop motor
+                act_driver_drive(0);
+                printf("Steering centered calibration finished\n\r");
+                *cal = SETTING_SWITCHES;
+            }
+            break;
+
+        case SETTING_SWITCHES:
+            steering_limit_sw_init();
+            *cal = CALIBRATED;
+            break;
+        default:
+            proto_state_error();
+            break;
     }
 
-    //stop motor
-    act_driver_drive(0);
-
-    //record value in degrees
-    steering_min_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
-    printf("Anticlockwise limit found at %i degrees\n\r", steering_min_angle);
-
-    //drive steering clockwise until limit hit
-    act_driver_drive(50);
-    while (!PIO_Get(&pin_lim_up)) {
-        continue;
-    }
-
-    //stop motor
-    act_driver_drive(0);
-
-    //record value in degrees
-    steering_max_angle = 360 * encoder_position_output / ENCODER_PULSES_PER_REV;
-    printf("Clockwise limit found at %i degrees\n\r", steering_max_angle);
-
-    //set starting position to center position
-    set_steering(0);
-
-    //check motor direction and enter error state if required
-    if (steering_max_angle < steering_min_angle) {
-        printf("ERROR MOTOR SPINNING BACKWARDS\n\r");
-
-        //implement error state TO DO
-        while (1) {
-            continue;
-        }
-    }
-    printf("Center offset found to be %i degrees\r\n",
-            ((steering_max_angle - steering_min_angle) / 2) + steering_min_angle);
-
-    //dont return until motor driven back to center
-    printf("desired location %i, current location %i\r\n",get_steering_desired_pos(),get_steering_pos());
-    act_driver_drive(-50);
-
-    //cannot have while(get_steering_pos() > get_steering_desired_pos()){};
-    //as compiler fucks up its implementation, hence the volatile i
-    volatile int i = 0;
-    while (get_steering_pos() > get_steering_desired_pos()) {
-        i++;
-    }
-
-    //stop motor
-    act_driver_drive(0);
-    printf("Steering centered calibration finished\n\r");
 }
 
 //------------------------------------------------------------------------------
 //         Main Function
 //------------------------------------------------------------------------------
+
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
 
@@ -190,22 +231,31 @@ int main(int argc, char *argv[]) {
 
     int speed;
     message_t msg;
+    cal_state cal = UNCALIBRATED;
 
     TRACE_INFO("Steering board initialization completed\n\r");
 
+    char_display_number(11);
+    char_display_tick();
+
     while (1) {
-        switch (proto_state()) {
+        switch (CALIBRATING) {//proto_state()) {
             case STARTUP:
                 break;
-            case CALIBRATING: 
+            case CALIBRATING:
                 //ideally this would run one iteration and return
                 //however that isn't a necessity
-                cal_steering(); 
-                steering_limit_sw_init();
+                if (cal == CALIBRATED) {
+                    proto_calibration_complete();
+                }
+                else
+                {
+                    cal_steering(&cal);
+                }
                 break;
-            case RUNNING: 
+            case RUNNING:
                 msg = proto_read();
-                switch(msg.command) {
+                switch (msg.command) {
                     case CMD_SET:
                         set_steering(msg.data[0]);
                         proto_refresh();
