@@ -32,6 +32,7 @@
 //------------------------------------------------------------------------------
 
 #include "tc.h"
+#include <aic/aic.h>
 
 //------------------------------------------------------------------------------
 //         Global Functions
@@ -140,5 +141,30 @@ unsigned char TC_FindMckDivisor(
     }
 
     return 1;
+}
+
+/**
+ * Starts a timer which runs a callback at the given speed.
+ * @param frequency the required frequency
+ * @param callback the function to call
+ */
+void TC_PeriodicCallback(unsigned int frequency, void (*callback)(void)) {
+    unsigned int div;
+    unsigned int tcclks;
+
+    // Enable peripheral clock
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
+
+    // Configure TC for a 4Hz frequency and trigger on RC compare
+    TC_FindMckDivisor(frequency, BOARD_MCK, &div, &tcclks);
+    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
+    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / frequency; // timerFreq / desiredFreq
+
+    // Configure and enable interrupt on RC compare
+    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, callback);
+    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
+    AIC_EnableIT(AT91C_ID_TC1);
+
+    TC_Start(AT91C_BASE_TC1);
 }
 

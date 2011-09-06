@@ -25,6 +25,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ----------------------------------------------------------------------------
+ *
+ *  Modified 09/2011 by Simon Richards
+ *  Added a simple to use periodic callback, hardcoded to use TC1
  */
 
 //------------------------------------------------------------------------------
@@ -76,5 +79,11 @@ extern unsigned char TC_FindMckDivisor(
     unsigned int *div,
     unsigned int *tcclks);
 
+/**
+ * Starts a timer which runs a callback at the given speed.
+ * @param frequency the required frequency
+ * @param callback the function to call
+ */
+void TC_PeriodicCallback(unsigned int frequency, void (*callback)(void));
 #endif //#ifndef TC_H
 
