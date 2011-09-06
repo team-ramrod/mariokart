@@ -51,12 +51,14 @@ void set_act(int distance){
     brake_location_in_adc = (1024 * distance) / ACT_MAX_LENGTH;
 }
 
+//TODO:reenable PWM commands
+#define DISABLE_PWM
+
 //------------------------------------------------------------------------------
 //         Main Function
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
-    //TODO:reenable PWM commands
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
@@ -65,16 +67,16 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
     pot_init();
-//    act_driver_init();
-
-    //drives the actuator out 30mm
-//    set_act(30);
+#ifndef DISABLE_PWM
+    act_driver_init();
+    drives the actuator out 30mm
+    set_act(30);
     int speed;
+#endif
 
     message_t msg;
 
     proto_init(ADDR_BRAKE);
-    char_display_number(11);
 
     while (1) {
         char_display_tick();
@@ -82,28 +84,30 @@ int main(int argc, char *argv[]) {
             case STARTUP:
                 break;
             case CALIBRATING:
-                char_display_number(22);
                 proto_calibration_complete();
                 // return to off position here?
                 break;
             case RUNNING: 
-                char_display_number(33);
-                proto_refresh();
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_SET:
+#ifndef DISABLE_PWM
                         set_act(msg.data[0]);
+#endif
                         proto_refresh();
                     case CMD_NONE:
                         break;
                     default:
-                        break;//ERROR
+                        TRACE_WARNING("Invalid command %i received in running state", msg.command);
+                        proto_state_error();
+                        break;
                 }
-//                speed = act_driver_pid(brake_location_in_adc, pot_current_value);
-//                act_driver_drive(speed);
+#ifndef DISABLE_PWM
+                speed = act_driver_pid(brake_location_in_adc, pot_current_value);
+                act_driver_drive(speed);
+#endif
                 break;
             default: // ERROR
-                char_display_number(44);
                 //TODO put the brake on
                 break;
         }
