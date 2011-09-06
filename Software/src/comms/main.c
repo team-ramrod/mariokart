@@ -138,8 +138,24 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
             if (usb_msg.command == CMD_NONE) {
                 TRACE_WARNING("Invalid USB message received.\n\r");
             } else {
-                TRANE_INFO("USB message received:" "\n\r"
-                           "    to: %2x
+                TRACE_DEBUG(
+                    "USB message received:" "\n\r"
+                    "    to:      0x%2X" "\n\r"
+                    "    command: 0x%2X" "\n\r"
+                    "    data:         " "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r",
+                    usb_msg.to, usb_msg.command,
+                    usb_msg.data[0], usb_msg.data[1], usb_msg.data[2], usb_msg.data[3],
+                    usb_msg.data[4], usb_msg.data[5], usb_msg.data[6], usb_msg.data[7]
+                );
+            }
             current_char = 0;
         }
     }
