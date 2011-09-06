@@ -19,6 +19,7 @@ typedef enum {
     ADDR_BROADCAST_TX = 0x2,
     ADDR_BRAKE        = 0x3,
     ADDR_COMMS        = 0x4,
+    ADDR_COMMS_USB    = 0x4,
     ADDR_STEERING     = 0x5,
     ADDR_MOTOR        = 0x6,
     ADDR_SENSOR       = 0x7,

@@ -11,7 +11,7 @@
 #include <usb/device/cdc-serial/CDCDSerialDriver.h>
 #include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
 
-void UsbHandler(unsigned char data[], unsigned int length);
+static void UsbHandler(const unsigned char data[], unsigned int length);
 
 //------------------------------------------------------------------------------
 //         Local defines
