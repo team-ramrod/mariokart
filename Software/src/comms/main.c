@@ -132,9 +132,11 @@ void ISR_Tc1(void)
 {
     static int i = 0;
 
+    // Update the display
     char_display_tick();
     AT91C_BASE_TC1->TC_SR;
     if (i++ > 10) {
+        // A flag used to run periodic events in the background
         timeout = true;
         i = 0;
     }
@@ -230,24 +232,23 @@ int main(int argc, char *argv[]) {
     broadcast_message.to       = ADDR_BRAKE;
     broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
-    char_display_number(11);
 
 
     while(1) {    
         switch (proto_state()) {
             case STARTUP:
+                // Probe all board periodically
                 if (timeout) {
-                    timeout = false;
                     responses = 0;
                     broadcast_message.command = CMD_REQ_CALIBRATE;
-                    if (CAN_STATUS_SUCCESS == proto_write(broadcast_message)) {
-                    }
+                    proto_write(broadcast_message);
+                    timeout = false;
                 } 
 
+                // Check any responses
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_ACK_CALIBRATE:
-                        char_display_number(23);
                         responses |= 1 << msg.from; 
                         break;
                     case CMD_NONE:
@@ -258,6 +259,7 @@ int main(int argc, char *argv[]) {
                         break;
                 }
 
+                // Check to see if all boards have acked
                 if (responses == ALL_CLIENTS) {
                     char_display_number(24);
                     broadcast_message.command = CMD_CALIBRATE;
@@ -267,7 +269,9 @@ int main(int argc, char *argv[]) {
                 }
 
                 break;
-            case CALIBRATING: // Waiting for all boards to finish calibration
+
+            case CALIBRATING:
+                // Request a transition periodically
                 if (timeout) {
                     responses = 0;
                     broadcast_message.command = CMD_REQ_RUN;
@@ -275,21 +279,29 @@ int main(int argc, char *argv[]) {
                     timeout = false;
                 } 
 
+                // Check any responses
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_NONE:
                         break;
-                    case CMD_ACK_RUN:
+
+                    // A board acked, add its bit to the response list
+                    case CMD_ACK_RUN: 
                         responses |= 1 << msg.from; 
                         break;
+                        
+                    // A board is refusing the transition
                     case CMD_NO:
-                        break;// A board is refusing the transition
+                        break;
+
+                    // Invalid response
                     default:
                         TRACE_ERROR("Invalid command %i received in calibrating state", msg.command);
                         proto_state_error();
                         break;
                 }
 
+                // Check if all clients have acked
                 if (responses == ALL_CLIENTS) {
                     char_display_number(72);
                     broadcast_message.command = CMD_RUN;
@@ -298,23 +310,31 @@ int main(int argc, char *argv[]) {
                 }
 
                 break;
+
             case RUNNING: // Normal state
 
-                char_display_number(33);
                 CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
                 if (usb_msg.command != CMD_NONE) {
+                    // TODO
                     // Send set points
                     // Check for acks
                     // Receive data from sensor
                     // Forward sensor data to latptop
                 }
+
+                // TODO Valid reponses received so refresh the protocol timer
                 proto_refresh();
-                // Any issues => state = ERROR; break;
+
                 break;
             default: // ERROR
-                char_display_number(44);
-                //broadcast ERROR signal
-                //send ERROR signal through USB
+                if (timeout) {
+                    responses = 0;
+                    broadcast_message.to = ADDR_BROADCAST_RX;
+                    broadcast_message.command = CMD_ERROR;
+                    proto_write(broadcast_message);
+                    timeout = false;
+                } 
+                //TODO send ERROR signal through USB
                 break;
         }
     }
