@@ -94,7 +94,44 @@ void send_messages(void) {
 void UsbHandler(unsigned char data[], unsigned int length) {
 }
 
-void ConfigureTimer1();
+//------------------------------------------------------------------------------
+/// Interrupt handler for TC1 interrupt.
+//------------------------------------------------------------------------------
+void ISR_Tc1(void)
+{
+    static int i = 0;
+
+    char_display_tick();
+    AT91C_BASE_TC1->TC_SR;
+    if (i++ > 10) {
+        timeout = true;
+        i = 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/// Configure Timer Counter 1 to generate an interrupt every 100ms.
+//------------------------------------------------------------------------------
+void ConfigureTimer1(void)
+{
+    unsigned int div;
+    unsigned int tcclks;
+
+    // Enable peripheral clock
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
+
+    // Configure TC for a 4Hz frequency and trigger on RC compare
+    TC_FindMckDivisor(100, BOARD_MCK, &div, &tcclks);
+    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
+    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 100; // timerFreq / desiredFreq
+
+    // Configure and enable interrupt on RC compare
+    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, ISR_Tc1);
+    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
+    AIC_EnableIT(AT91C_ID_TC1);
+
+    TC_Start(AT91C_BASE_TC1);
+}
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -127,6 +164,7 @@ int main(int argc, char *argv[]) {
     broadcast_message.data_len = 0;
     char_display_number(11);
    
+    while(1)TRACE_ERROR("test\n");
 
     while(1) {    
         switch (proto_state()) {
@@ -135,7 +173,7 @@ int main(int argc, char *argv[]) {
                     timeout = false;
                     responses = 0;
                     broadcast_message.command = CMD_REQ_CALIBRATE;
-                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
+                    if (CAN_STATUS_SUCCESS == proto_write(broadcast_message)) {
                     }
                 } 
 
@@ -214,41 +252,3 @@ int main(int argc, char *argv[]) {
     }
 }
 
-//------------------------------------------------------------------------------
-/// Interrupt handler for TC1 interrupt.
-//------------------------------------------------------------------------------
-void ISR_Tc1(void)
-{
-    static int i = 0;
-
-    char_display_tick();
-    AT91C_BASE_TC1->TC_SR;
-    if (i++ > 10) {
-        timeout = true;
-        i = 0;
-    }
-}
-
-//------------------------------------------------------------------------------
-/// Configure Timer Counter 1 to generate an interrupt every 100ms.
-//------------------------------------------------------------------------------
-void ConfigureTimer1(void)
-{
-    unsigned int div;
-    unsigned int tcclks;
-
-    // Enable peripheral clock
-    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
-
-    // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor(100, BOARD_MCK, &div, &tcclks);
-    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 100; // timerFreq / desiredFreq
-
-    // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, ISR_Tc1);
-    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
-    AIC_EnableIT(AT91C_ID_TC1);
-
-    TC_Start(AT91C_BASE_TC1);
-}
