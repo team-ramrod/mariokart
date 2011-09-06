@@ -4,7 +4,6 @@
  */
 
 #include "protocol.h"
-#include <char_display.h> //TODO deleteme
 #include "proto_msg_buff.h"
 #include <better_can/can.h>
 #include <tc/tc.h>
@@ -31,7 +30,11 @@ static bool ready_to_run = false;
 // The address of current board
 static address_t local_address;
 
+// The message to broadcast when in error state
 static message_t error_message;
+
+// Forward declarations
+unsigned int message_handler(CAN_Packet packet);
 
 /**
  * Interrupt handler for TC0, increments a counter and checks
@@ -46,7 +49,7 @@ void ISR_Tc0(void)
     if (state == RUNNING) {
             wait_timer += 250;
             if (wait_timer >= TIMEOUT ) {
-                TRACE_ERROR("Timeout while running");
+                TRACE_WARNING("Timeout while running");
                 proto_state_error();
             }
     }
@@ -119,12 +122,11 @@ void ConfigureTc(void)
     TC_Start(AT91C_BASE_TC0);
 }
 
-unsigned int message_handler(CAN_Packet packet);
 
 
 /**
  * Initialises the protocol handler and the can bus.
- *
+ * @param board_address the address of the local board
  */
 void proto_init(address_t board_address) {
     TRACE_INFO("Running proto_init\n\r");
@@ -187,7 +189,7 @@ void proto_init(address_t board_address) {
             proto_set_rx_mailbox(ADDR_SENSOR);
             break;
         default:
-            TRACE_WARNING("An incorrect address was passed to proto_init();\n\r");
+            TRACE_ERROR("An incorrect address was passed to proto_init();\n\r");
             break;
     }
 
@@ -212,6 +214,11 @@ unsigned int reply_to_comms(command_t cmd) {
 }
 
 
+/**
+ * Returns the most recent message available to the
+ * client. The command field reads: CMD_NONE if the
+ * buffer is empty
+ */
 message_t proto_read() {
     message_t msg = {
         .from    = 0x0,
@@ -233,12 +240,10 @@ void proto_state_transition(state_t new_state) {
     state = new_state;
 }
 
-volatile int handler_counter = 70;
 
 /**
- * To be called asynchronously when a new can frame is
- * received. Decodes packets and intercepts state transition
- * commands.
+ * To be called when a new can frame is received.
+ * Decodes packets and intercepts state transition commands.
  */
 unsigned int message_handler(CAN_Packet packet) {
     message_t msg = {
@@ -253,13 +258,6 @@ unsigned int message_handler(CAN_Packet packet) {
         .data[4]  =  packet.data_low          & 0xFF,
     };
 
-
-    // Short circuit the message handling for the comms board.
-    if (local_address == ADDR_COMMS) {
-        proto_msg_buff_push(msg);
-        return 1;
-    }
-    
     TRACE_DEBUG("Incoming Packet\n\r\n\r"
                 "from\t%i\n\r" 
                 "to\t%i\n\r"
@@ -270,28 +268,41 @@ unsigned int message_handler(CAN_Packet packet) {
                   msg.from, msg.to, msg.command, msg.data_len,
                   packet.data_high,packet.data_low);
 
+    // Short circuit the message handling for the comms board.
+    if (local_address == ADDR_COMMS) {
+        proto_msg_buff_push(msg);
+        return 1;
+    }
+
     unsigned int result;
+    
+    //For all client boards: control the boards state based on incoming messages while not in RUNNING mode
     switch (state) {
         case STARTUP:
             switch (msg.command) {
+                // Ackknowledge master requests to transition to calibration state
                 case CMD_REQ_CALIBRATE:
                     if (CAN_STATUS_SUCCESS != reply_to_comms(CMD_ACK_CALIBRATE)) {
-                        TRACE_ERROR("Failed to ack CMD_REQ_CALIBRATE");
+                        TRACE_WARNING("Failed to ack CMD_REQ_CALIBRATE");
                         proto_state_error();
                     }
 
                     break;
+
+                // Transition to calibration state at master boards command
                 case CMD_CALIBRATE:
                     state = CALIBRATING;
                     break;
+
                 default:
-                    TRACE_ERROR("Unknown command %i during startup", msg.command);
+                    TRACE_WARNING("Unknown command %i during startup", msg.command);
                     proto_state_error();
                     break;
             }
             break;
         case CALIBRATING:
             switch(msg.command) {
+                // Respond to master requests to transition to run state
                 case CMD_REQ_RUN:
                     if (ready_to_run)
                         result = reply_to_comms(CMD_ACK_RUN);
@@ -299,27 +310,31 @@ unsigned int message_handler(CAN_Packet packet) {
                         result = reply_to_comms(CMD_NO);
 
                     if (CAN_STATUS_SUCCESS != result) {
-                        TRACE_ERROR("Failed to ack/deny CMD_REQ_CALIBRATE");
+                        TRACE_WARNING("Failed to ack/deny CMD_REQ_CALIBRATE");
                         proto_state_error();
                     }
                     break;
+
+                // Transition to run state at master boards command
                 case CMD_RUN:
                     proto_refresh();
                     state = RUNNING;
                     break;
+
                 default:
-                    TRACE_ERROR("Unknown command %i during calibration", msg.command);
+                    TRACE_WARNING("Unknown command %i during calibration", msg.command);
                     proto_state_error();
                     break;
             }
             break;
         case RUNNING:
+            // Pass all messages on to the client
             proto_msg_buff_push(msg);
             break;
         case ERROR:
             break;
         default:
-            TRACE_ERROR("Unknown state");
+            TRACE_WARNING("Unknown state");
             proto_state_error();
             break;
     }
@@ -359,9 +374,6 @@ int proto_write(message_t msg) {
     return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, 8);
 }
 
-void proto_debug_send(unsigned int high, unsigned int low) {
-    BCAN_Write(0, ADDR_BRAKE, high, low, 8);
-}
 
 /**
  * To be called when an arbitrary 'heartbeat' message is received
