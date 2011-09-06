@@ -7,14 +7,15 @@ void Location::set_values (double new_x, double new_y, double new_z, double new_
   t = new_t;
 }
 
-void Location::add_offset (Location offset) {
-  x = offset.x;
-  y = offset.y;
-  z = offset.z;
-  t = offset.t;
+void Location::add_offset (Location offset ,double angle) {
+  double temp_x = offset.x + cos(angle) * x - sin(angle) * z;
+  double temp_z = offset.z + sin(angle) * x + cos(angle) * z;
+
+  x = temp_x;
+  z = temp_z;
 }
 
 void Location::move_position (double angle, double speed, double timestep) {
-  x += cos(angle) * (speed / timestep);
-  z = sin(angle) * (speed / timestep);
+  z += cos(angle) * (speed / timestep);
+  x = sin(angle) * (speed / timestep);
 }

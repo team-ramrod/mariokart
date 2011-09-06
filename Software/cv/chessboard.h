@@ -25,7 +25,7 @@
 CvCapture * chessboard_init(void);
 
 //finds chessboard in image
-Location chessboard_find(CvCapture *capture);
+bool chessboard_find(CvCapture *capture, Location *board_loc);
 
 //frees memory used to find chessboard
 void chessboard_dispose(CvCapture *capture);

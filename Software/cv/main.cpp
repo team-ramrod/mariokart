@@ -15,9 +15,6 @@
 
 using namespace std;
 
-/*
- * 
- */
 int main(int argc, char** argv) {
 
     bool running = true;
@@ -29,24 +26,30 @@ int main(int argc, char** argv) {
 
     std::clock_t loop_time;
 
-    Location kartLoc;
-    kartLoc.set_values(0,0,0,0);
-    Location chessboardLoc;
-    chessboardLoc.set_values(0,0,0,0);
+    Location kart_loc;
+    kart_loc.set_values(0,0,0,0);
+    Location chessboard_loc;
+    chessboard_loc.set_values(0,0,0,0);
 
     //setup chessboard
     CvCapture *capture = chessboard_init();
 
     while(running){
+
     //locate the chessboard
-    chessboard_find(capture);
+    if(chessboard_find(capture, &chessboard_loc)){
+        chessboard_loc.add_offset(kart_loc, kart_angle);
+
+        printf("x: %g,  y: %g,  z: %g, t: %g\n",chessboard_loc.x,chessboard_loc.y,chessboard_loc.z,chessboard_loc.t);
+    }
 
     //updates karts position
     kart_angle += wheel_angle;
 
     double timestep = ( std::clock() - loop_time ) / (double) CLOCKS_PER_SEC;
     loop_time = std::clock();
-    kartLoc.move_position(kart_angle, kart_speed, timestep);
+    kart_loc.move_position(kart_angle, kart_speed, timestep);
+
 
     //Check for keypresses/allow for other threads to operate
 		switch (cvWaitKey(1)) {
