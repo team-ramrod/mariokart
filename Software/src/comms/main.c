@@ -137,7 +137,9 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
             usb_msg = parse_usb_message(message_buffer, current_char);
             if (usb_msg.command == CMD_NONE) {
                 TRACE_WARNING("Invalid USB message received.\n\r");
-            }
+            } else {
+                TRANE_INFO("USB message received:" "\n\r"
+                           "    to: %2x
             current_char = 0;
         }
     }
