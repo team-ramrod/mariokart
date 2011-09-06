@@ -10,6 +10,7 @@
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
+#include <tc/tc.h>
 #include <protocol/protocol.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
@@ -24,6 +25,12 @@
 //------------------------------------------------------------------------------
 
 
+//------------------------------------------------------------------------------
+//         Local functions
+//------------------------------------------------------------------------------
+void timer_callback(void) {
+    char_display_tick();
+}
 
 void set_motor(unsigned char setpoint) {
 
@@ -38,6 +45,9 @@ int main(int argc, char *argv[]) {
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
 
+    //Starts a timer running at 100Hz to maintain the display
+    TC_PeriodicCallback(100, timer_callback);
+
     //Main initialisations
     char_display_init();
     switches_init();
@@ -51,6 +61,7 @@ int main(int argc, char *argv[]) {
             case STARTUP:
                 break;
             case CALIBRATING:
+                proto_calibration_complete();
                 break;
             case RUNNING: 
                 msg = proto_read();
@@ -61,10 +72,11 @@ int main(int argc, char *argv[]) {
                     case CMD_NONE:
                         break;
                     default:
-                        break; //ERROR
+                        TRACE_WARNING("Invalid command %i received in running state", msg.command);
+                        proto_state_error();
+                        break; 
 
                 }
-                char_display_tick();
                 break;
             default: // ERROR
                 set_motor(0);

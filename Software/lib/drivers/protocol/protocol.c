@@ -9,11 +9,14 @@
 #include <tc/tc.h>
 #include <aic/aic.h>
 #include <utility/trace.h>
+#include <components/char_display.h>
 
 #define PROTO_ADDR_PRIORITY 0x0001
 #define PROTO_ADDR_SUFFEX 0x1000
 
 #define ACK_TIMEOUT 500
+
+#define DEBUG_STATES //TODO: deleteme
 
 // The current state as per our state diagram
 static state_t state;
@@ -57,6 +60,31 @@ void ISR_Tc0(void)
     // broadcast the error message
     if (state == ERROR) 
         proto_write(error_message);
+}
+
+/**
+ * A setter function to drive state changes.
+ * Only available through protocol_master.h
+ */
+void proto_state_transition(state_t new_state) {
+    state = new_state;
+
+#ifdef DEBUG_STATES
+    switch (state) {
+        case STARTUP:
+            char_display_number(11);
+            break;
+        case CALIBRATING:
+            char_display_number(22);
+            break;
+        case RUNNING:
+            char_display_number(33);
+            break;
+        default:
+            char_display_number(44);
+            break;
+    }
+#endif
 }
 
 /*
@@ -130,7 +158,7 @@ void ConfigureTc(void)
  */
 void proto_init(address_t board_address) {
     TRACE_INFO("Running proto_init\n\r");
-    state = STARTUP;
+    proto_state_transition(STARTUP);
 
     local_address = board_address;
 
@@ -232,13 +260,6 @@ message_t proto_read() {
     return msg;
 }
 
-/**
- * A setter function for the master to drive state changes.
- * Only available through protocol_master.h
- */
-void proto_state_transition(state_t new_state) {
-    state = new_state;
-}
 
 
 /**
@@ -291,7 +312,7 @@ unsigned int message_handler(CAN_Packet packet) {
 
                 // Transition to calibration state at master boards command
                 case CMD_CALIBRATE:
-                    state = CALIBRATING;
+                    proto_state_transition(CALIBRATING);
                     break;
 
                 default:
@@ -318,7 +339,7 @@ unsigned int message_handler(CAN_Packet packet) {
                 // Transition to run state at master boards command
                 case CMD_RUN:
                     proto_refresh();
-                    state = RUNNING;
+                    proto_state_transition(RUNNING);
                     break;
 
                 default:
@@ -401,7 +422,7 @@ void proto_set_error_callback(error_callback callback) {
  * Drop the can handler into error state then calls the error state callback
  */
 void proto_state_error() {
-    state = ERROR;
+                    proto_state_transition(ERROR);
     BCAN_AbortAllTransfers(0);
     if (error_callback_function != NULL) {
         error_callback_function();

@@ -11,6 +11,7 @@
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
+#include <tc/tc.h>
 #include <encoder.h>
 #include <protocol/protocol.h>
 #include <pio/pio.h>
@@ -61,9 +62,13 @@ void LIMIT_ISR(const Pin *pin) {
         //something wrong with steering so stops motor
         act_driver_drive(0);
 
-        TRACE_ERROR("LIMIT SWITCH ACTIVATED ENTERING ERROR STATE\r\n");
-        //TODO: trigger error state
+        TRACE_WARNING("LIMIT SWITCH ACTIVATED ENTERING ERROR STATE\r\n");
+        proto_state_error();
     }
+}
+
+void timer_callback() {
+    char_display_tick();
 }
 
 //------------------------------------------------------------------------------
@@ -220,6 +225,9 @@ int main(int argc, char *argv[]) {
     encoder_init();
     act_driver_init();
 
+    // Starts a 100Hz timer
+    TC_PeriodicCallback(100, timer_callback);
+
     //sets pins as inputs
     PIO_Configure(&pin_lim_up, 1);
     PIO_Configure(&pin_lim_down, 1);
@@ -235,21 +243,16 @@ int main(int argc, char *argv[]) {
 
     TRACE_INFO("Steering board initialization completed\n\r");
 
-    char_display_number(11);
-    char_display_tick();
 
     while (1) {
         switch (CALIBRATING) {//proto_state()) {
             case STARTUP:
                 break;
             case CALIBRATING:
-                //ideally this would run one iteration and return
-                //however that isn't a necessity
                 if (cal == CALIBRATED) {
                     proto_calibration_complete();
                 }
-                else
-                {
+                else {
                     cal_steering(&cal);
                 }
                 break;
@@ -262,6 +265,8 @@ int main(int argc, char *argv[]) {
                     case CMD_NONE:
                         break;
                     default:
+                        TRACE_WARNING("Invalid command %i received in running state", msg.command);
+                        proto_state_error();
                         break; //ERROR?
                 }
                 speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);

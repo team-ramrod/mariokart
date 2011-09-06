@@ -11,6 +11,7 @@
 #include <components/debug.h>
 #include <components/switches.h>
 #include <protocol/protocol.h>
+#include <tc/tc.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
 #include <peripherals/tc/tc.h>
@@ -55,42 +56,15 @@ void send_data(address_t to, unsigned char id, variable_t var) {
 }
 
 //------------------------------------------------------------------------------
-//         Interrupt Handlers
+//         Local Functions
 //------------------------------------------------------------------------------
 
 //updates time since speed sensor last triggered
-void TIMER_ISR(void)
-{
+void timer_callback(void) {
     // Clear status bit to acknowledge interrupt
     AT91C_BASE_TC0->TC_SR;
 
     speed_update_time(TIMER_RES);
-}
-
-//------------------------------------------------------------------------------
-//         Local Functions
-//------------------------------------------------------------------------------
-
-// Configure Timer Counter 0 to generate an interrupt every ms.
-void timer_init(void){
-    unsigned int div;
-    unsigned int tcclks;
-
-    // Enable peripheral clock
-    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
-
-    // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor((1000/TIMER_RES), BOARD_MCK, &div, &tcclks);
-    TC_Configure(AT91C_BASE_TC0, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / (1000/TIMER_RES); // timerFreq / desiredFreq
-
-    // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, TIMER_ISR);
-    AT91C_BASE_TC0->TC_IER = AT91C_TC_CPCS;
-    AIC_EnableIT(AT91C_ID_TC0);
-
-    // Start the counter
-    TC_Start(AT91C_BASE_TC0);
 }
 
 //------------------------------------------------------------------------------
@@ -108,15 +82,16 @@ int main(int argc, char *argv[]) {
     };
 
     debug_init(SOFTWARE_NAME);
-    proto_init(ADDR_SENSOR);
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
 
+    TC_PeriodicCallback(1000, timer_callback);
+
     //Main initialisations
     char_display_init();
     switches_init();
-    timer_init();
+    //timer_init(); Can i delete this
     speed_init();
 
     proto_init(ADDR_SENSOR);
@@ -140,9 +115,10 @@ int main(int argc, char *argv[]) {
                     case CMD_NONE:
                         break;
                     default:
+                        TRACE_WARNING("Invalid command %i received in running state", msg.command);
+                        proto_state_error();
                         break; //Go to error state  
                 }
-                char_display_tick();
                 break;
             default: // ERROR
                 break;

@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------
 #include <actuator_driver.h>
 #include <char_display.h>
+#include <tc/tc.h>
 #include <debug.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
@@ -51,6 +52,11 @@ void set_act(int distance){
     brake_location_in_adc = (1024 * distance) / ACT_MAX_LENGTH;
 }
 
+void timer_callback(void) {
+    char_display_tick();
+}
+
+
 //TODO:reenable PWM commands
 #define DISABLE_PWM
 
@@ -63,13 +69,16 @@ int main(int argc, char *argv[]) {
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
 
+    //Starts a timer running at 100Hz to maintain the display
+    TC_PeriodicCallback(100, timer_callback);
+
     //Main initialisations
     char_display_init();
     switches_init();
     pot_init();
 #ifndef DISABLE_PWM
     act_driver_init();
-    drives the actuator out 30mm
+    //drive the actuator out 30mm
     set_act(30);
     int speed;
 #endif
