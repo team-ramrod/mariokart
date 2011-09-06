@@ -232,7 +232,6 @@ int main(int argc, char *argv[]) {
     broadcast_message.data_len = 0;
     char_display_number(11);
 
-    while(1)TRACE_ERROR("test\n");
 
     while(1) {    
         switch (proto_state()) {
@@ -293,7 +292,6 @@ int main(int argc, char *argv[]) {
 
                 if (responses == ALL_CLIENTS) {
                     char_display_number(72);
-                    while(1);
                     broadcast_message.command = CMD_RUN;
                     proto_write(broadcast_message);
                     proto_state_transition(RUNNING);

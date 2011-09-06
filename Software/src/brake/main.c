@@ -56,6 +56,7 @@ void set_act(int distance){
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
+    //TODO:reenable PWM commands
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
@@ -64,10 +65,10 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
     pot_init();
-    act_driver_init();
+//    act_driver_init();
 
     //drives the actuator out 30mm
-    set_act(30);
+//    set_act(30);
     int speed;
 
     message_t msg;
@@ -98,11 +99,11 @@ int main(int argc, char *argv[]) {
                     default:
                         break;//ERROR
                 }
-                speed = act_driver_pid(brake_location_in_adc, pot_current_value);
-                act_driver_drive(speed);
+//                speed = act_driver_pid(brake_location_in_adc, pot_current_value);
+//                act_driver_drive(speed);
                 break;
             default: // ERROR
-                //char_display_number(44);
+                char_display_number(44);
                 //TODO put the brake on
                 break;
         }

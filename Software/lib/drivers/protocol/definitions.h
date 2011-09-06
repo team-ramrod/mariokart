@@ -12,7 +12,7 @@
  * for a more in-depth decription of the protocol.
  */
 
-// Needs to be only 3 bit
+// Needs to be only 3 bit (but there's space for 8)
 typedef enum {
     ADDR_ERROR_RX         = 0x00,
     ADDR_BROADCAST_RX     = 0x01,

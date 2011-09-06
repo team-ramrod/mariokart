@@ -45,9 +45,10 @@ void ISR_Tc0(void)
 
     if (state == RUNNING) {
             wait_timer += 250;
-            if (wait_timer >= TIMEOUT ) 
+            if (wait_timer >= TIMEOUT ) {
                 TRACE_ERROR("Timeout while running");
                 proto_state_error();
+            }
     }
 
     // broadcast the error message
@@ -291,15 +292,16 @@ unsigned int message_handler(CAN_Packet packet) {
             break;
         case CALIBRATING:
             switch(msg.command) {
-                case CMD_REQ_CALIBRATE:
+                case CMD_REQ_RUN:
                     if (ready_to_run)
                         result = reply_to_comms(CMD_ACK_RUN);
                     else 
                         result = reply_to_comms(CMD_NO);
 
-                    if (CAN_STATUS_SUCCESS != result) 
+                    if (CAN_STATUS_SUCCESS != result) {
                         TRACE_ERROR("Failed to ack/deny CMD_REQ_CALIBRATE");
-                    proto_state_error();
+                        proto_state_error();
+                    }
                     break;
                 case CMD_RUN:
                     proto_refresh();

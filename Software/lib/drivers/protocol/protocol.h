@@ -8,7 +8,7 @@
 #include "definitions.h"
 
 #define BAUD_RATE 1000 // allowed values: 1000, 800, 500, 250, 125, 50, 25, 10
-#define TIMEOUT 2000 // May be replaced by a variable
+#define TIMEOUT 200000 // May be replaced by a variable
 
 
 // For error state callback
