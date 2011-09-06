@@ -11,6 +11,8 @@
 #include <usb/device/cdc-serial/CDCDSerialDriver.h>
 #include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
 
+static void UsbHandler(const unsigned char data[], unsigned int length);
+
 //------------------------------------------------------------------------------
 //         Local defines
 //------------------------------------------------------------------------------
@@ -24,10 +26,6 @@
 // Buffer for storing incoming USB data.
 static unsigned char usbBuffer[DATABUFFERSIZE];
 
-#ifdef PIN_USB_VBUS
-static const Pin pinVBus = PIN_USB_VBUS;
-#endif
-
 //------------------------------------------------------------------------------
 //         Local functions
 //------------------------------------------------------------------------------
@@ -36,7 +34,7 @@ static const Pin pinVBus = PIN_USB_VBUS;
  * Handles interrupts coming from the PIO controller for the VBus pin
  */
 static void ISR_VBus(const Pin *pPin) {
-    if (PIO_Get(&pinVBus)) {
+    if (PIO_Get(pPin)) {
         TRACE_INFO("VBUS connected\n\r");
         USBD_Connect();
     } else {
@@ -50,6 +48,8 @@ static void ISR_VBus(const Pin *pPin) {
  * trigger an interrupt when the level on the VBus pin changes */
 static void VBus_Configure() {
 #ifdef PIN_USB_VBUS
+    static const Pin pinVBus = PIN_USB_VBUS;
+
     TRACE_INFO("VBus configuration\n\r");
 
     PIO_Configure(&pinVBus, 1);
@@ -62,28 +62,30 @@ static void VBus_Configure() {
 #endif
 }
 
-void UsbDataReceived(unsigned int unused,
-                            unsigned char status,
-                            unsigned int received,
-                            unsigned int remaining)
+void UsbDataReceived(void *unused,
+                     unsigned char status,
+                     unsigned int received,
+                     unsigned int remaining)
 {
     // Check that data has been received successfully
     if (status == USBD_STATUS_SUCCESS) {
 
-        // Send data through USART
-        while (!USART_WriteBuffer(AT91C_BASE_US0, usbBuffer, received));
-        AT91C_BASE_US0->US_IER = AT91C_US_TXBUFE;
+        TRACE_INFO("UsbDataReceived:\n\r[\n\r");
+        for (unsigned int i = 0; i < received; i++) {
+            TRACE_INFO("\t%c\n\r", usbBuffer[i]);
+        }
+        TRACE_INFO("]\n\r");
+
+        UsbHandler(usbBuffer, received);
 
         // Check if bytes have been discarded
         if ((received == DATABUFFERSIZE) && (remaining > 0)) {
-
             TRACE_WARNING(
                       "UsbDataReceived: %u bytes discarded\n\r",
                       remaining);
         }
     }
     else {
-
         TRACE_WARNING( "UsbDataReceived: Transfer error\n\r");
     }
 }

@@ -21,6 +21,7 @@
 #include <utility/trace.h>
 #include <pit/pit.h>
 #include <better_can/can.h>
+#include <string.h>
 
 #include "usb.c"
 
@@ -37,6 +38,11 @@
 //         Local Variables
 //------------------------------------------------------------------------------
 unsigned int milisecond_counter;
+#define BUFFER_LENGTH 8
+static unsigned char message_buffer[BUFFER_LENGTH] = {0};
+static unsigned int current_char = 0;
+
+static message_t usb_msg;
 
 //------------------------------------------------------------------------------
 //         Local Functions
@@ -90,7 +96,110 @@ void send_messages(void) {
             break;
     }
 }
-void ConfigureTimer1();
+
+// Message format:
+//   to address (1 byte)
+//   command (1 byte)
+//   data (0-5 bytes)
+//   0xFF (message delimiter)
+static message_t parse_usb_message(unsigned char message[], unsigned int length) {
+    message_t msg = {
+        .from     = ADDR_ERROR_RX,
+        .to       = ADDR_ERROR_RX,
+        .command  = CMD_NONE,
+        .data     = {0},
+        .data_len = 0
+    };
+
+    if (length > 1) {
+        msg.from     = ADDR_COMMS_USB;
+        msg.to       = message[0];
+        msg.command  = message[1];
+        msg.data_len = length - 2;
+
+        for (unsigned int i = 0; i < (length - 2); i++) {
+            msg.data[i] = message[i+2];
+        }
+    }
+
+    return msg;
+}
+
+//------------------------------------------------------------------------------
+/// Interrupt handler for TC1 interrupt.
+//------------------------------------------------------------------------------
+void ISR_Tc1(void)
+{
+    static int i = 0;
+
+    char_display_tick();
+    AT91C_BASE_TC1->TC_SR;
+    if (i++ > 10) {
+        timeout = true;
+        i = 0;
+    }
+}
+
+//------------------------------------------------------------------------------
+/// Configure Timer Counter 1 to generate an interrupt every 100ms.
+//------------------------------------------------------------------------------
+void ConfigureTimer1(void)
+{
+    unsigned int div;
+    unsigned int tcclks;
+
+    // Enable peripheral clock
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
+
+    // Configure TC for a 4Hz frequency and trigger on RC compare
+    TC_FindMckDivisor(100, BOARD_MCK, &div, &tcclks);
+    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
+    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 100; // timerFreq / desiredFreq
+
+    // Configure and enable interrupt on RC compare
+    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, ISR_Tc1);
+    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
+    AIC_EnableIT(AT91C_ID_TC1);
+
+    TC_Start(AT91C_BASE_TC1);
+}
+
+
+static void UsbHandler(const unsigned char data[], unsigned int length) {
+    if (length > (BUFFER_LENGTH - current_char)) {
+        TRACE_WARNING("Invalid USB message received.\n\r");
+        current_char = 0;
+    } else {
+        memcpy(&message_buffer[current_char], data, length);
+        current_char += length;
+        if (data[length-1] == 0xFF) {
+            usb_msg = parse_usb_message(message_buffer, current_char);
+            if (usb_msg.command == CMD_NONE) {
+                TRACE_WARNING("Invalid USB message received.\n\r");
+            } else {
+                TRACE_DEBUG(
+                    "USB message received:" "\n\r"
+                    "    to:      0x%2X" "\n\r"
+                    "    command: 0x%2X" "\n\r"
+                    "    data:         " "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r",
+                    usb_msg.to, usb_msg.command,
+                    usb_msg.data[0], usb_msg.data[1], usb_msg.data[2], usb_msg.data[3],
+                    usb_msg.data[4], usb_msg.data[5], usb_msg.data[6], usb_msg.data[7]
+                );
+            }
+            current_char = 0;
+        }
+    }
+}
+
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -108,6 +217,8 @@ int main(int argc, char *argv[]) {
     //Main initialisations
     char_display_init();
     switches_init();
+
+    CDCDSerialDriver_Initialize();
     VBus_Configure();
 
     proto_init(ADDR_COMMS);
@@ -120,7 +231,8 @@ int main(int argc, char *argv[]) {
     broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
     char_display_number(11);
-   
+
+    while(1)TRACE_ERROR("test\n");
 
     while(1) {    
         switch (proto_state()) {
@@ -129,7 +241,7 @@ int main(int argc, char *argv[]) {
                     timeout = false;
                     responses = 0;
                     broadcast_message.command = CMD_REQ_CALIBRATE;
-                    if (CAN_STATUS_SUCCESS ==proto_write(broadcast_message)) {
+                    if (CAN_STATUS_SUCCESS == proto_write(broadcast_message)) {
                     }
                 } 
 
@@ -189,13 +301,15 @@ int main(int argc, char *argv[]) {
 
                 break;
             case RUNNING: // Normal state
-                
+
                 char_display_number(33);
-                // Read USB input
-                // Send set points
-                // Check for acks
-                // Receive data from sensor
-                // Forward sensor data to latptop
+                CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
+                if (usb_msg.command != CMD_NONE) {
+                    // Send set points
+                    // Check for acks
+                    // Receive data from sensor
+                    // Forward sensor data to latptop
+                }
                 proto_refresh();
                 // Any issues => state = ERROR; break;
                 break;
@@ -208,41 +322,3 @@ int main(int argc, char *argv[]) {
     }
 }
 
-//------------------------------------------------------------------------------
-/// Interrupt handler for TC1 interrupt.
-//------------------------------------------------------------------------------
-void ISR_Tc1(void)
-{
-    static int i = 0;
-
-    char_display_tick();
-    AT91C_BASE_TC1->TC_SR;
-    if (i++ > 10) {
-        timeout = true;
-        i = 0;
-    }
-}
-
-//------------------------------------------------------------------------------
-/// Configure Timer Counter 1 to generate an interrupt every 100ms.
-//------------------------------------------------------------------------------
-void ConfigureTimer1(void)
-{
-    unsigned int div;
-    unsigned int tcclks;
-
-    // Enable peripheral clock
-    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
-
-    // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor(100, BOARD_MCK, &div, &tcclks);
-    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / 100; // timerFreq / desiredFreq
-
-    // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, ISR_Tc1);
-    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
-    AIC_EnableIT(AT91C_ID_TC1);
-
-    TC_Start(AT91C_BASE_TC1);
-}
