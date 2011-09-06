@@ -7,6 +7,13 @@ void Location::set_values (double new_x, double new_y, double new_z, double new_
   t = new_t;
 }
 
+void Location::set_values (Location loc) {
+  x = loc.x;
+  y = loc.y;
+  z = loc.z;
+  t = loc.t;
+}
+
 void Location::add_offset (Location offset ,double angle) {
   double temp_x = offset.x + cos(angle) * x - sin(angle) * z;
   double temp_z = offset.z + sin(angle) * x + cos(angle) * z;
