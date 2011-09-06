@@ -41,6 +41,8 @@ int main(int argc, char** argv) {
     //setup chessboard
     CvCapture *capture = chessboard_init();
 
+    plot_init();
+   
     while (running) {
 
         Location* kart_loc = new Location();
@@ -52,7 +54,7 @@ int main(int argc, char** argv) {
         if (chessboard_find(capture, chessboard_loc)) {
             chessboard_loc->add_offset(*kart_loc, kart_angle);
             board_loc_list.push_front(chessboard_loc);
-            printf("x: %g,  y: %g,  z: %g, t: %g\n", chessboard_loc->x, chessboard_loc->y, chessboard_loc->z, chessboard_loc->t);
+            //printf("x: %g,  y: %g,  z: %g, t: %g\n", chessboard_loc->x, chessboard_loc->y, chessboard_loc->z, chessboard_loc->t);
         } else {
             delete chessboard_loc;
         }
@@ -62,14 +64,14 @@ int main(int argc, char** argv) {
 
         double timestep = (std::clock() - loop_time) / (double) CLOCKS_PER_SEC;
         loop_time = std::clock();
-
-        //printf("hteaodudhooue\n\n");
         
         kart_loc->move_position(kart_angle, kart_speed, timestep);
 
         kart_loc_list.push_front(kart_loc);
 
-        plot_update();
+        Location *loc = kart_loc_list.front();
+
+        plot_update(&kart_loc_list, &board_loc_list);
 
         //Check for keypresses/allow for other threads to operate
         switch (cvWaitKey(1)) {
