@@ -1,67 +1,10 @@
 #ifndef BCAN_H
 #define BCAN_H
 
-//------------------------------------------------------------------------------
-//      Definitions
-//------------------------------------------------------------------------------
-#define AT91C_CAN_TIMEOUT         100000
-
-#define AT91C_TEST_NOK                 0
-#define AT91C_TEST_OK                  1
-
 #define CAN_STATUS_SUCCESS             0
 #define CAN_STATUS_LOCKED              1
 #define CAN_STATUS_ABORTED             2
 #define CAN_STATUS_RESET               3
-
-#if defined (AT91C_BASE_CAN)
-    #define AT91C_BASE_CAN0      AT91C_BASE_CAN
-#endif
-#if defined (AT91C_ID_CAN)
-    #define AT91C_ID_CAN0        AT91C_ID_CAN
-#endif
-#if defined (AT91C_BASE_CAN_MB0)
-    #define AT91C_BASE_CAN0_MB0  AT91C_BASE_CAN_MB0
-    #define AT91C_BASE_CAN0_MB1  AT91C_BASE_CAN_MB1
-    #define AT91C_BASE_CAN0_MB2  AT91C_BASE_CAN_MB2
-    #define AT91C_BASE_CAN0_MB3  AT91C_BASE_CAN_MB3
-    #define AT91C_BASE_CAN0_MB4  AT91C_BASE_CAN_MB4
-    #define AT91C_BASE_CAN0_MB5  AT91C_BASE_CAN_MB5
-    #define AT91C_BASE_CAN0_MB6  AT91C_BASE_CAN_MB6
-    #define AT91C_BASE_CAN0_MB7  AT91C_BASE_CAN_MB7
-    #define NUM_MAILBOX_MAX 8
-#endif
-#if defined (AT91C_BASE_CAN_MB8)
-    #define AT91C_BASE_CAN0_MB8   AT91C_BASE_CAN_MB8
-    #define AT91C_BASE_CAN0_MB9   AT91C_BASE_CAN_MB9
-    #define AT91C_BASE_CAN0_MB10  AT91C_BASE_CAN_MB10
-    #define AT91C_BASE_CAN0_MB11  AT91C_BASE_CAN_MB11
-    #define AT91C_BASE_CAN0_MB12  AT91C_BASE_CAN_MB12
-    #define AT91C_BASE_CAN0_MB13  AT91C_BASE_CAN_MB13
-    #define AT91C_BASE_CAN0_MB14  AT91C_BASE_CAN_MB14
-    #define AT91C_BASE_CAN0_MB15  AT91C_BASE_CAN_MB15
-    #define NUM_MAILBOX_MAX 16
-#endif
-
-
-//------------------------------------------------------------------------------
-//         Types
-//------------------------------------------------------------------------------
-typedef struct
-{
-    volatile unsigned char state;
-    volatile unsigned char can_number;
-    volatile unsigned char mailbox_number;
-    volatile unsigned char test_can;
-    volatile unsigned int  mode_reg;
-    volatile unsigned int  acceptance_mask_reg;
-    volatile unsigned int  identifier;
-    volatile unsigned int  data_low_reg;
-    volatile unsigned int  data_high_reg;
-    volatile unsigned int  control_reg;
-    volatile unsigned int  mailbox_in_use;
-    volatile int           size;
-} CanTransfer;
 
 typedef struct {
     unsigned int mailbox;
@@ -93,24 +36,55 @@ unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1, CAN_Callbac
  */
 void BCAN_disable();
 
-
+/**
+ * Reset the configuration of all the mailboxes.
+ */
 void BCAN_ResetAllMailbox( void );
 
+/**
+ * Initialises all the registers for a mailbox.
+ */
 void BCAN_InitMailboxRegisters(
     unsigned int can_number, unsigned int mailbox_number,
     unsigned int acceptance_mask, unsigned int identifier,
     unsigned int mode_reg, unsigned int control_reg
 );
 
+/**
+ * Returns one if the can peripheral is idle, zero otherwise.
+ */
 unsigned int BCAN_IsInIdle(unsigned int can_number);
 
+/**
+ * Queues the given data up to be written out of the specified can peripheral
+ * and mailbox.  The destination should have been previously set up using
+ * BCAN_InitMailboxRegisters.
+ *
+ * @param   can_number  The CAN peripheral to write to.
+ * @param   mailbox     The mailbox of the CAN peripheral to write to.
+ * @param   data_high   The high 4 bytes of data to write.
+ * @param   data_low    The low 4 bytes of data to write.
+ * @param   size        The number of bytes to write.
+ *                      (Unknown what order the bytes are read from the data params.)
+ *
+ * @return  Returns CAN_STATUS_SUCCESS if the message was successfully queued
+ *          or CAN_STATUS_LOCKED if the mailbox was in use.
+ */
 unsigned int BCAN_Write(
     unsigned int can_number, unsigned int mailbox,
     unsigned int data_high, unsigned int data_low, unsigned int size
 );
 
+/**
+ * Tells the specified mailbox to abort its transfer.
+ */
 void BCAN_AbortTransfer(unsigned int can_number, unsigned int mailbox);
+
+/**
+ * Tells all the mailboxes to abort their transfers.
+ */
 void BCAN_AbortAllTransfers(unsigned int can_number);
+
 /**
  * Reads a value from the mailbox specified.
  *
@@ -121,8 +95,38 @@ void BCAN_AbortAllTransfers(unsigned int can_number);
  *          or {CAN_STATUS_SUCCESS,data,size}.
  */
 CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox);
+
+/**
+ * Reads a value from the first mailbox that contains a received message.
+ *
+ * @param can_number    The CAN peripheral to read from.
+ *
+ * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
+ *          or {CAN_STATUS_SUCCESS,data,size}.
+ */
 CAN_Packet BCAN_ReadAny(unsigned int can_number);
 
+/**
+ * Reads a value from the mailbox specified then clears that mailboxes
+ * reception buffer.
+ *
+ * @param can_number    The CAN peripheral to read from.
+ * @param mailbox       Which mailbox to read from.
+ *
+ * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
+ *          or {CAN_STATUS_SUCCESS,data,size}.
+ */
 CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox);
+
+/**
+ * Reads a value from the first mailbox that contains a received message then
+ * clears that mailboxes reception buffer.
+ *
+ * @param can_number    The CAN peripheral to read from.
+ *
+ * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
+ *          or {CAN_STATUS_SUCCESS,data,size}.
+ */
 CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number);
+
 #endif /* BCAN_H */

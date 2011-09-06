@@ -6,25 +6,58 @@
 
 #define QUIT_CAN
 
+#define AT91C_CAN_TIMEOUT         100000
+
+#define AT91C_TEST_NOK                 0
+#define AT91C_TEST_OK                  1
+
+#if defined (AT91C_BASE_CAN)
+    #define AT91C_BASE_CAN0      AT91C_BASE_CAN
+#endif
+#if defined (AT91C_ID_CAN)
+    #define AT91C_ID_CAN0        AT91C_ID_CAN
+#endif
+#if defined (AT91C_BASE_CAN_MB0)
+    #define AT91C_BASE_CAN0_MB0  AT91C_BASE_CAN_MB0
+    #define AT91C_BASE_CAN0_MB1  AT91C_BASE_CAN_MB1
+    #define AT91C_BASE_CAN0_MB2  AT91C_BASE_CAN_MB2
+    #define AT91C_BASE_CAN0_MB3  AT91C_BASE_CAN_MB3
+    #define AT91C_BASE_CAN0_MB4  AT91C_BASE_CAN_MB4
+    #define AT91C_BASE_CAN0_MB5  AT91C_BASE_CAN_MB5
+    #define AT91C_BASE_CAN0_MB6  AT91C_BASE_CAN_MB6
+    #define AT91C_BASE_CAN0_MB7  AT91C_BASE_CAN_MB7
+    #define NUM_MAILBOX_MAX 8
+#endif
+#if defined (AT91C_BASE_CAN_MB8)
+    #define AT91C_BASE_CAN0_MB8   AT91C_BASE_CAN_MB8
+    #define AT91C_BASE_CAN0_MB9   AT91C_BASE_CAN_MB9
+    #define AT91C_BASE_CAN0_MB10  AT91C_BASE_CAN_MB10
+    #define AT91C_BASE_CAN0_MB11  AT91C_BASE_CAN_MB11
+    #define AT91C_BASE_CAN0_MB12  AT91C_BASE_CAN_MB12
+    #define AT91C_BASE_CAN0_MB13  AT91C_BASE_CAN_MB13
+    #define AT91C_BASE_CAN0_MB14  AT91C_BASE_CAN_MB14
+    #define AT91C_BASE_CAN0_MB15  AT91C_BASE_CAN_MB15
+    #define NUM_MAILBOX_MAX 16
+#endif
+
 // CAN state
 typedef enum {
-    CAN_DISABLED,
-    CAN_HALTED,
-    CAN_IDLE,
-    CAN_SENDING,
-    CAN_RECIEVING
+    CAN_DISABLED  = 0x00,
+    CAN_HALTED    = 0x01,
+    CAN_IDLE      = 0x02,
+    CAN_SENDING   = 0x03,
+    CAN_RECIEVING = 0x04
 } CAN_state_t;
 
 // MOT: Mailbox Object Type
 typedef enum {
-    CAN_MOT_DISABLE   = 0x0,
-    CAN_MOT_RECEPT    = 0x1,
-    CAN_MOT_RECEPT_OW = 0x2,
-    CAN_MOT_TRANSMIT  = 0x3,
-    CAN_MOT_CONSUMER  = 0x4,
-    CAN_MOT_PRODUCER  = 0x5
+    CAN_MOT_DISABLE   = 0x00,
+    CAN_MOT_RECEPT    = 0x01,
+    CAN_MOT_RECEPT_OW = 0x02,
+    CAN_MOT_TRANSMIT  = 0x03,
+    CAN_MOT_CONSUMER  = 0x04,
+    CAN_MOT_PRODUCER  = 0x05
 } CAN_mot_t;
-
 
 typedef struct {
     CAN_state_t state;

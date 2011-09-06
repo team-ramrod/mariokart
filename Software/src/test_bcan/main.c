@@ -111,17 +111,17 @@ void Test_TransmitWithoutAccMask(
 void DumpRegisters(void)
 {    
     printf("Dump registers\n\r");
-    printf("CAN_MR:     0x%X\n\r", AT91C_BASE_CAN0->CAN_MR);
-    printf("CAN_IMR:    0x%X\n\r", AT91C_BASE_CAN0->CAN_IMR);
-    printf("CAN_SR:     0x%X\n\r", AT91C_BASE_CAN0->CAN_SR);
-    printf("CAN_BR:     0x%X\n\r", AT91C_BASE_CAN0->CAN_BR);
-    printf("CAN_ECR:    0x%X\n\r", AT91C_BASE_CAN0->CAN_ECR);
-    printf("CAN_MB_MMR: 0x%X\n\r", AT91C_BASE_CAN0_MB1->CAN_MB_MMR);
-    printf("CAN_MB_MAM: 0x%X\n\r", AT91C_BASE_CAN0_MB1->CAN_MB_MAM);
-    printf("CAN_MB_MID: 0x%X\n\r", AT91C_BASE_CAN0_MB1->CAN_MB_MID);
-    printf("CAN_MB_MSR: 0x%X\n\r", AT91C_BASE_CAN0_MB1->CAN_MB_MSR);
-    printf("CAN_MB_MDL: 0x%X\n\r", AT91C_BASE_CAN0_MB1->CAN_MB_MDL);
-    printf("CAN_MB_MDH: 0x%X\n\r", AT91C_BASE_CAN0_MB1->CAN_MB_MDH);    
+    printf("CAN_MR:     0x%X\n\r", AT91C_BASE_CAN->CAN_MR);
+    printf("CAN_IMR:    0x%X\n\r", AT91C_BASE_CAN->CAN_IMR);
+    printf("CAN_SR:     0x%X\n\r", AT91C_BASE_CAN->CAN_SR);
+    printf("CAN_BR:     0x%X\n\r", AT91C_BASE_CAN->CAN_BR);
+    printf("CAN_ECR:    0x%X\n\r", AT91C_BASE_CAN->CAN_ECR);
+    printf("CAN_MB_MMR: 0x%X\n\r", AT91C_BASE_CAN_MB1->CAN_MB_MMR);
+    printf("CAN_MB_MAM: 0x%X\n\r", AT91C_BASE_CAN_MB1->CAN_MB_MAM);
+    printf("CAN_MB_MID: 0x%X\n\r", AT91C_BASE_CAN_MB1->CAN_MB_MID);
+    printf("CAN_MB_MSR: 0x%X\n\r", AT91C_BASE_CAN_MB1->CAN_MB_MSR);
+    printf("CAN_MB_MDL: 0x%X\n\r", AT91C_BASE_CAN_MB1->CAN_MB_MDL);
+    printf("CAN_MB_MDH: 0x%X\n\r", AT91C_BASE_CAN_MB1->CAN_MB_MDH);
 }
 
 //-----------------------------------------------------------------------------
