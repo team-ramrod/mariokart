@@ -177,9 +177,10 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
             if (usb_msg.command == CMD_NONE) {
                 TRACE_WARNING("Invalid USB message received.\n\r");
             } else {
-                TRANE_INFO("USB message received:" "\n\r"
-                           "    to: %2x
-            current_char = 0;")
+                TRACE_INFO("USB message received:" "\n\r"
+                        "    to: %2x",
+                        current_char = 0);
+            }
         }
     }
 }
@@ -215,7 +216,7 @@ int main(int argc, char *argv[]) {
     broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
     char_display_number(11);
-   
+
     while(1)TRACE_ERROR("test\n");
 
     while(1) {    
@@ -285,7 +286,7 @@ int main(int argc, char *argv[]) {
 
                 break;
             case RUNNING: // Normal state
-                
+
                 char_display_number(33);
                 CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
                 if (usb_msg.command != CMD_NONE) {
