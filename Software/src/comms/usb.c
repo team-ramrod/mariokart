@@ -116,9 +116,7 @@ static message_t parse_usb_message(unsigned char message[], unsigned int length)
         msg.command  = message[1];
         msg.data_len = length - 2;
 
-        for (unsigned int i = 0; i < (length - 2); i++) {
-            msg.data[i] = message[i+2];
-        }
+        memcpy(msg.data, &message[2], length - 2);
     }
 
     return msg;
