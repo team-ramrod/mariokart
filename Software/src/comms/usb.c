@@ -130,9 +130,6 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
                 TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[2]);
                 TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[3]);
                 TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[4]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[5]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[6]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[7]);
             }
             message_buffer_position = 0;
         } else {
