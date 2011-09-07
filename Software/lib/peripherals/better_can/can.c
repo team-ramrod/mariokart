@@ -222,6 +222,7 @@ static void BCAN_Handler(unsigned int can_number) {
                     TRACE_DEBUG("CAN_MB_MID 0x%X\n\r", (mailbox->CAN_MB_MID & AT91C_CAN_MIDvA) >> 18);
 
                     TRACE_DEBUG("can_number %d\n\r", can_number);
+                    BCAN_Received_Packets[can_number][numMailbox].valid = 1;
                     BCAN_Received_Packets[can_number][numMailbox].mailbox = numMailbox;
                     BCAN_Received_Packets[can_number][numMailbox].data_low = mailbox->CAN_MB_MDL;
                     BCAN_Received_Packets[can_number][numMailbox].data_high = mailbox->CAN_MB_MDH;
@@ -230,6 +231,7 @@ static void BCAN_Handler(unsigned int can_number) {
                     // Message Data has been received
                     mailbox->CAN_MB_MCR = AT91C_CAN_MTCR;
                     if (can->callback && can->callback(BCAN_Received_Packets[can_number][numMailbox])) {
+                        BCAN_Received_Packets[can_number][numMailbox].valid = 0;
                         BCAN_Received_Packets[can_number][numMailbox].mailbox = 0;
                         BCAN_Received_Packets[can_number][numMailbox].data_low = 0;
                         BCAN_Received_Packets[can_number][numMailbox].data_high = 0;
@@ -435,7 +437,7 @@ CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox) {
 CAN_Packet BCAN_ReadAny(unsigned int can_number) {
     CAN_Packet packet = { 0 };
     for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
-        if (BCAN_Received_Packets[can_number][i].size > 0) {
+        if (BCAN_Received_Packets[can_number][i].valid) {
             packet = BCAN_Received_Packets[can_number][i];
         }
     }
@@ -444,6 +446,7 @@ CAN_Packet BCAN_ReadAny(unsigned int can_number) {
 
 CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox) {
     CAN_Packet packet = BCAN_Received_Packets[can_number][mailbox];
+    BCAN_Received_Packets[can_number][mailbox].valid = 0;
     BCAN_Received_Packets[can_number][mailbox].mailbox = 0;
     BCAN_Received_Packets[can_number][mailbox].data_low = 0;
     BCAN_Received_Packets[can_number][mailbox].data_high = 0;
@@ -454,8 +457,9 @@ CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox) {
 CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number) {
     CAN_Packet packet = { 0 };
     for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
-        if (packet.size > 0 && BCAN_Received_Packets[can_number][i].size > 0) {
+        if ((!packet.valid) && BCAN_Received_Packets[can_number][i].valid) {
             packet = BCAN_Received_Packets[can_number][i];
+            BCAN_Received_Packets[can_number][i].valid = 0;
             BCAN_Received_Packets[can_number][i].mailbox = 0;
             BCAN_Received_Packets[can_number][i].data_low = 0;
             BCAN_Received_Packets[can_number][i].data_high = 0;

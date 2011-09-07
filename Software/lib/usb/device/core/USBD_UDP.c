@@ -1249,7 +1249,7 @@ char USBD_MblWrite( unsigned char       bEndpoint,
     }
     pEndpoint->state = UDP_ENDPOINT_SENDINGM;
 
-    TRACE_DEBUG_WP("WriteM%d(0x%x,%d) ", bEndpoint, pMbl, wListSize);
+    TRACE_DEBUG_WP("WriteM%d(0x%x,%d) ", bEndpoint, (unsigned int)pMbl, wListSize);
 
     // Start from first if not circled list
     if (!bCircList) wStartNdx = 0;

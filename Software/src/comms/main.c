@@ -92,14 +92,13 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
 
-    CDCDSerialDriver_Initialize();
-    VBus_Configure();
+    UsbInit();
 
     proto_init(ADDR_COMMS);
 
     unsigned int responses;
 
-    message_t msg;
+    message_t msg, usb_msg;
     message_t broadcast_message = {
         .from     = ADDR_COMMS,
         .to       = ADDR_BROADCAST_RX,
@@ -186,7 +185,7 @@ int main(int argc, char *argv[]) {
 
             case RUNNING: // Normal state
 
-                CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
+                usb_msg = UsbRead();
                 if (usb_msg.command != CMD_NONE) {
                     proto_write(usb_msg);
                     // TODO

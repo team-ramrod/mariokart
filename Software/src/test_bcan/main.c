@@ -238,7 +238,7 @@ int main(void)
                     DisplayMenu();    
                 }
             }
-            if (packet.size > 0) {
+            if (packet.valid) {
                 printf("Data (Low/High): %8X%8X\n\r", 
                     packet.data_low,packet.data_high);
                     CharReceive = -1;
