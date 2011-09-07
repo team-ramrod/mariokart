@@ -184,6 +184,6 @@ void registerChessboard(vector<CvPoint2D32f> corners, CvMat *capParams, CvMat *c
 
     //printf("%f\t%f\t%f\n\n", transVect[0], transVect[1], transVect[2]);
 
-    board_loc->set_values(transVect[0],transVect[1],transVect[2],clock() / (double) CLOCKS_PER_SEC);
+    board_loc->set_values(5*transVect[2],transVect[1],transVect[0],clock() / (double) CLOCKS_PER_SEC);
 }
 

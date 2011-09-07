@@ -45,7 +45,7 @@ void send_data(address_t to, unsigned char id, variable_t var) {
 
             proto_write(msg);
 
-            char_display_number(speed);
+            //char_display_number(speed);
             break;
 
         default:
@@ -62,9 +62,10 @@ void send_data(address_t to, unsigned char id, variable_t var) {
 void TIMER_ISR(void)
 {
     // Clear status bit to acknowledge interrupt
-    AT91C_BASE_TC0->TC_SR;
+    AT91C_BASE_TC1->TC_SR;
 
     speed_update_time(TIMER_RES);
+
 }
 
 //------------------------------------------------------------------------------
@@ -77,20 +78,20 @@ void timer_init(void){
     unsigned int tcclks;
 
     // Enable peripheral clock
-    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
 
     // Configure TC for a 4Hz frequency and trigger on RC compare
     TC_FindMckDivisor((1000/TIMER_RES), BOARD_MCK, &div, &tcclks);
-    TC_Configure(AT91C_BASE_TC0, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / (1000/TIMER_RES); // timerFreq / desiredFreq
+    TC_Configure(AT91C_BASE_TC1, tcclks | AT91C_TC_CPCTRG);
+    AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / (1000/TIMER_RES); // timerFreq / desiredFreq
 
     // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, TIMER_ISR);
-    AT91C_BASE_TC0->TC_IER = AT91C_TC_CPCS;
-    AIC_EnableIT(AT91C_ID_TC0);
+    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, TIMER_ISR);
+    AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
+    AIC_EnableIT(AT91C_ID_TC1);
 
     // Start the counter
-    TC_Start(AT91C_BASE_TC0);
+    TC_Start(AT91C_BASE_TC1);
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
 
     //Main initialisations
     char_display_init();
-    switches_init();
+    //switches_init();
     timer_init();
     speed_init();
 
@@ -142,6 +143,8 @@ int main(int argc, char *argv[]) {
                     default:
                         break; //Go to error state  
                 }
+                char_display_number((int)(speed_output * 10));
+
                 char_display_tick();
                 break;
             default: // ERROR

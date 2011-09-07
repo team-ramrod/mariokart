@@ -16,8 +16,9 @@ class Location {
     void set_values (double, double, double, double);
     void set_values (Location);
     void add_offset(Location, double);
-    double relative_angle(Location);
+    double relative_angle(Location, double);
     void move_position (double, double, double);
+    double dist_to(Location);
 };
 
 #endif	/* LOCATION_H */
