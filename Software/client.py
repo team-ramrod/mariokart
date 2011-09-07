@@ -1,103 +1,37 @@
-import sys, tty, termios, select, os, threading, time, re
+from re import compile
+from sys import stderr, exit, argv
 from serial import Serial, SerialException
-from mutex import mutex
+from definitions import *
 
-ADDR_ERROR_RX     = '\x00'
-ADDR_BROADCAST_RX = '\x01'
-ADDR_BROADCAST_TX = '\x02'
-ADDR_BRAKE        = '\x03'
-ADDR_COMMS        = '\x04'
-ADDR_COMMS_USB    = '\x04'
-ADDR_STEERING     = '\x05'
-ADDR_MOTOR        = '\x06'
-ADDR_SENSOR       = '\x07'
+cmd_re = compile(r'send\s+(\w+)\s+(\w+)\s*([\w\s]*)')
 
+serial = Serial()
+serial.port = argv[1] if len(argv) > 1 else '/dev/ttyACM0'
+serial.timeout = 1
 
-CMD_NONE          = '\x00'
-CMD_GET           = '\x01'
-CMD_REPLY         = '\x02'
-CMD_SET           = '\x03'
-CMD_REQ_CALIBRATE = '\x04'
-CMD_ACK_CALIBRATE = '\x05'
-CMD_REQ_RUN       = '\x06'
-CMD_ACK_RUN       = '\x07'
-CMD_NO            = '\x08'
-CMD_ERROR         = '\x09'
-CMD_RUN           = '\x0A'
-CMD_CALIBRATE     = '\x0B'
+try:
+	serial.open()
+except SerialException, e:
+	stderr.write("%s\n" % (e))
+	exit(1)
 
+print 'Connected.'
+running = True
+while running:
+	try:
+		match = cmd_re.match(raw_input())
+		if match:
+			board   = match.group(1)
+			command = match.group(2)
+			data    = match.group(3)
 
-VAR_SPEED   = '\x01'
-VAR_BRK_POS = '\x02'
+			try:
+				message = address_translation(board) + command_translation(command) + data_translation(data) + ['\xFF']
+			except Exception, e:
+				stderr.write("Incorrect command\n")
 
-address_translation = {
-    'brake': ADDR_BRAKE,
-    'comms': ADDR_COMMS,
-    'steering': ADDR_STEERING,
-    'motor': ADDR_MOTOR,
-    'sensor': ADDR_SENSOR
-}
-
-command_translation = {
-    'get': CMD_GET,
-    'set': CMD_SET,
-}
-
-var_translation = {
-    'speed': VAR_SPEED,
-    'brake_position': VAR_BRK_POS
-}
-
-def data_translation(data):
-  data = data.split(' ')
-  result = []
-  for datum in data:
-    if datum in var_translation:
-      result += [var_translation[datum]]
-    else:
-      try:
-        result += [int(datum,0)]
-      except ValueError, e:
-        pass
-  return result
-
-
-class Client:
-  def __init__(self):
-    self.serial = Serial();
-    self.serial.port = '/dev/ttyACM0'
-    self.serial.timeout = 1
-
-    try:
-      self.serial.open()
-    except SerialException, e:
-      sys.stderr.write("Could not open serial port %s: %s\n" % (self.serial.portstr, e))
-      sys.exit(1)
-
-  def run(self):
-    cmd_re = re.compile(r'send\s+(\w+)\s+(\w+)\s*([\w\s]*)')
-    print 'Connected.'
-    running = True
-    while running:
-      try:
-        cmd = raw_input()
-        match = cmd_re.match(cmd)
-        if match:
-          board = match.group(1)
-          command = match.group(2)
-          data = match.group(3)
-
-          try:
-            message = [address_translation[board]] + [command_translation[command]] + data_translation(data) + ['\xFF']
-          except KeyError, e:
-            sys.stderr.write("Incorrect command\n")
-
-          self.serial.write(''.join(message))
-        else:
-          sys.stderr.write("Incorrect command\n")
-      except EOFError:
-        running = False
-
-
-if __name__ == '__main__':
-  Client().run()
+			serial.write(''.join(message))
+		else:
+			stderr.write("Incorrect command\n")
+	except EOFError:
+		running = False
