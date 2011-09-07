@@ -437,7 +437,7 @@ CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox) {
 CAN_Packet BCAN_ReadAny(unsigned int can_number) {
     CAN_Packet packet = { 0 };
     for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
-        if (BCAN_Received_Packets[can_number][i].size > 0) {
+        if (BCAN_Received_Packets[can_number][i].valid) {
             packet = BCAN_Received_Packets[can_number][i];
         }
     }
@@ -457,7 +457,7 @@ CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox) {
 CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number) {
     CAN_Packet packet = { 0 };
     for (unsigned int i = 0; i < NUM_MAILBOX_MAX; i++) {
-        if (packet.size > 0 && BCAN_Received_Packets[can_number][i].size > 0) {
+        if ((!packet.valid) && BCAN_Received_Packets[can_number][i].valid) {
             packet = BCAN_Received_Packets[can_number][i];
             BCAN_Received_Packets[can_number][i].valid = 0;
             BCAN_Received_Packets[can_number][i].mailbox = 0;
