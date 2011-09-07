@@ -7,6 +7,7 @@
 #define CAN_STATUS_RESET               3
 
 typedef struct {
+    unsigned int status;
     unsigned int mailbox;
     unsigned int data_low;
     unsigned int data_high;
@@ -29,7 +30,11 @@ typedef unsigned int (*CAN_Callback)(CAN_Packet);
  * @return 1 if CAN perpherial(s) have good baudrates and are synchronised,
  *         otherwise 0
  */
-unsigned int BCAN_Init(unsigned int baudrate, unsigned int initCan1, CAN_Callback callback);
+unsigned int BCAN_Init(
+    unsigned int baudrate,
+    unsigned int initCan1,
+    CAN_Callback callback
+);
 
 /**
  * Disable CAN and enter low power mode.
@@ -65,7 +70,8 @@ unsigned int BCAN_IsInIdle(unsigned int can_number);
  * @param   data_high   The high 4 bytes of data to write.
  * @param   data_low    The low 4 bytes of data to write.
  * @param   size        The number of bytes to write.
- *                      (Unknown what order the bytes are read from the data params.)
+ *                      (Unknown what order the bytes are read from the data
+ *                      params.)
  *
  * @return  Returns CAN_STATUS_SUCCESS if the message was successfully queued
  *          or CAN_STATUS_LOCKED if the mailbox was in use.
@@ -91,8 +97,8 @@ void BCAN_AbortAllTransfers(unsigned int can_number);
  * @param can_number    The CAN peripheral to read from.
  * @param mailbox       Which mailbox to read from.
  *
- * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
- *          or {CAN_STATUS_SUCCESS,data,size}.
+ * @return  A packet with either valid set to 0 if there has been no data or
+ *          valid set to 1 and the data filled in.
  */
 CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox);
 
@@ -101,8 +107,8 @@ CAN_Packet BCAN_Read(unsigned int can_number, unsigned int mailbox);
  *
  * @param can_number    The CAN peripheral to read from.
  *
- * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
- *          or {CAN_STATUS_SUCCESS,data,size}.
+ * @return  A packet with either valid set to 0 if there has been no data or
+ *          valid set to 1 and the data filled in.
  */
 CAN_Packet BCAN_ReadAny(unsigned int can_number);
 
@@ -113,8 +119,8 @@ CAN_Packet BCAN_ReadAny(unsigned int can_number);
  * @param can_number    The CAN peripheral to read from.
  * @param mailbox       Which mailbox to read from.
  *
- * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
- *          or {CAN_STATUS_SUCCESS,data,size}.
+ * @return  A packet with either valid set to 0 if there has been no data or
+ *          valid set to 1 and the data filled in.
  */
 CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox);
 
@@ -124,8 +130,8 @@ CAN_Packet BCAN_ReadAndClear(unsigned int can_number, unsigned int mailbox);
  *
  * @param can_number    The CAN peripheral to read from.
  *
- * @return  A packet containing either {CAN_STATUS_LOCKED,0,0}
- *          or {CAN_STATUS_SUCCESS,data,size}.
+ * @return  A packet with either valid set to 0 if there has been no data or
+ *          valid set to 1 and the data filled in.
  */
 CAN_Packet BCAN_ReadAndClearAny(unsigned int can_number);
 
