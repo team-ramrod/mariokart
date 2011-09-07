@@ -10,31 +10,69 @@
 #include <components/char_display.h>
 #include <components/debug.h>
 #include <components/switches.h>
-#include <tc/tc.h>
-#include <protocol/protocol.h>
+#include <board.h>
 #include <pio/pio.h>
 #include <pio/pio_it.h>
+#include <protocol/protocol.h>
+#include <spi/spi.h>
+#include <tc/tc.h>
+#include <utility/trace.h>
 
 //------------------------------------------------------------------------------
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Motor"
 
+#define TOP_ACCELERATOR 3200
+
+//Sets the chip select for the student board SPI
+#define STUDENT_CS 0x1
+
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
-
+const Pin student_spi_pins[] = {PINS_SPI1,PIN_SPI1_NPCS0,PIN_SPI1_NPCS1,PIN_SPI1_NPCS2};
+AT91S_SPI student_spi;
 
 //------------------------------------------------------------------------------
 //         Local functions
 //------------------------------------------------------------------------------
+void set_motor(unsigned int setpoint) {
+    // Make sure the value is valid else error
+    if (setpoint > TOP_ACCELERATOR) {
+        TRACE_WARNING("The accelerator value (%d) sent to the student board is invalid!\n\r", setpoint);
+        SPI_Write(&student_spi, STUDENT_CS, 0x0000);
+        proto_state_error();
+        return;
+    }
+    TRACE_DEBUG("Setting the motor board accelerator value to: %d\n\r", setpoint);
+    SPI_Write(&student_spi, STUDENT_CS, setpoint);
+
+}
+
+void init_student_spi() {
+    TRACE_DEBUG("Configuring SPI for student board\n\r");
+    PIO_Configure(student_spi_pins, PIO_LISTSIZE(student_spi_pins));
+    //set 12 bits per transmit for max value of `TOP_ACCELERATOR'
+    SPI_Configure(
+            &student_spi,
+            AT91C_ID_SPI1,
+            (AT91C_SPI_MSTR | AT91C_SPI_PS_FIXED) | AT91C_SPI_MODFDIS | AT91C_SPI_PCS | 
+            (AT91C_SPI_BITS & AT91C_SPI_BITS_12)
+            );
+    SPI_ConfigureNPCS(
+            &student_spi,
+            AT91C_ID_SPI1,
+            (AT91C_SPI_MSTR | AT91C_SPI_PS_FIXED) | AT91C_SPI_MODFDIS | AT91C_SPI_PCS | 
+            (AT91C_SPI_BITS & AT91C_SPI_BITS_12)
+            );
+    SPI_Enable(&student_spi);
+}
+
 void timer_callback(void) {
     char_display_tick();
 }
 
-void set_motor(unsigned char setpoint) {
-
-}
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -51,6 +89,7 @@ int main(int argc, char *argv[]) {
     //Main initialisations
     char_display_init();
     switches_init();
+    init_student_spi();
 
     message_t msg;
 
@@ -67,8 +106,9 @@ int main(int argc, char *argv[]) {
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_SET:
-                        set_motor(msg.data[0]);
+                        set_motor(msg.data[1]);
                         proto_refresh();
+                        break;
                     case CMD_NONE:
                         break;
                     default:
