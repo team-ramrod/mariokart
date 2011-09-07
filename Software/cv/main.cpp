@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
         }
 
         //perform tracking
-follow_boards_path(&wheel_angle, &kart_speed, &kart_angle);
+        follow_boards_path(&wheel_angle, &kart_speed, &kart_angle);
         
 
         double timestep = (std::clock() - loop_time) / (double) CLOCKS_PER_SEC;
