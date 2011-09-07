@@ -4,6 +4,7 @@
 #include <board.h>
 #include <pio/pio.h>
 #include <irq/irq.h>
+#include <stdbool.h>
 
 #include "definitions.h"
 
@@ -41,6 +42,11 @@ int proto_write(message_t msg);
  */
 void proto_refresh();
 
+/**
+ * Blocks until the most recent message sent or times out
+ * @return true if the message sent, false otherwise
+ */
+bool proto_wait_on_send();
 
 /**
  * A getter for the can handler's state

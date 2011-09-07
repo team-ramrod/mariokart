@@ -372,6 +372,14 @@ void proto_calibration_complete() {
     ready_to_run = true;
 }   
 
+/**
+ * Blocks until the most recent message sent or times out
+ * @return true if the message sent, false otherwise
+ */
+bool proto_wait_on_send() {
+    //TODO 
+    return true;
+}
 
 /**
  * Attempts a write and returns status code (success == 0)

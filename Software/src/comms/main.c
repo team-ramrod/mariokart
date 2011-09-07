@@ -30,20 +30,11 @@
 #define SOFTWARE_NAME "Comms"
 #define ALL_CLIENTS (1<<ADDR_BRAKE)//((1<<ADDR_SENSOR) | (1<<ADDR_STEERING) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR))
 
-/// PIT period value in µseconds.
-#define PIT_PERIOD          1000
-
-//------------------------------------------------------------------------------
-//         Local Variables
-//------------------------------------------------------------------------------
-unsigned int milisecond_counter;
-
-//------------------------------------------------------------------------------
-//         Local Functions
-//------------------------------------------------------------------------------
 volatile bool timeout = false;
 
 unsigned int brake_position;
+
+typedef void(*output_send_t)(void);
 
 void send_brake_value(void) {
     message_t msg = {
@@ -67,33 +58,7 @@ void send_motor_value(void){
 void check_speed_timeout(void){
 }
 
-void send_messages(void) {
-    milisecond_counter++;
-    if (milisecond_counter > 1000) {
-        milisecond_counter = milisecond_counter % 10;
-    }
 
-    switch(milisecond_counter % 10) {
-        case 0:
-            send_brake_value();
-            break;
-        case 1:
-            send_steering_value();
-            break;
-        case 2:
-            send_motor_value();
-            break;
-        case 3:
-            check_speed_timeout();
-            break;
-        default:
-            break;
-    }
-}
-
-//------------------------------------------------------------------------------
-/// Interrupt handler for TC1 interrupt.
-//------------------------------------------------------------------------------
 void timer_callback(void) {
     static int i = 0;
 
@@ -108,19 +73,18 @@ void timer_callback(void) {
 }
 
 
-
-
-//------------------------------------------------------------------------------
-//         Main Function
-//------------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
 
+    unsigned int num_output_boards = 3;
+    output_send_t output_board_send[] = {
+        send_motor_value,
+        send_brake_value,
+        send_steering_value,
+    };
 
     //enables interrupts (note resets all configured interrupts)
     PIO_InitializeInterrupts(AT91C_AIC_PRIOR_LOWEST);
-
-    milisecond_counter = 0;
 
     TC_PeriodicCallback(100, timer_callback);
 
@@ -213,7 +177,6 @@ int main(int argc, char *argv[]) {
 
                 // Check if all clients have acked
                 if (responses == ALL_CLIENTS) {
-                    char_display_number(72);
                     broadcast_message.command = CMD_RUN;
                     proto_write(broadcast_message);
                     proto_state_transition(RUNNING);
@@ -233,8 +196,17 @@ int main(int argc, char *argv[]) {
                     // Forward sensor data to laptop
                 }
 
-                // TODO Valid reponses received so refresh the protocol timer
-                proto_refresh();
+                if (timeout) {
+                    for (int i = 0; i < num_output_boards; i++) {
+                        output_board_send[i](); // might need to check status here too
+                        if (proto_wait_on_send())
+                            break;
+                    }
+                    //TODO
+                    //sensor req
+                    //wait on sensor receive
+                    proto_refresh();
+                }
 
                 break;
             default: // ERROR
