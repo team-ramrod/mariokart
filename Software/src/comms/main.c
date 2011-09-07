@@ -225,12 +225,16 @@ int main(int argc, char *argv[]) {
 
                 CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
                 if (usb_msg.command != CMD_NONE) {
+                    proto_write(usb_msg);
                     // TODO
                     // Set setpoints
                     // Send set points
                     // Check for acks
                     // Receive data from sensor
                     // Forward sensor data to laptop
+
+                    // Clear message
+                    usb_msg.command = CMD_NONE;
                 }
 
                 // TODO Valid reponses received so refresh the protocol timer
