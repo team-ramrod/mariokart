@@ -116,7 +116,9 @@ static message_t parse_usb_message(unsigned char message[], unsigned int length)
         msg.command  = message[1];
         msg.data_len = length - 2;
 
-        memcpy(msg.data, &message[2], length - 2);
+        for (unsigned int i = 0; i < length - 2; i++) {
+            msg.data[i] = message[i + 2];
+        }
     }
 
     return msg;
@@ -127,7 +129,9 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
         TRACE_WARNING("Too long USB message received.\n\r");
         current_char = 0;
     } else {
-        memcpy(&message_buffer[current_char], data, length);
+        for (unsigned int i = 0; i < length; i++) {
+            message_buffer[current_char + i] = data[i];
+        }
         current_char += length;
         if (data[length-1] == 0xFF) {
             usb_msg = parse_usb_message(message_buffer, current_char);

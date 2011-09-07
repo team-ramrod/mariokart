@@ -21,7 +21,6 @@
 #include <utility/trace.h>
 #include <pit/pit.h>
 #include <better_can/can.h>
-#include <string.h>
 
 #include "usb.c"
 
