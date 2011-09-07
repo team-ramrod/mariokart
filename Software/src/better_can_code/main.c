@@ -8,9 +8,9 @@ struct pair { unsigned int low, high; };
 #undef ASDF
 #ifdef ASDF
 
-AT91PS_CAN_MB mailbox = CAN_Mailboxes[can_number][numMailbox];
-can_msr               = mailbox->CAN_MB_MSR;
-message_mode          = (mailbox->CAN_MB_MMR >> 24) & 0x07;
+mailbox      = CAN_Mailboxes[can_number][numMailbox];
+can_ms       = mailbox->CAN_MB_MSR;
+message_mode = (mailbox->CAN_MB_MMR >> 24) & 0x07;
 TRACE_DEBUG("CAN_MB_MID 0x%X\n\r", (mailbox->CAN_MB_MID & AT91C_CAN_MIDvA) >> 18);
 
 #endif
