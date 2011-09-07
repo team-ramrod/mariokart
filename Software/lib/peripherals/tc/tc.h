@@ -67,6 +67,8 @@
 //         Global functions
 //------------------------------------------------------------------------------
 
+typedef void(*timer_callback_t)(void);
+
 extern void TC_Configure(AT91S_TC *pTc, unsigned int mode);
 
 extern void TC_Start(AT91S_TC *pTc);

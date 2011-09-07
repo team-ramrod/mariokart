@@ -143,14 +143,24 @@ unsigned char TC_FindMckDivisor(
     return 1;
 }
 
+static timer_callback_t TC_FinalCallback;
+
+void TC1_ISR() {
+    AT91C_BASE_TC1->TC_SR;
+    TC_FinalCallback();
+}
+
 /**
  * Starts a timer which runs a callback at the given speed.
  * @param frequency the required frequency
  * @param callback the function to call
  */
-void TC_PeriodicCallback(unsigned int frequency, void (*callback)(void)) {
+void TC_PeriodicCallback(
+        unsigned int frequency, 
+        timer_callback_t callback) {
     unsigned int div;
     unsigned int tcclks;
+    TC_FinalCallback = callback;
 
     // Enable peripheral clock
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC1;
@@ -161,7 +171,7 @@ void TC_PeriodicCallback(unsigned int frequency, void (*callback)(void)) {
     AT91C_BASE_TC1->TC_RC = (BOARD_MCK / div) / frequency; // timerFreq / desiredFreq
 
     // Configure and enable interrupt on RC compare
-    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, callback);
+    AIC_ConfigureIT(AT91C_ID_TC1, AT91C_AIC_PRIOR_LOWEST, TC1_ISR);
     AT91C_BASE_TC1->TC_IER = AT91C_TC_CPCS;
     AIC_EnableIT(AT91C_ID_TC1);
 

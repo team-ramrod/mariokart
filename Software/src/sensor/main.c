@@ -61,9 +61,6 @@ void send_data(address_t to, unsigned char id, variable_t var) {
 
 //updates time since speed sensor last triggered
 void timer_callback(void) {
-    // Clear status bit to acknowledge interrupt
-    AT91C_BASE_TC0->TC_SR;
-
     speed_update_time(TIMER_RES);
 }
 

@@ -178,12 +178,10 @@ void proto_init(address_t board_address) {
 
     // Set up the error broadcast message
     error_message.from     = board_address;
-    error_message.to       = ADDR_ERROR_RX;
+    error_message.to       = ADDR_BROADCAST_RX;
     error_message.command  = CMD_ERROR;
     error_message.data_len = 0;
-
-    proto_set_rx_mailbox(ADDR_BROADCAST_RX);
-
+                                
     switch (board_address) {
         case ADDR_BRAKE:
             proto_set_rx_mailbox(ADDR_BRAKE);
@@ -396,7 +394,19 @@ int proto_write(message_t msg) {
         | (msg.data[3]           << 0x08)
         |  msg.data[4];
 
-    return BCAN_Write(can_num, msg.to, can_data_high, can_data_low, 8);
+    return (msg.to == ADDR_BROADCAST_RX) ?
+        BCAN_Write(
+                can_num,
+                ADDR_BROADCAST_TX, 
+                can_data_high, 
+                can_data_low,
+                8) :
+        BCAN_Write(
+                can_num, 
+                msg.to, 
+                can_data_high, 
+                can_data_low,
+                8);
 }
 
 

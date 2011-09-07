@@ -1,34 +1,34 @@
-import sys, tty, termios, select, os, threading, time
+import sys, tty, termios, select, os, threading, time, re
 from serial import Serial, SerialException
 from mutex import mutex
 
-ADDR_ERROR_RX     = '\x00',
-ADDR_BROADCAST_RX = '\x01',
-ADDR_BROADCAST_TX = '\x02',
-ADDR_BRAKE        = '\x03',
-ADDR_COMMS        = '\x04',
-ADDR_COMMS_USB    = '\x04',
-ADDR_STEERING     = '\x05',
-ADDR_MOTOR        = '\x06',
-ADDR_SENSOR       = '\x07',
+ADDR_ERROR_RX     = '\x00'
+ADDR_BROADCAST_RX = '\x01'
+ADDR_BROADCAST_TX = '\x02'
+ADDR_BRAKE        = '\x03'
+ADDR_COMMS        = '\x04'
+ADDR_COMMS_USB    = '\x04'
+ADDR_STEERING     = '\x05'
+ADDR_MOTOR        = '\x06'
+ADDR_SENSOR       = '\x07'
 
 
-CMD_NONE          = '\x00',
-CMD_GET           = '\x01',
-CMD_REPLY         = '\x02',
-CMD_SET           = '\x03',
-CMD_REQ_CALIBRATE = '\x04',
-CMD_ACK_CALIBRATE = '\x05',
-CMD_REQ_RUN       = '\x06',
-CMD_ACK_RUN       = '\x07',
-CMD_NO            = '\x08',
-CMD_ERROR         = '\x09',
-CMD_RUN           = '\x0A',
-CMD_CALIBRATE     = '\x0B',
+CMD_NONE          = '\x00'
+CMD_GET           = '\x01'
+CMD_REPLY         = '\x02'
+CMD_SET           = '\x03'
+CMD_REQ_CALIBRATE = '\x04'
+CMD_ACK_CALIBRATE = '\x05'
+CMD_REQ_RUN       = '\x06'
+CMD_ACK_RUN       = '\x07'
+CMD_NO            = '\x08'
+CMD_ERROR         = '\x09'
+CMD_RUN           = '\x0A'
+CMD_CALIBRATE     = '\x0B'
 
 
-VAR_SPEED   = '\0x1',
-VAR_BRK_POS = '\0x2',
+VAR_SPEED   = '\x01'
+VAR_BRK_POS = '\x02'
 
 address_translation = {
     'brake': ADDR_BRAKE,
@@ -71,7 +71,7 @@ class Client:
     try:
       self.serial.open()
     except SerialException, e:
-      sys.stderr.write("Could not open serial port %s: %s\n" % (self.serial.portstr, e)) 
+      sys.stderr.write("Could not open serial port %s: %s\n" % (self.serial.portstr, e))
       sys.exit(1)
 
   def run(self):
@@ -83,16 +83,16 @@ class Client:
         cmd = raw_input()
         match = cmd_re.match(cmd)
         if match:
-          board = match.groups[1]
-          command = match.groups[2]
-          data = match.groups[3]
-          
+          board = match.group(1)
+          command = match.group(2)
+          data = match.group(3)
+
           try:
-            message = [address_translation[board]] + [command_translation[command]] + [data_translation(data)] + ['\xFF']
+            message = [address_translation[board]] + [command_translation[command]] + data_translation(data) + ['\xFF']
           except KeyError, e:
             sys.stderr.write("Incorrect command")
 
-          self.serial.write(message)
+          self.serial.write(''.join(message))
         else:
           sys.stderr.write("Incorrect command")
       except EOFError:

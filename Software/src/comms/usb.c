@@ -25,6 +25,11 @@ static void UsbHandler(const unsigned char data[], unsigned int length);
 //------------------------------------------------------------------------------
 // Buffer for storing incoming USB data.
 static unsigned char usbBuffer[DATABUFFERSIZE];
+#define BUFFER_LENGTH 8
+static unsigned char message_buffer[BUFFER_LENGTH] = {0};
+static unsigned int current_char = 0;
+
+static message_t usb_msg;
 
 //------------------------------------------------------------------------------
 //         Local functions
@@ -87,5 +92,69 @@ void UsbDataReceived(void *unused,
     }
     else {
         TRACE_WARNING( "UsbDataReceived: Transfer error\n\r");
+    }
+}
+
+
+// Message format:
+//   to address (1 byte)
+//   command (1 byte)
+//   data (0-5 bytes)
+//   0xFF (message delimiter)
+static message_t parse_usb_message(unsigned char message[], unsigned int length) {
+    message_t msg = {
+        .from     = ADDR_ERROR_RX,
+        .to       = ADDR_ERROR_RX,
+        .command  = CMD_NONE,
+        .data     = {0},
+        .data_len = 0
+    };
+
+    if (length > 1) {
+        msg.from     = ADDR_COMMS_USB;
+        msg.to       = message[0];
+        msg.command  = message[1];
+        msg.data_len = length - 2;
+
+        for (unsigned int i = 0; i < (length - 2); i++) {
+            msg.data[i] = message[i+2];
+        }
+    }
+
+    return msg;
+}
+
+static void UsbHandler(const unsigned char data[], unsigned int length) {
+    if (length > (BUFFER_LENGTH - current_char)) {
+        TRACE_WARNING("Invalid USB message received.\n\r");
+        current_char = 0;
+    } else {
+        memcpy(&message_buffer[current_char], data, length);
+        current_char += length;
+        if (data[length-1] == 0xFF) {
+            usb_msg = parse_usb_message(message_buffer, current_char);
+            if (usb_msg.command == CMD_NONE) {
+                TRACE_WARNING("Invalid USB message received.\n\r");
+            } else {
+                TRACE_DEBUG(
+                    "USB message received:" "\n\r"
+                    "    to:      0x%2X" "\n\r"
+                    "    command: 0x%2X" "\n\r"
+                    "    data:         " "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r"
+                    "             0x%2X" "\n\r",
+                    usb_msg.to, usb_msg.command,
+                    usb_msg.data[0], usb_msg.data[1], usb_msg.data[2], usb_msg.data[3],
+                    usb_msg.data[4], usb_msg.data[5], usb_msg.data[6], usb_msg.data[7]
+                );
+            }
+            current_char = 0;
+        }
     }
 }
