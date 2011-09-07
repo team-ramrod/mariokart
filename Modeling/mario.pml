@@ -55,11 +55,11 @@ proctype Client() {
     bool ready_to_run = false;
 Startup:
     client?message;
-    do
-        :: message == req_calibrate -> comms!ack_calibrate
-        :: message == do_calibrate -> break
+    if
+        :: message == req_calibrate -> comms!ack_calibrate; goto Startup
+        :: message == do_calibrate 
         :: else -> goto Error 
-    od;
+    fi;
 
 Calibration:
     if
@@ -75,18 +75,19 @@ Calibration:
             fi
     fi;
 
+Running:
 progress:
-    client?message;
+//  client?message;
     do 
-        :: message == data -> comms!ack
-        :: else -> goto Error
+        :: client?data -> comms!ack 
+//      :: else -> goto Error
     od;
 
 Error:
     error_count++;
     do
         ::client!error
-    od  
+    od 
 }
 
 init {
