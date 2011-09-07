@@ -83,7 +83,7 @@ static inline void UsbInit() {
 //   command (1 byte)
 //   data (0-5 bytes)
 //   0xFF (message delimiter)
-static message_t parse_usb_message(unsigned char message[], unsigned int length) {
+static message_t parse_usb_message(const unsigned char message[], unsigned int length) {
     message_t msg = {
         .from     = ADDR_ERROR_RX,
         .to       = ADDR_ERROR_RX,
