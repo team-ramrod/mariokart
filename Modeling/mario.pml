@@ -51,16 +51,17 @@ Error:
 
 proctype Client() {
     mtype message;
+    int calib_count = 0;
+    bool ready_to_run = false;
 Startup:
+    client?message;
     do
-        :: client?req_calibrate -> comms!ack_calibrate
-        :: client?do_calibrate -> break
+        :: message == req_calibrate -> comms!ack_calibrate
+        :: message == do_calibrate -> break
         :: else -> goto Error 
     od;
 
 Calibration:
-    int calib_count = 0;
-    bool ready_to_run = false;
     if
         :: client?req_run ->
             if
@@ -75,8 +76,9 @@ Calibration:
     fi;
 
 progress:
+    client?message;
     do 
-        :: client?data -> comms!ack
+        :: message == data -> comms!ack
         :: else -> goto Error
     od;
 
