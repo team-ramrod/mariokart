@@ -76,10 +76,10 @@ void UsbDataReceived(void *unused,
     if (status == USBD_STATUS_SUCCESS) {
 
         TRACE_INFO("UsbDataReceived:\n\r[\n\r");
-        for (unsigned int i = 0; i < received; i++) {
-            TRACE_INFO("\t%c\n\r", usbBuffer[i]);
+        for (unsigned int i = 0; i < received-1; i++) {
+            TRACE_INFO("\t0x%2X\n\r", usbBuffer[i]);
         }
-        TRACE_INFO("]\n\r");
+        TRACE_INFO("\t0x%2X\n\r]\n\r", usbBuffer[received-1]);
 
         UsbHandler(usbBuffer, received);
 
