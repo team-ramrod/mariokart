@@ -39,7 +39,7 @@ void send_message(unsigned int mailboxNumber, unsigned int dataLow, unsigned int
 struct pair read_message(unsigned int mailboxNumber) {
     CAN_Packet result = { 0 };
 
-    while (result.size < 0) {
+    while (! result.valid) {
         result = BCAN_ReadAndClear(0, mailboxNumber);
     }
 

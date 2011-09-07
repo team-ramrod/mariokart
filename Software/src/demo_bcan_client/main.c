@@ -32,7 +32,7 @@ int main(void)
     char_display_number(6);
     while(1) {
         CAN_Packet packet = BCAN_ReadAndClear(0,2);
-        if (packet.size > 0) {
+        if (packet.valid) {
             char_display_number(packet.data_low);
         }
         char_display_tick();

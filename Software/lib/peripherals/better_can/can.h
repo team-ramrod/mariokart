@@ -7,7 +7,7 @@
 #define CAN_STATUS_RESET               3
 
 typedef struct {
-    unsigned int status;
+    unsigned int valid;
     unsigned int mailbox;
     unsigned int data_low;
     unsigned int data_high;
