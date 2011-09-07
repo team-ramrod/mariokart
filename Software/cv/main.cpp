@@ -14,20 +14,52 @@
 #include <ctime>
 #include <list>
 
-#define FOLLOW_LAG 3
-#define MIN_DIST 1
+#define FOLLOW_LAG 10
+#define MIN_DIST 20
+#define TURN_FACTOR 0.5
 
 using namespace std;
+
+//stored board positions
+    list<Location *> board_loc_list;
+
+    //stored kart positions
+    list<Location *> kart_loc_list;
+
+    list<Location *>::iterator current_des = board_loc_list.begin();
+
+void follow_boards_path(double *wheel_angle, double *kart_speed, double *kart_angle){
+
+while(kart_loc_list.front()->dist_to(**current_des) < MIN_DIST) {
+
+            if (current_des != board_loc_list.begin()) {
+               *kart_speed = 0.1;
+               current_des--;
+            } else {
+                *kart_speed = 0;
+                break;
+            }
+        }
+        //timeout to forget point and go after next one
+        while (((clock() / (double) CLOCKS_PER_SEC) - (*current_des)->t) > FOLLOW_LAG) {
+            if (current_des != board_loc_list.begin()) {
+               *kart_speed = 0.1;
+               current_des--;
+            } else {
+                *kart_speed = 0;
+                break;
+            }
+        }
+
+        //printf("a %g   %g\n",wheel_angle, kart_angle);
+        *wheel_angle = kart_loc_list.front()->relative_angle(**current_des, *kart_angle);
+        }
 
 int main(int argc, char** argv) {
 
     bool running = true;
 
-    //stored board positions
-    list<Location *> board_loc_list;
-
-    //stored kart positions
-    list<Location *> kart_loc_list;
+    
 
     Location* kart_init_pos = new Location;
     Location* board_init_pos = new Location;
@@ -37,8 +69,6 @@ int main(int argc, char** argv) {
 
     board_init_pos->set_values(0, 0, 0, 0);
     board_loc_list.push_front(board_init_pos);
-
-    list<Location *>::iterator current_des = board_loc_list.begin();
 
     //sets up kart and board inital positions
     double wheel_angle = 0;
@@ -70,29 +100,14 @@ int main(int argc, char** argv) {
         }
 
         //perform tracking
-
-        //if new point stop kart
-       // if (((clock() / (double) CLOCKS_PER_SEC) - (*current_des)->t) < FOLLOW_LAG) {
-       //     kart_speed = 0;
-       // }
-       // else{
-      //      kart_speed = 1;
-      //  }
-        //printf("%g \n",kart_loc->dist_to(**current_des));
-        if (kart_loc->dist_to(**current_des) < MIN_DIST) {
-            if (current_des != board_loc_list.begin()) {
-                current_des--;
-            }
-        }
-        //current_des = board_loc_list.begin();
-        //printf("a %g   %g\n",wheel_angle, kart_angle);
-        wheel_angle = kart_loc->relative_angle(**current_des, kart_angle);
+follow_boards_path(&wheel_angle, &kart_speed, &kart_angle);
+        
 
         double timestep = (std::clock() - loop_time) / (double) CLOCKS_PER_SEC;
 
         //updates karts position
-        kart_angle += (wheel_angle * timestep)/2;
-        printf("%g \n",wheel_angle);
+        kart_angle += TURN_FACTOR * (wheel_angle * timestep);
+
         while (kart_angle > 2 * M_PI) {
             kart_angle -= 2 * M_PI;
         }
@@ -106,7 +121,7 @@ int main(int argc, char** argv) {
 
         kart_loc_list.push_front(kart_loc);
 
-        plot_update(&kart_loc_list, &board_loc_list);
+        plot_update(&kart_loc_list, &board_loc_list, current_des);
 
         //Check for keypresses/allow for other threads to operate
         switch (cvWaitKey(1)) {
