@@ -33,18 +33,20 @@ def address_translation(address):
         'comms': ADDR_COMMS,
         'steering': ADDR_STEERING,
         'motor': ADDR_MOTOR,
-        'sensor': ADDR_SENSOR
+        'sensor': ADDR_SENSOR,
+        'all': ADDR_BROADCAST_RX,
     }[address]]
 
 def command_translation(command):
     return [{
         'get': CMD_GET,
         'set': CMD_SET,
+        'error': CMD_ERROR,
     }[command]]
 
 var_translation = {
     'speed': VAR_SPEED,
-    'brake_position': VAR_BRK_POS
+    'brake_position': VAR_BRK_POS,
 }
 
 def data_translation(data):

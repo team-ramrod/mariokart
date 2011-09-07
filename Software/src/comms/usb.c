@@ -83,7 +83,7 @@ static inline void UsbInit() {
 //   command (1 byte)
 //   data (0-5 bytes)
 //   0xFF (message delimiter)
-static message_t parse_usb_message(unsigned char message[], unsigned int length) {
+static message_t parse_usb_message(const unsigned char message[], unsigned int length) {
     message_t msg = {
         .from     = ADDR_ERROR_RX,
         .to       = ADDR_ERROR_RX,
@@ -130,9 +130,6 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
                 TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[2]);
                 TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[3]);
                 TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[4]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[5]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[6]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[7]);
             }
             message_buffer_position = 0;
         } else {
