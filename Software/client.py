@@ -90,11 +90,11 @@ class Client:
           try:
             message = [address_translation[board]] + [command_translation[command]] + data_translation(data) + ['\xFF']
           except KeyError, e:
-            sys.stderr.write("Incorrect command")
+            sys.stderr.write("Incorrect command\n")
 
           self.serial.write(''.join(message))
         else:
-          sys.stderr.write("Incorrect command")
+          sys.stderr.write("Incorrect command\n")
       except EOFError:
         running = False
 
