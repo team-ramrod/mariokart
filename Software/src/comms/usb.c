@@ -77,9 +77,9 @@ void UsbDataReceived(void *unused,
 
         TRACE_INFO("UsbDataReceived:\n\r[\n\r");
         for (unsigned int i = 0; i < received-1; i++) {
-            TRACE_INFO("\t0x%2X\n\r", usbBuffer[i]);
+            TRACE_INFO("\t0x%02X\n\r", usbBuffer[i]);
         }
-        TRACE_INFO("\t0x%2X\n\r]\n\r", usbBuffer[received-1]);
+        TRACE_INFO("\t0x%02X\n\r]\n\r", usbBuffer[received-1]);
 
         UsbHandler(usbBuffer, received);
 
@@ -126,7 +126,7 @@ static message_t parse_usb_message(unsigned char message[], unsigned int length)
 
 static void UsbHandler(const unsigned char data[], unsigned int length) {
     if (length > (BUFFER_LENGTH - current_char)) {
-        TRACE_WARNING("Invalid USB message received.\n\r");
+        TRACE_WARNING("Too long USB message received.\n\r");
         current_char = 0;
     } else {
         memcpy(&message_buffer[current_char], data, length);
@@ -138,17 +138,17 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
             } else {
                 TRACE_DEBUG(
                     "USB message received:" "\n\r"
-                    "    to:      0x%2X" "\n\r"
-                    "    command: 0x%2X" "\n\r"
-                    "    data:         " "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r"
-                    "             0x%2X" "\n\r",
+                    "    to:      0x%02X" "\n\r"
+                    "    command: 0x%02X" "\n\r"
+                    "    data:          " "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r"
+                    "             0x%02X" "\n\r",
                     usb_msg.to, usb_msg.command,
                     usb_msg.data[0], usb_msg.data[1], usb_msg.data[2], usb_msg.data[3],
                     usb_msg.data[4], usb_msg.data[5], usb_msg.data[6], usb_msg.data[7]
