@@ -25,7 +25,7 @@ static void UsbHandler(const unsigned char data[], unsigned int length);
 //------------------------------------------------------------------------------
 // Buffer for storing incoming USB data.
 static unsigned char usbBuffer[DATABUFFERSIZE];
-#define BUFFER_LENGTH 8
+#define BUFFER_LENGTH 7
 static unsigned char message_buffer[BUFFER_LENGTH] = {0};
 static unsigned int current_char = 0;
 
@@ -129,6 +129,7 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
         TRACE_WARNING("Too long USB message received.\n\r");
         current_char = 0;
     } else {
+        TRACE_INFO("Stuffs happening.\n\r");
         for (unsigned int i = 0; i < length; i++) {
             message_buffer[current_char + i] = data[i];
         }
@@ -157,6 +158,8 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
                 );
             }
             current_char = 0;
+        } else {
+            TRACE_INFO("Incomplete message");
         }
     }
 }
