@@ -29,7 +29,7 @@ static unsigned char usbBuffer[DATABUFFERSIZE];
 static unsigned char message_buffer[BUFFER_LENGTH] = {0};
 static unsigned int current_char = 0;
 
-static message_t usb_msg;
+static volatile message_t usb_msg;
 
 //------------------------------------------------------------------------------
 //         Local functions
@@ -114,9 +114,9 @@ static message_t parse_usb_message(unsigned char message[], unsigned int length)
         msg.from     = ADDR_COMMS_USB;
         msg.to       = message[0];
         msg.command  = message[1];
-        msg.data_len = length - 2;
+        msg.data_len = length - 3;
 
-        for (unsigned int i = 0; i < length - 2; i++) {
+        for (unsigned int i = 0; i < length - 3; i++) {
             msg.data[i] = message[i + 2];
         }
     }
@@ -129,7 +129,6 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
         TRACE_WARNING("Too long USB message received.\n\r");
         current_char = 0;
     } else {
-        TRACE_INFO("Stuffs happening.\n\r");
         for (unsigned int i = 0; i < length; i++) {
             message_buffer[current_char + i] = data[i];
         }
@@ -139,23 +138,19 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
             if (usb_msg.command == CMD_NONE) {
                 TRACE_WARNING("Invalid USB message received.\n\r");
             } else {
-                TRACE_DEBUG(
-                    "USB message received:" "\n\r"
-                    "    to:      0x%02X" "\n\r"
-                    "    command: 0x%02X" "\n\r"
-                    "    data:          " "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r"
-                    "             0x%02X" "\n\r",
-                    usb_msg.to, usb_msg.command,
-                    usb_msg.data[0], usb_msg.data[1], usb_msg.data[2], usb_msg.data[3],
-                    usb_msg.data[4], usb_msg.data[5], usb_msg.data[6], usb_msg.data[7]
-                );
+                TRACE_DEBUG("USB message received:" "\n\r");
+                TRACE_DEBUG("    to:       0x%02X" "\n\r", usb_msg.to);
+                TRACE_DEBUG("    command:  0x%02X" "\n\r", usb_msg.command);
+                TRACE_DEBUG("    data_len: 0x%02X" "\n\r", usb_msg.data_len);
+                TRACE_DEBUG("    data:          " "\n\r");
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[0]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[1]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[2]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[3]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[4]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[5]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[6]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[7]);
             }
             current_char = 0;
         } else {
