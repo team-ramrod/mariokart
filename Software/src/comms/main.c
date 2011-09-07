@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
 
     message_t broadcast_message, msg;
     broadcast_message.from     = ADDR_COMMS;
-    broadcast_message.to       = ADDR_BRAKE;
+    broadcast_message.to       = ADDR_BROADCAST_RX;
     broadcast_message.command  = CMD_NONE;
     broadcast_message.data_len = 0;
 

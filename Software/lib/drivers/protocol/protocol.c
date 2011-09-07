@@ -50,11 +50,11 @@ void ISR_Tc0(void)
     AT91C_BASE_TC0->TC_SR;
 
     if (state == RUNNING) {
-            wait_timer += 250;
-            if (wait_timer >= TIMEOUT ) {
-                TRACE_WARNING("Timeout while running");
-                proto_state_error();
-            }
+        wait_timer += 250;
+        if (wait_timer >= TIMEOUT ) {
+            TRACE_WARNING("Timeout while running");
+            proto_state_error();
+        }
     }
 
     // broadcast the error message
@@ -113,7 +113,7 @@ void proto_set_tx_mailbox(address_t from_address, address_t dest_address) {
 void proto_set_rx_mailbox(address_t rx_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
-    
+
     full_address = (PROTO_ADDR_PRIORITY << 7) + (rx_address << 4) + (PROTO_ADDR_SUFFEX << 0);
 
     can_number = 0;
@@ -124,6 +124,8 @@ void proto_set_rx_mailbox(address_t rx_address) {
     control_reg = 0x0;
     BCAN_InitMailboxRegisters(can_number, mailbox_number, acceptance_mask, identifier, mode_reg, control_reg);
 }
+
+
 
 /**
  * Configure Timer Counter 0 to generate an interrupt every 250ms.
@@ -179,6 +181,8 @@ void proto_init(address_t board_address) {
     error_message.to       = ADDR_ERROR_RX;
     error_message.command  = CMD_ERROR;
     error_message.data_len = 0;
+
+    proto_set_rx_mailbox(ADDR_BROADCAST_RX);
 
     switch (board_address) {
         case ADDR_BRAKE:
@@ -280,14 +284,14 @@ unsigned int message_handler(CAN_Packet packet) {
     };
 
     TRACE_DEBUG("Incoming Packet\n\r\n\r"
-                "from\t%i\n\r" 
-                "to\t%i\n\r"
-                "command\t%i\n\r"
-                "data_len\t%i\n\r"
-                "packet-hi\t%i\n\r"
-                "packet-low\t%i\n\r\n\r",
-                  msg.from, msg.to, msg.command, msg.data_len,
-                  packet.data_high,packet.data_low);
+            "from\t%i\n\r" 
+            "to\t%i\n\r"
+            "command\t%i\n\r"
+            "data_len\t%i\n\r"
+            "packet-hi\t%i\n\r"
+            "packet-low\t%i\n\r\n\r",
+            msg.from, msg.to, msg.command, msg.data_len,
+            packet.data_high,packet.data_low);
 
     // Short circuit the message handling for the comms board.
     if (local_address == ADDR_COMMS) {
@@ -296,7 +300,7 @@ unsigned int message_handler(CAN_Packet packet) {
     }
 
     unsigned int result;
-    
+
     //For all client boards: control the boards state based on incoming messages while not in RUNNING mode
     switch (state) {
         case STARTUP:
@@ -310,7 +314,7 @@ unsigned int message_handler(CAN_Packet packet) {
 
                     break;
 
-                // Transition to calibration state at master boards command
+                    // Transition to calibration state at master boards command
                 case CMD_CALIBRATE:
                     proto_state_transition(CALIBRATING);
                     break;
@@ -336,7 +340,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     }
                     break;
 
-                // Transition to run state at master boards command
+                    // Transition to run state at master boards command
                 case CMD_RUN:
                     proto_refresh();
                     proto_state_transition(RUNNING);
@@ -422,8 +426,8 @@ void proto_set_error_callback(error_callback callback) {
  * Drop the can handler into error state then calls the error state callback
  */
 void proto_state_error() {
-                    proto_state_transition(ERROR);
     BCAN_AbortAllTransfers(0);
+    proto_state_transition(ERROR);
     if (error_callback_function != NULL) {
         error_callback_function();
     }
