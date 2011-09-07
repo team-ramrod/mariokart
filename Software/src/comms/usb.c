@@ -4,36 +4,42 @@
  *  Copyright (c) 2011, University of Canterbury
  */
 
-//------------------------------------------------------------------------------
-//         Headers
-//------------------------------------------------------------------------------
+/******************************************************************************
+ * Interface used by main to interact with this section of code.              *
+ ******************************************************************************/
+
+// Initializes the usb connection.
+static inline void UsbInit();
+
+// Initiates a read on the usb and returns the result of the last read.
+static message_t UsbRead();
+
+
+/******************************************************************************
+ * Inner workings, this is so inextricably linked to the main comms code that *
+ * there is little reason to seperate out into an actual module.              *
+ ******************************************************************************/
+static volatile message_t usb_received_msg;
+
 #include <board.h>
+#include <utility/interrupts.h>
 #include <usb/device/cdc-serial/CDCDSerialDriver.h>
 #include <usb/device/cdc-serial/CDCDSerialDriverDescriptors.h>
 
-static void UsbHandler(const unsigned char data[], unsigned int length);
-
-//------------------------------------------------------------------------------
-//         Local defines
-//------------------------------------------------------------------------------
 // Size in bytes of the buffer used for reading data from the USB.
 #define DATABUFFERSIZE \
     BOARD_USB_ENDPOINTS_MAXPACKETSIZE(CDCDSerialDriverDescriptors_DATAIN)
+#define MESSAGEBUFFERSIZE 7
 
-//------------------------------------------------------------------------------
-//         Local variables
-//------------------------------------------------------------------------------
 // Buffer for storing incoming USB data.
 static unsigned char usbBuffer[DATABUFFERSIZE];
-#define BUFFER_LENGTH 7
-static unsigned char message_buffer[BUFFER_LENGTH] = {0};
-static unsigned int current_char = 0;
 
-static volatile message_t usb_msg;
+// Buffer for storing parts of the message until it is complete.
+static unsigned char message_buffer[MESSAGEBUFFERSIZE] = {0};
 
-//------------------------------------------------------------------------------
-//         Local functions
-//------------------------------------------------------------------------------
+// Current position in the buffer.
+static unsigned int message_buffer_position = 0;
+
 #ifdef PIN_USB_VBUS
 /**
  * Handles interrupts coming from the PIO controller for the VBus pin
@@ -67,34 +73,10 @@ static void VBus_Configure() {
 #endif
 }
 
-void UsbDataReceived(void *unused,
-                     unsigned char status,
-                     unsigned int received,
-                     unsigned int remaining)
-{
-    // Check that data has been received successfully
-    if (status == USBD_STATUS_SUCCESS) {
-
-        TRACE_INFO("UsbDataReceived:\n\r[\n\r");
-        for (unsigned int i = 0; i < received-1; i++) {
-            TRACE_INFO("\t0x%02X\n\r", usbBuffer[i]);
-        }
-        TRACE_INFO("\t0x%02X\n\r]\n\r", usbBuffer[received-1]);
-
-        UsbHandler(usbBuffer, received);
-
-        // Check if bytes have been discarded
-        if ((received == DATABUFFERSIZE) && (remaining > 0)) {
-            TRACE_WARNING(
-                      "UsbDataReceived: %u bytes discarded\n\r",
-                      remaining);
-        }
-    }
-    else {
-        TRACE_WARNING( "UsbDataReceived: Transfer error\n\r");
-    }
+static inline void UsbInit() {
+    CDCDSerialDriver_Initialize();
+    VBus_Configure();
 }
-
 
 // Message format:
 //   to address (1 byte)
@@ -125,36 +107,86 @@ static message_t parse_usb_message(unsigned char message[], unsigned int length)
 }
 
 static void UsbHandler(const unsigned char data[], unsigned int length) {
-    if (length > (BUFFER_LENGTH - current_char)) {
+    if (length > (MESSAGEBUFFERSIZE - message_buffer_position)) {
         TRACE_WARNING("Too long USB message received.\n\r");
-        current_char = 0;
+        message_buffer_position = 0;
     } else {
         for (unsigned int i = 0; i < length; i++) {
-            message_buffer[current_char + i] = data[i];
+            message_buffer[message_buffer_position + i] = data[i];
         }
-        current_char += length;
+        message_buffer_position += length;
         if (data[length-1] == 0xFF) {
-            usb_msg = parse_usb_message(message_buffer, current_char);
-            if (usb_msg.command == CMD_NONE) {
+            usb_received_msg = parse_usb_message(message_buffer, message_buffer_position);
+            if (usb_received_msg.command == CMD_NONE) {
                 TRACE_WARNING("Invalid USB message received.\n\r");
             } else {
                 TRACE_DEBUG("USB message received:" "\n\r");
-                TRACE_DEBUG("    to:       0x%02X" "\n\r", usb_msg.to);
-                TRACE_DEBUG("    command:  0x%02X" "\n\r", usb_msg.command);
-                TRACE_DEBUG("    data_len: 0x%02X" "\n\r", usb_msg.data_len);
+                TRACE_DEBUG("    to:       0x%02X" "\n\r", usb_received_msg.to);
+                TRACE_DEBUG("    command:  0x%02X" "\n\r", usb_received_msg.command);
+                TRACE_DEBUG("    data_len: 0x%02X" "\n\r", usb_received_msg.data_len);
                 TRACE_DEBUG("    data:          " "\n\r");
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[0]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[1]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[2]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[3]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[4]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[5]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[6]);
-                TRACE_DEBUG("              0x%02X" "\n\r", usb_msg.data[7]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[0]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[1]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[2]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[3]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[4]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[5]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[6]);
+                TRACE_DEBUG("              0x%02X" "\n\r", usb_received_msg.data[7]);
             }
-            current_char = 0;
+            message_buffer_position = 0;
         } else {
             TRACE_INFO("Incomplete message");
         }
     }
+}
+
+static void UsbDataReceived(void *unused,
+                     unsigned char status,
+                     unsigned int received,
+                     unsigned int remaining)
+{
+    // Check that data has been received successfully
+    if (status == USBD_STATUS_SUCCESS) {
+
+        TRACE_INFO("UsbDataReceived:\n\r[\n\r");
+        for (unsigned int i = 0; i < received-1; i++) {
+            TRACE_INFO("\t0x%02X\n\r", usbBuffer[i]);
+        }
+        TRACE_INFO("\t0x%02X\n\r]\n\r", usbBuffer[received-1]);
+
+        UsbHandler(usbBuffer, received);
+
+        // Check if bytes have been discarded
+        if ((received == DATABUFFERSIZE) && (remaining > 0)) {
+            TRACE_WARNING(
+                      "UsbDataReceived: %u bytes discarded\n\r",
+                      remaining);
+        }
+    }
+    else {
+        TRACE_WARNING( "UsbDataReceived: Transfer error\n\r");
+    }
+}
+
+static message_t UsbRead() {
+    disable_interrupts();
+
+    message_t temp = usb_received_msg;
+
+    usb_received_msg.from     = ADDR_ERROR_RX;
+    usb_received_msg.to       = ADDR_ERROR_RX;
+    usb_received_msg.command  = CMD_NONE;
+    usb_received_msg.data[0]  = 0;
+    usb_received_msg.data[1]  = 0;
+    usb_received_msg.data[2]  = 0;
+    usb_received_msg.data[3]  = 0;
+    usb_received_msg.data[4]  = 0;
+    usb_received_msg.data_len = 0;
+
+    enable_interrupts();
+
+    CDCDSerialDriver_Read(usbBuffer, DATABUFFERSIZE, UsbDataReceived, 0);
+
+    return temp;
 }
