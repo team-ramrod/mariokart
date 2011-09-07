@@ -28,32 +28,31 @@ VAR_BRK_POS = '\x02'
 
 
 def address_translation(address):
-	return [{
-		'brake': ADDR_BRAKE,
-		'comms': ADDR_COMMS,
-		'steering': ADDR_STEERING,
-		'motor': ADDR_MOTOR,
-		'sensor': ADDR_SENSOR
-	}[address]]
+    return [{
+        'brake': ADDR_BRAKE,
+        'comms': ADDR_COMMS,
+        'steering': ADDR_STEERING,
+        'motor': ADDR_MOTOR,
+        'sensor': ADDR_SENSOR
+    }[address]]
 
 def command_translation(command):
-	return [{
-		'get': CMD_GET,
-		'set': CMD_SET,
-	}[command]]
+    return [{
+        'get': CMD_GET,
+        'set': CMD_SET,
+    }[command]]
 
-def var_translation(var):
-	return [{
-		'speed': VAR_SPEED,
-		'brake_position': VAR_BRK_POS
-	}[var]]
+var_translation = {
+    'speed': VAR_SPEED,
+    'brake_position': VAR_BRK_POS
+}
 
 def data_translation(data):
-	data = data.split(' ')
-	result = []
-	for datum in data:
-		if datum in var_translation:
-			result += [var_translation[datum]]
-		else:
-			result += [int(datum,0)]
-	return result
+    data = data.split(' ')
+    result = []
+    for datum in data:
+        if datum in var_translation:
+            result += [var_translation[datum]]
+        else:
+            result += [int(datum,0)]
+    return result
