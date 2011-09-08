@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
             case STARTUP:
                 break;
             case CALIBRATING:
-                if (cal == CALIBRATED) {
+                if (switches_pressed(0)) { //cal == CALIBRATED) {
                     proto_calibration_complete();
                 } else {
 #ifndef DISABLE_PWM
