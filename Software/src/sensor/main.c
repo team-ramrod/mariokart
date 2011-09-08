@@ -94,6 +94,7 @@ int main(int argc, char *argv[]) {
     proto_init(ADDR_SENSOR);
 
     while (1) {
+        char_display_tick();
         switch (proto_state()) {
             case STARTUP:
                 break;
