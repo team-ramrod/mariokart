@@ -32,6 +32,33 @@
 
 volatile bool timeout = false;
 
+message_t brake_msg = {
+    .from = ADDR_COMMS,
+    .to   = ADDR_BRAKE,
+    .command = CMD_SET,
+    .data = {
+        VAR_BRK_POS,
+        0
+    }
+};
+message_t steering_msg = {
+    .from = ADDR_COMMS,
+    .to   = ADDR_STEERING,
+    .command = CMD_SET,
+    .data = {
+        VAR_STEERING_ANGLE,
+        0
+    }
+};
+message_t motor_msg = {
+    .from = ADDR_COMMS,
+    .to   = ADDR_MOTOR,
+    .command = CMD_SET,
+    .data = {
+        VAR_SPEED,
+        0
+    }
+};
 
 typedef void(*output_send_t)(void);
 
@@ -64,38 +91,10 @@ void timer_callback(void) {
     }
 }
 
-message_t brake_msg, motor_msg, steering_msg;
 
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
 
-    brake_msg = {
-        .from = ADDR_COMMS,
-        .to   = ADDR_BRAKE,
-        .command = CMD_SET,
-        .data = {
-            VAR_BRK_POS,
-            0
-        }
-    };
-    steering_msg = {
-        .from = ADDR_COMMS,
-        .to   = ADDR_STEERING,
-        .command = CMD_SET,
-        .data = {
-            VAR_STEERING_POS,
-            0
-        }
-    };
-    motor_msg = {
-        .from = ADDR_COMMS,
-        .to   = ADDR_MOTOR,
-        .command = CMD_SET,
-        .data = {
-            VAR_SPEED,
-            0
-        }
-    };
 
     unsigned int num_output_boards = 3;
     output_send_t output_board_send[] = {
