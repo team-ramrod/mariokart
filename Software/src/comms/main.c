@@ -28,31 +28,23 @@
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Comms"
-#define ALL_CLIENTS ((1<<ADDR_BRAKE) | (1<<ADDR_SENSOR) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR)/*| (1<<ADDR_STEERING) */)
+#define ALL_CLIENTS ((1<<ADDR_SENSOR) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR)/*| (1<<ADDR_STEERING) */)
 
 volatile bool timeout = false;
 
-unsigned int brake_position;
 
 typedef void(*output_send_t)(void);
 
 void send_brake_value(void) {
-    message_t msg = {
-        .from = ADDR_COMMS,
-        .to   = ADDR_BRAKE,
-        .command = CMD_SET,
-        .data = {
-            VAR_BRK_POS,
-            brake_position
-        }
-    };
-    proto_write(msg);
+    proto_write(brake_msg);
 }
 
 void send_steering_value(void){
+    proto_write(steering_msg);
 }
 
 void send_motor_value(void){
+    proto_write(motor_msg);
 }
 
 void check_speed_timeout(void){
@@ -72,9 +64,38 @@ void timer_callback(void) {
     }
 }
 
+message_t brake_msg, motor_msg, steering_msg;
 
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
+
+    brake_msg = {
+        .from = ADDR_COMMS,
+        .to   = ADDR_BRAKE,
+        .command = CMD_SET,
+        .data = {
+            VAR_BRK_POS,
+            0
+        }
+    };
+    steering_msg = {
+        .from = ADDR_COMMS,
+        .to   = ADDR_STEERING,
+        .command = CMD_SET,
+        .data = {
+            VAR_STEERING_POS,
+            0
+        }
+    };
+    motor_msg = {
+        .from = ADDR_COMMS,
+        .to   = ADDR_MOTOR,
+        .command = CMD_SET,
+        .data = {
+            VAR_SPEED,
+            0
+        }
+    };
 
     unsigned int num_output_boards = 3;
     output_send_t output_board_send[] = {
@@ -203,7 +224,7 @@ int main(int argc, char *argv[]) {
                     for (int i = 0; i < num_output_boards; i++) {
                         output_board_send[i](); // might need to check status here too
                         if (proto_wait_on_send())
-                            break;
+                            break; //TODO sending funcs and proto_wait_on_send
                     }
                     //TODO
                     //sensor req
@@ -224,7 +245,7 @@ int main(int argc, char *argv[]) {
 
                     // Invalid response
                     default:
-                        TRACE_ERROR("Invalid command %i received in calibrating state", msg.command);
+                        TRACE_ERROR("Invalid command %i received in calibrating state\n\r", msg.command);
                         proto_state_error();
                         break;
                 }
