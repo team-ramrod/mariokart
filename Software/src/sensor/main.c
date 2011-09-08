@@ -104,7 +104,6 @@ int main(int argc, char *argv[]) {
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_GET:
-                        proto_refresh();
                         id = msg.data[0];
                         var = msg.data[1];
                         send_data(msg.from, id, var);
@@ -116,6 +115,7 @@ int main(int argc, char *argv[]) {
                         proto_state_error();
                         break; //Go to error state  
                 }
+                proto_refresh();
                 break;
             default: // ERROR
                 break;
