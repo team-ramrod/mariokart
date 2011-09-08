@@ -52,7 +52,7 @@ void ISR_Tc0(void)
     if (state == RUNNING) {
         wait_timer += 250;
         if (wait_timer >= TIMEOUT ) {
-            TRACE_WARNING("Timeout while running");
+            TRACE_WARNING("Timeout while running\n\r");
             proto_state_error();
         }
     }
@@ -306,7 +306,7 @@ unsigned int message_handler(CAN_Packet packet) {
                 // Ackknowledge master requests to transition to calibration state
                 case CMD_REQ_CALIBRATE:
                     if (CAN_STATUS_SUCCESS != reply_to_comms(CMD_ACK_CALIBRATE)) {
-                        TRACE_WARNING("Failed to ack CMD_REQ_CALIBRATE");
+                        TRACE_WARNING("Failed to ack CMD_REQ_CALIBRATE\n\r");
                         proto_state_error();
                     }
 
@@ -318,7 +318,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     break;
 
                 default:
-                    TRACE_WARNING("Unknown command %i during startup", msg.command);
+                    TRACE_WARNING("Unknown command %i during startup\n\r", msg.command);
                     proto_state_error();
                     break;
             }
@@ -333,7 +333,7 @@ unsigned int message_handler(CAN_Packet packet) {
                         result = reply_to_comms(CMD_NO);
 
                     if (CAN_STATUS_SUCCESS != result) {
-                        TRACE_WARNING("Failed to ack/deny CMD_REQ_CALIBRATE");
+                        TRACE_WARNING("Failed to ack/deny CMD_REQ_CALIBRATE\n\r");
                         proto_state_error();
                     }
                     break;
@@ -345,7 +345,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     break;
 
                 default:
-                    TRACE_WARNING("Unknown command %i during calibration", msg.command);
+                    TRACE_WARNING("Unknown command %i during calibration\n\r", msg.command);
                     proto_state_error();
                     break;
             }
@@ -357,7 +357,7 @@ unsigned int message_handler(CAN_Packet packet) {
         case ERROR:
             break;
         default:
-            TRACE_WARNING("Unknown state");
+            TRACE_WARNING("Unknown state\n\r");
             proto_state_error();
             break;
     }

@@ -133,7 +133,7 @@ static void UsbHandler(const unsigned char data[], unsigned int length) {
             }
             message_buffer_position = 0;
         } else {
-            TRACE_INFO("Incomplete message");
+            TRACE_INFO("Incomplete message\n\r");
         }
     }
 }

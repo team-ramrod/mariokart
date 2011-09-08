@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
                     case CMD_NONE:
                         break;
                     default:
-                        TRACE_ERROR("Invalid command %i received in startup state", msg.command);
+                        TRACE_ERROR("Invalid command %i received in startup state\n\r", msg.command);
                         proto_state_error();
                         break;
                 }
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 
                     // Invalid response
                     default:
-                        TRACE_ERROR("Invalid command %i received in calibrating state", msg.command);
+                        TRACE_ERROR("Invalid command %i received in calibrating state\n\r", msg.command);
                         proto_state_error();
                         break;
                 }
