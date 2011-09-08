@@ -119,7 +119,7 @@ void proto_set_rx_mailbox(address_t rx_address) {
 
     can_number = 0;
     mailbox_number = rx_address;
-    acceptance_mask = 0x07F; // ignore the first 3 bits
+    acceptance_mask = AT91C_CAN_MIDvA & (0x07F << 18); // ignore the first 3 bits
     identifier = AT91C_CAN_MIDvA & (full_address << 18);
     mode_reg = AT91C_CAN_MOT_RXOVERWRITE;
     control_reg = 0x0;

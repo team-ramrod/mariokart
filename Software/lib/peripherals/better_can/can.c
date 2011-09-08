@@ -218,6 +218,7 @@ static void BCAN_Handler(unsigned int can_number) {
                     TRACE_DEBUG("Mailbox is in RECEPTION\n\r");
                     TRACE_DEBUG("Length 0x%X\n\r", (can_msr >> 16) & 0xF);
                     TRACE_DEBUG("CAN_MB_MID 0x%X\n\r", (mailbox->CAN_MB_MID & AT91C_CAN_MIDvA) >> 18);
+                    TRACE_DEBUG("CAN_MB_MAM 0x%X\n\r", (mailbox->CAN_MB_MAM & AT91C_CAN_MIDvA) >> 18);
                     TRACE_DEBUG("CAN_MB_MFID 0x%X\n\r", (mailbox->CAN_MB_MFID & AT91C_CAN_MIDvA) >> 18);
 
                     TRACE_DEBUG("can_number %d\n\r", can_number);
