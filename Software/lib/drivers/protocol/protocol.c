@@ -376,8 +376,19 @@ void proto_calibration_complete() {
  * @return true if the message sent, false otherwise
  */
 bool proto_wait_on_send() {
-    //TODO 
-    return true;
+    unsigned int tick = 0;
+
+    // TODO @SimonRichards: Connect mailbox and TRANSFER_TIMEOUT wherever they're meant to be.
+    while ((!BCAN_ReadyToTransmit(0, mailbox)) && (tick++ < TRANSFER_TIMEOUT)) {
+        // Wait
+    }
+
+    if (tick == TRANSFER_TIMEOUT) {
+        BCAN_AbortTransfer(0, mailbox);
+        return false;
+    } else {
+        return true;
+    }
 }
 
 /**

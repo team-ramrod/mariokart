@@ -479,22 +479,8 @@ void BCAN_AbortAllTransfers(unsigned int can_number) {
     }
 }
 
-unsigned int BCAN_IsInIdle(unsigned int can_number) {
-    CAN_t *can;
-    switch (can_number) {
-        case 0:
-            can = &can0;
-            break;
-#ifdef AT91_BASE_CAN
-        case 1:
-            can = &can1;
-            break;
-#endif
-        default:
-            TRACE_ERROR("Unknown CAN: %X\n\r", can_number);
-            break;
-    }
-    return can->state == CAN_IDLE;
+unsigned int BCAN_ReadyToTransmit(unsigned int can_number, unsigned int mailbox) {
+    return (CAN_Mailboxes[can_number][mailbox]->CAN_MB_MSR & AT91C_CAN_MRDY);
 }
 
 void BCAN_disable() {
