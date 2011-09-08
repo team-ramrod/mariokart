@@ -1,97 +1,111 @@
+int num_clients = 2;
 mtype = {req_calibrate, ack_calibrate, do_calibrate, req_run, ack_run, do_run, data, ack, no, error};
 chan comms = [0] of {mtype};
-chan client = [0] of {mtype};
-byte Rclientid;
-byte motor_id;
-
-bool comms_error, motor_error, sensor_error,
-     comms_reset, motor_reset, sensor_reset;
+chan clients[2] = [0] of {mtype};
 
 int error_count;
 
 
+
 proctype Comms() {
     mtype response;
+    int i;
 Startup:
-    client!req_calibrate;
-    comms?response;
-    if
-        ::response == ack_calibrate
-        ::else -> goto Error
-    fi;
-
-    client!do_calibrate;
+    for (i : 0..num_clients-1) {
+        clients[i]!req_calibrate;
+        comms?ack_calibrate
+    };
+    for (i : 0..num_clients-1) {
+        clients[i]!do_calibrate
+    };
 
 Calibration:
 
-    client!req_run;
-    comms?response;
-    if
-        ::response == ack_run
-        ::response == no -> goto Calibration
-        ::else -> goto Error
-    fi;
+    for (i : 0..num_clients-1) {
+        clients[i]!req_run;
+        comms?response;
+        if
+            ::response == ack_run -> skip
+            ::response == no -> goto Calibration
+            ::else -> goto Error
+        fi
+    };
 
-    client!do_run;
+SendRun:
+
+    for (i : 0..num_clients-1) {
+        clients[i]!do_run
+    };
 
 Running:
 progress:
-    do
-        ::client!data;
-          client?ack;
-    od;
+    for (i : 0..num_clients-1) {
+        clients[i]!data;
+        comms?ack
+    };
+    goto Running;
 
 Error:
     error_count++;
     do
-        ::client!error
+        ::for (i : 0..num_clients-1) {
+            clients[i]!error;
+        }
     od  
 }
 
 
-proctype Client() {
+proctype Client(chan input) {
     mtype message;
     int calib_count = 0;
     bool ready_to_run = false;
 Startup:
-    client?message;
-    do
-        :: message == req_calibrate -> comms!ack_calibrate
-        :: message == do_calibrate -> break
-        :: else -> goto Error 
-    od;
-
-Calibration:
+    input?message;
     if
-        :: client?req_run ->
-            if
-                :: calib_count < 10 -> comms!no; calib_count++
-                :: comms!ack_run; 
-            fi
-        :: client?do_run -> 
-            if 
-                :: ready_to_run == false -> goto Error
-                :: else -> skip
-            fi
+        :: message == req_calibrate -> comms!ack_calibrate; goto Startup
+        :: message == do_calibrate 
+        :: else -> goto Error 
     fi;
 
-progress:
-    client?message;
-    do 
-        :: message == data -> comms!ack
-        :: else -> goto Error
+Calibration:
+    do
+        :: input?req_run ->
+            if
+                :: calib_count < 10 -> comms!no; calib_count++
+                :: comms!ack_run -> ready_to_run = true
+            fi
+        :: input?do_run -> 
+            if 
+                :: ready_to_run == false -> goto Error
+                :: else -> break
+            fi
     od;
+
+Running:
+progress:
+    input?data;
+    comms!ack;
+    goto Running;
 
 Error:
     error_count++;
     do
-        ::client!error
-    od  
+        ::input!error
+    od 
+}
+
+
+never {
+    do
+        :: true -> skip
+        :: error_count > 0 -> break
+    od
 }
 
 init {
     atomic {
         run Comms();
-        run Client()
+        run Client(clients[0]);
+        run Client(clients[1])
     }
 }
