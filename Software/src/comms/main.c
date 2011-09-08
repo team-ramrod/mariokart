@@ -28,7 +28,7 @@
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Comms"
-#define ALL_CLIENTS (1<<ADDR_BRAKE)//((1<<ADDR_SENSOR) | (1<<ADDR_STEERING) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR))
+#define ALL_CLIENTS ((1<<ADDR_BRAKE) | (1<<ADDR_SENSOR) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR)/*| (1<<ADDR_STEERING) */)
 
 volatile bool timeout = false;
 
