@@ -110,6 +110,26 @@ int main(int argc, char *argv[]) {
                         proto_state_error();
                         break;
                 }
+
+                //demo program remove
+                if (switches_pressed(0)) {
+                    TRACE_INFO("Switch 0 is pressed\n\r");
+                    set_act(10);
+                    char_display_number(0);
+                } else if (switches_pressed(1)) {
+                    TRACE_INFO("Switch 1 is pressed\n\r");
+                    set_act(50);
+                    char_display_number(1);
+                } else if (switches_pressed(2)) {
+                    TRACE_INFO("Switch 2 is pressed\n\r");
+                    set_act(80);
+                    char_display_number(3);
+                } else if (switches_pressed(3)) {
+                    TRACE_INFO("Switch 3 is pressed\n\r");
+                    set_act(95);
+                    char_display_number(4);
+                }
+
 #ifndef DISABLE_PWM
                 speed = act_driver_pid(brake_location_in_adc, pot_current_value);
                 act_driver_drive(speed);
