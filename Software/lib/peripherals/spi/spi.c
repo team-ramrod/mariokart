@@ -32,6 +32,7 @@
 //------------------------------------------------------------------------------
 
 #include "spi.h"
+#include <utility/trace.h>
 
 //------------------------------------------------------------------------------
 //         Exported functions
@@ -66,6 +67,7 @@ void SPI_Configure(AT91S_SPI *spi,
                           unsigned int id,
                           unsigned int configuration)
 {
+    TRACE_DEBUG("Configuring an SPI\n\r");
     AT91C_BASE_PMC->PMC_PCER = 1 << id;
     spi->SPI_CR = AT91C_SPI_SPIDIS;
     // Execute a software reset of the SPI twice
