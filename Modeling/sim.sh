@@ -1,2 +1,0 @@
-spin -c mario.pml
-	
