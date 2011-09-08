@@ -24,7 +24,7 @@ s32 MAX_AMP_SECONDS = 0.5e5;//(3800*(100)*0.625/150)/5*1024;
 #define RESTART cbi(SD_DDR, SD_BIT) //Floating output on SD line
 
 s32 ampSeconds = 0;
-int pedal_input = 0;
+int setpoint = 0;
 
 //Control the colour of the RGB LED
 enum colours {red, green, blue, purple, orange, aqua, white, off};
@@ -53,6 +53,16 @@ void rgb(char c)
 
 } 
 
+ISR(SPI_STC_Vect) {
+	if (SPDR > TOP_COUNT)
+	{
+		setpoint = 0;
+	}
+	else
+	{
+		setpoint = SPDR;
+	}
+}
 
 void init(void)
 {
@@ -86,6 +96,18 @@ void init(void)
 	timer1PWMInitICR(TOP_COUNT); //Enable PWM with top count
 	timer1PWMAOn(); //Turn PWM on
 	
+	// Set MOSI as output, all others as input
+	sbi(DDR_SPI, DD_MISO);
+
+	// Set the clock phase
+	sbi(SPCR, CPHA);
+
+	// Enable the SPI
+	sbi(SPCR, SPI);
+
+	// Enable the SPI interrupt
+	sbi(SPCR, SPIE);
+
 	rgb(green);
 
 	sei(); //Enable interupts
@@ -116,7 +138,7 @@ int main(void)
 		if(BRAKE_PRESSED)
 		{
 			//Start at the current duty cycle
-			s16 braking_duty = pedal_input;
+			s16 braking_duty = setpoint;
 			
 			//While the brake pedal is pressed do regenerative braking
 			while(BRAKE_PRESSED)
@@ -170,14 +192,8 @@ int main(void)
 			rgb(green);
 		}		
 		
-		//Get the position of the accelerator pedal
-		pedal_input = a2dConvert10bit(ACCEL_PIN);
-		
-		//Rescale between 0 and TOP_COUNT
-		pedal_input *= (TOP_COUNT/1024); 
-		
 		//Set the PWM Duty
-		timer1PWMASet(TOP_COUNT - pedal_input); //inverted
+		timer1PWMASet(TOP_COUNT - setpoint); //inverted
 	
 	}
 
