@@ -58,7 +58,7 @@ void timer_callback(void) {
 
 
 //TODO:reenable PWM commands
-#define DISABLE_PWM
+//#define DISABLE_PWM
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -88,8 +88,7 @@ int main(int argc, char *argv[]) {
     proto_init(ADDR_BRAKE);
 
     while (1) {
-        char_display_tick();
-        switch (proto_state()) {
+        switch (RUNNING){//proto_state()) {
             case STARTUP:
                 break;
             case CALIBRATING:
