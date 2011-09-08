@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
                     case CMD_NONE:
                         break;
                     default:
-                        TRACE_WARNING("Invalid command %i received in running state", msg.command);
+                        TRACE_WARNING("Invalid command %i received in running state\n\r", msg.command);
                         proto_state_error();
                         break;
                 }
