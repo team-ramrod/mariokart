@@ -96,14 +96,14 @@ void init(void)
 	timer1PWMInitICR(TOP_COUNT); //Enable PWM with top count
 	timer1PWMAOn(); //Turn PWM on
 	
-	// Set MOSI as output, all others as input
-	sbi(DDR_SPI, DD_MISO);
+	// Set MISO as output, all others as input
+	sbi(SPI_DDR, MISO_BIT);
 
 	// Set the clock phase
 	sbi(SPCR, CPHA);
 
 	// Enable the SPI
-	sbi(SPCR, SPI);
+	sbi(SPCR, SPE);
 
 	// Enable the SPI interrupt
 	sbi(SPCR, SPIE);
