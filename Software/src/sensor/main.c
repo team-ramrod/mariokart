@@ -46,7 +46,7 @@ void send_data(address_t to, unsigned char id, variable_t var) {
 
             proto_write(msg);
 
-            char_display_number(speed);
+            char_display_number((int)(10*speed));
             break;
 
         default:
