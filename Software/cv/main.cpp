@@ -1,10 +1,3 @@
-/* 
- * File:   main.cpp
- * Author: z
- *
- * Created on September 6, 2011, 2:12 PM
- */
-
 #include <cstdlib>
 #include "chessboard.h"
 #include "location.h"
@@ -21,46 +14,48 @@
 using namespace std;
 
 //stored board positions
-    list<Location *> board_loc_list;
+list<Location *> board_loc_list;
 
-    //stored kart positions
-    list<Location *> kart_loc_list;
+//stored kart positions
+list<Location *> kart_loc_list;
 
-    list<Location *>::iterator current_des = board_loc_list.begin();
+//current position to dirve to
+list<Location *>::iterator current_des = board_loc_list.begin();
 
-void follow_boards_path(double *wheel_angle, double *kart_speed, double *kart_angle){
+//follows the boards path
+void follow_boards_path(double *wheel_angle, double *kart_speed, double *kart_angle) {
 
-while(kart_loc_list.front()->dist_to(**current_des) < MIN_DIST) {
+    //if within min dist of point take as close enough to move onto next point
+    while (kart_loc_list.front()->dist_to(**current_des) < MIN_DIST) {
 
-            if (current_des != board_loc_list.begin()) {
-               *kart_speed = 0.1;
-               current_des--;
-            } else {
-                *kart_speed = 0;
-                break;
-            }
+        if (current_des != board_loc_list.begin()) {
+            *kart_speed = 0.1;
+            current_des--;
+        } else {
+            *kart_speed = 0;
+            break;
         }
-        //timeout to forget point and go after next one
-        while (((clock() / (double) CLOCKS_PER_SEC) - (*current_des)->t) > FOLLOW_LAG) {
-            if (current_des != board_loc_list.begin()) {
-               *kart_speed = 0.1;
-               current_des--;
-            } else {
-                *kart_speed = 0;
-                break;
-            }
+    }
+    //timeout to forget point and go after next one prevents doubling back excessively
+    while (((clock() / (double) CLOCKS_PER_SEC) - (*current_des)->t) > FOLLOW_LAG) {
+        if (current_des != board_loc_list.begin()) {
+            *kart_speed = 0.1;
+            current_des--;
+        } else {
+            *kart_speed = 0;
+            break;
         }
+    }
 
-        //printf("a %g   %g\n",wheel_angle, kart_angle);
-        *wheel_angle = kart_loc_list.front()->relative_angle(**current_des, *kart_angle);
-        }
+    //updates angle karts wheels will be commanded to
+    *wheel_angle = kart_loc_list.front()->relative_angle(**current_des, *kart_angle);
+}
 
 int main(int argc, char** argv) {
 
     bool running = true;
 
-    
-
+    //sets up inital positions in list
     Location* kart_init_pos = new Location;
     Location* board_init_pos = new Location;
 
@@ -75,14 +70,18 @@ int main(int argc, char** argv) {
     double kart_angle = 0.0;
     double kart_speed = 0.1;
 
+    //track time of execution
     std::clock_t loop_time;
 
     //setup chessboard
     CvCapture *capture = chessboard_init();
 
+    //setup plotting window
     plot_init();
 
     while (running) {
+
+        //get kart current position from list
         Location* kart_loc = new Location();
         kart_loc->set_values(*kart_loc_list.front());
 
@@ -92,22 +91,23 @@ int main(int argc, char** argv) {
 
             chessboard_loc->add_offset(*kart_loc, kart_angle);
 
-            //printf("kart : %g, %g,    board : %g , %g        %g\n",chessboard_loc->x,chessboard_loc->z, kart_loc->x, kart_loc->z, kart_angle);
             board_loc_list.push_front(chessboard_loc);
-            //printf("x: %g,  y: %g,  z: %g, t: %g\n", chessboard_loc->x, chessboard_loc->y, chessboard_loc->z, chessboard_loc->t);
+
         } else {
             delete chessboard_loc;
         }
 
         //perform tracking
         follow_boards_path(&wheel_angle, &kart_speed, &kart_angle);
-        
 
+
+        //get time elapsed
         double timestep = (std::clock() - loop_time) / (double) CLOCKS_PER_SEC;
 
         //updates karts position
         kart_angle += TURN_FACTOR * (wheel_angle * timestep);
 
+        //wrap angle
         while (kart_angle > 2 * M_PI) {
             kart_angle -= 2 * M_PI;
         }
@@ -115,12 +115,16 @@ int main(int argc, char** argv) {
             kart_angle += 2 * M_PI;
         }
 
+        //start timer going again
         loop_time = std::clock();
 
+        //move kart
         kart_loc->move_position(kart_angle, kart_speed, timestep);
 
+        //update kart position list
         kart_loc_list.push_front(kart_loc);
 
+        //plot positions
         plot_update(&kart_loc_list, &board_loc_list, current_des);
 
         //Check for keypresses/allow for other threads to operate
@@ -132,6 +136,9 @@ int main(int argc, char** argv) {
     }
 
     chessboard_dispose(capture);
+
+    kart_loc_list.clear();
+    board_loc_list.clear();
 
     return 0;
 }
