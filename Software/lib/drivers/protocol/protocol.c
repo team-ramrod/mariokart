@@ -11,8 +11,8 @@
 #include <utility/trace.h>
 #include <components/char_display.h>
 
-#define PROTO_ADDR_PRIORITY 0x0001
-#define PROTO_ADDR_SUFFEX 0x1000
+#define PROTO_ADDR_PRIORITY 0b0001
+#define PROTO_ADDR_SUFFEX 0b1000
 
 #define ACK_TIMEOUT 500
 
@@ -94,8 +94,8 @@ void proto_set_tx_mailbox(address_t from_address, address_t dest_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
 
-    full_address = (PROTO_ADDR_PRIORITY << 7) + (dest_address << 4) +
-        (PROTO_ADDR_SUFFEX << 0);
+    full_address = ((PROTO_ADDR_PRIORITY & 0b1111) << 7) | ((dest_address & 0b111) << 4) |
+        ((PROTO_ADDR_SUFFEX & 0b1111) << 0);
 
     can_number = 0;
     mailbox_number = from_address;
@@ -114,7 +114,8 @@ void proto_set_rx_mailbox(address_t rx_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
 
-    full_address = (PROTO_ADDR_PRIORITY << 7) + (rx_address << 4) + (PROTO_ADDR_SUFFEX << 0);
+    full_address = ((PROTO_ADDR_PRIORITY & 0b1111) << 7) | ((rx_address & 0b111) << 4) |
+        ((PROTO_ADDR_SUFFEX & 0b1111) << 0);
 
     can_number = 0;
     mailbox_number = rx_address;
