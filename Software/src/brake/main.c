@@ -53,6 +53,7 @@ void set_act(int distance){
 }
 
 void timer_callback(void) {
+    TRACE_DEBUG("test\n");
     char_display_tick();
 }
 
@@ -75,8 +76,8 @@ int main(int argc, char *argv[]) {
     //Main initialisations
     char_display_init();
     switches_init();
-    pot_init();
 #ifndef DISABLE_PWM
+    pot_init();
     act_driver_init();
     //drive the actuator out 30mm
     set_act(30);
