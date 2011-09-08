@@ -4,8 +4,6 @@
 #include <irq/irq.h>
 #include "can.h"
 
-#define QUIT_CAN
-
 #define AT91C_CAN_TIMEOUT         100000
 
 #define AT91C_TEST_NOK                 0
