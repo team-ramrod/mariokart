@@ -232,40 +232,18 @@ int main(int argc, char *argv[]) {
 
     TRACE_INFO("Steering board initialization completed\n\r");
 
-    state_t remove_me = CALIBRATING;
-
     while (1) {
-        switch (remove_me) {//proto_state()) {
+        switch (proto_state()) {
             case STARTUP:
                 break;
             case CALIBRATING:
                 if (cal == CALIBRATED) {
                     proto_calibration_complete();
-                    remove_me = RUNNING;
                 } else {
                     cal_steering(&cal);
                 }
                 break;
             case RUNNING:
-
-                //demo program remove
-                if (switches_pressed(0)) {
-                    TRACE_INFO("Switch 0 is pressed\n\r");
-                    set_steering(0);
-                    char_display_number(0);
-                } else if (switches_pressed(1)) {
-                    TRACE_INFO("Switch 1 is pressed\n\r");
-                    set_steering(-50);
-                    char_display_number(1);
-                } else if (switches_pressed(2)) {
-                    TRACE_INFO("Switch 2 is pressed\n\r");
-                    set_steering(50);
-                    char_display_number(3);
-                } else if (switches_pressed(3)) {
-                    TRACE_INFO("Switch 3 is pressed\n\r");
-                    set_steering(100);
-                    char_display_number(4);
-                }
 
                 msg = proto_read();
                 switch (msg.command) {
@@ -281,8 +259,6 @@ int main(int argc, char *argv[]) {
                 }
                 speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
                 act_driver_drive(speed);
-
-                char_display_tick();
 
                 break;
             default: // ERROR
