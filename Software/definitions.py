@@ -56,5 +56,5 @@ def data_translation(data):
         if datum in var_translation:
             result += [var_translation[datum]]
         else:
-            result += [int(datum,0)]
+            result += [chr(int(datum,0))]
     return result

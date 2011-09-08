@@ -211,6 +211,24 @@ int main(int argc, char *argv[]) {
                     proto_refresh();
                 }
 
+                // Check any responses
+                msg = proto_read();
+                switch(msg.command) {
+                    case CMD_NONE:
+                        break;
+                        
+                    // A board is refusing the transition
+                    case CMD_REPLY:
+                        // TODO: sensor data retrieved
+                        break;
+
+                    // Invalid response
+                    default:
+                        TRACE_ERROR("Invalid command %i received in calibrating state", msg.command);
+                        proto_state_error();
+                        break;
+                }
+
                 break;
             default: // ERROR
                 if (timeout) {
