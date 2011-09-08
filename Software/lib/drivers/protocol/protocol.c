@@ -259,6 +259,12 @@ message_t proto_read() {
     };
     if (proto_msg_buff_length()) {
         msg = proto_msg_buff_pop();
+        TRACE_INFO("Incoming Packet\n\r\n\r"
+                "from\t%i\n\r" 
+                "to\t%i\n\r"
+                "command\t%i\n\r"
+                "data_len\t%i\n\r",
+                msg.from, msg.to, msg.command, msg.data_len);
     }
     return msg;
 }
@@ -282,16 +288,7 @@ unsigned int message_handler(CAN_Packet packet) {
         .data[4]  =  packet.data_low          & 0xFF,
     };
 
-    TRACE_DEBUG("Incoming Packet\n\r\n\r"
-            "from\t%i\n\r" 
-            "to\t%i\n\r"
-            "command\t%i\n\r"
-            "data_len\t%i\n\r"
-            "packet-mailbox\t%i\n\r"
-            "packet-hi\t%i\n\r"
-            "packet-low\t%i\n\r\n\r",
-            msg.from, msg.to, msg.command, msg.data_len,
-            packet.mailbox, packet.data_high,packet.data_low);
+            
 
     // Short circuit the message handling for the comms board.
     if (local_address == ADDR_COMMS) {

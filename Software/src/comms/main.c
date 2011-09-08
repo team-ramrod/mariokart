@@ -28,7 +28,7 @@
 //         Local defines
 //------------------------------------------------------------------------------
 #define SOFTWARE_NAME "Comms"
-#define ALL_CLIENTS ((1<<ADDR_SENSOR) | (1<<ADDR_BRAKE) | (1<<ADDR_MOTOR)/*| (1<<ADDR_STEERING) */)
+#define ALL_CLIENTS ((1<<ADDR_BRAKE) | (1<<ADDR_MOTOR)| (1<<ADDR_STEERING) )
 
 volatile bool timeout = false;
 
@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
                 if (timeout) {
                     for (int i = 0; i < num_output_boards; i++) {
                         output_board_send[i](); // might need to check status here too
-                        if (proto_wait_on_send())
+                        if (!proto_wait_on_send())
                             break; //TODO sending funcs and proto_wait_on_send
                     }
                     //TODO

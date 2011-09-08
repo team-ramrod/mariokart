@@ -27,6 +27,9 @@
 //must not be set to 0
 #define SAFETY_MARGIN 10
 
+//TODO:reenable PWM commands
+#define DISABLE_PWM
+
 //------------------------------------------------------------------------------
 //         Local variables
 //------------------------------------------------------------------------------
@@ -215,7 +218,9 @@ int main(int argc, char *argv[]) {
     char_display_init();
     switches_init();
     encoder_init();
+#ifndef DISABLE_PWM
     act_driver_init();
+#endif
 
     // Starts a 100Hz timer
     TC_PeriodicCallback(100, timer_callback);
@@ -226,7 +231,9 @@ int main(int argc, char *argv[]) {
 
     proto_init(ADDR_STEERING);
 
+#ifndef DISABLE_PWM
     int speed;
+#endif
     message_t msg;
     cal_state cal = UNCALIBRATED;
 
@@ -240,7 +247,9 @@ int main(int argc, char *argv[]) {
                 if (cal == CALIBRATED) {
                     proto_calibration_complete();
                 } else {
+#ifndef DISABLE_PWM
                     cal_steering(&cal);
+#endif
                 }
                 break;
             case RUNNING:
@@ -257,8 +266,10 @@ int main(int argc, char *argv[]) {
                         proto_state_error();
                         break; //ERROR?
                 }
+#ifndef DISABLE_PWM
                 speed = act_driver_pid(steering_loc_in_pulses, encoder_position_output);
                 act_driver_drive(speed);
+#endif
 
                 break;
             default: // ERROR
