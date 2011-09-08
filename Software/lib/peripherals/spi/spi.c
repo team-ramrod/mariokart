@@ -103,10 +103,14 @@ void SPI_Write(AT91S_SPI *spi, unsigned int npcs, unsigned short data)
     // Discard contents of RDR register
     //volatile unsigned int discard = spi->SPI_RDR;
 
+    TRACE_DEBUG("Sending data over spi: 0x%016X\n\r", data);
     // Send data
     while ((spi->SPI_SR & AT91C_SPI_TXEMPTY) == 0);
     spi->SPI_TDR = data | SPI_PCS(npcs);
-    while ((spi->SPI_SR & AT91C_SPI_TDRE) == 0);
+    while ((spi->SPI_SR & AT91C_SPI_TDRE) == 0) {
+        TRACE_DEBUG("The value of SPI_SR is: 0x%08X\n\r", spi->SPI_SR);
+        TRACE_DEBUG("The value of SPI_TCR is: 0x%08X\n\r", spi->SPI_TCR);
+    }
 }
 
 //------------------------------------------------------------------------------
