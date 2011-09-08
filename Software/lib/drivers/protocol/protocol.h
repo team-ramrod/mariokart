@@ -46,7 +46,7 @@ void proto_refresh();
  * Blocks until the most recent message sent or times out
  * @return true if the message sent, false otherwise
  */
-bool proto_wait_on_send();
+bool proto_wait_on_send(address_t mailbox);
 
 /**
  * A getter for the can handler's state

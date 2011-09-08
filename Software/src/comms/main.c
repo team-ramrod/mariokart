@@ -60,21 +60,25 @@ message_t motor_msg = {
     }
 };
 
-typedef void(*output_send_t)(void);
+typedef bool(*output_send_t)(void);
 
-void send_brake_value(void) {
+bool send_brake_value(void) {
     proto_write(brake_msg);
+    return proto_wait_on_send(brake_msg.to);
 }
 
-void send_steering_value(void){
+bool send_steering_value(void){
     proto_write(steering_msg);
+    return proto_wait_on_send(steering_msg.to);
 }
 
-void send_motor_value(void){
+bool send_motor_value(void){
     proto_write(motor_msg);
+    return proto_wait_on_send(motor_msg.to);
 }
 
-void check_speed_timeout(void){
+bool check_speed_timeout(void){
+    return true;
 }
 
 
@@ -221,9 +225,11 @@ int main(int argc, char *argv[]) {
 
                 if (timeout) {
                     for (int i = 0; i < num_output_boards; i++) {
-                        output_board_send[i](); // might need to check status here too
-                        if (!proto_wait_on_send())
-                            break; //TODO sending funcs and proto_wait_on_send
+                        
+                        if (!output_board_send[i]()) {
+                            TRACE_WARNING("Message not sent\n\r");
+                            proto_state_error();
+                        }
                     }
                     //TODO
                     //sensor req

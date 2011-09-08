@@ -39,6 +39,8 @@ static message_t error_message;
 // Forward declarations
 unsigned int message_handler(CAN_Packet packet);
 
+static unsigned int transmission_wait = 0;
+
 /**
  * Interrupt handler for TC0, increments a counter and checks
  * to see if the the program has timed out. Sends the board into
@@ -50,12 +52,14 @@ void ISR_Tc0(void)
     AT91C_BASE_TC0->TC_SR;
 
     if (state == RUNNING) {
-        wait_timer += 250;
+        wait_timer += 100;
         if (wait_timer >= TIMEOUT ) {
             TRACE_WARNING("Timeout while running\n\r");
             proto_state_error();
         }
     }
+
+    transmission_wait++;
 
     // broadcast the error message
     if (state == ERROR) 
@@ -141,9 +145,9 @@ void ConfigureTc(void)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
 
     // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor(4, BOARD_MCK, &div, &tcclks);
+    TC_FindMckDivisor(10, BOARD_MCK, &div, &tcclks);
     TC_Configure(AT91C_BASE_TC0, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / 4; // timerFreq / desiredFreq
+    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / 10; // timerFreq / desiredFreq
 
     // Configure and enable interrupt on RC compare
     AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, ISR_Tc0);
@@ -375,20 +379,15 @@ void proto_calibration_complete() {
  * Blocks until the most recent message sent or times out
  * @return true if the message sent, false otherwise
  */
-bool proto_wait_on_send() {
-    unsigned int tick = 0;
-
-    // TODO @SimonRichards: Connect mailbox and TRANSFER_TIMEOUT wherever they're meant to be.
-    while ((!BCAN_ReadyToTransmit(0, mailbox)) && (tick++ < TRANSFER_TIMEOUT)) {
-        // Wait
+bool proto_wait_on_send(address_t mailbox) {
+    transmission_wait = 0;
+    while (!BCAN_ReadyToTransmit(0, mailbox) ) {
+        if (transmission_wait > 3) {
+            BCAN_AbortTransfer(0, mailbox);
+            return false;
+        }
     }
-
-    if (tick == TRANSFER_TIMEOUT) {
-        BCAN_AbortTransfer(0, mailbox);
-        return false;
-    } else {
-        return true;
-    }
+    return true;
 }
 
 /**
