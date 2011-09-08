@@ -286,10 +286,11 @@ unsigned int message_handler(CAN_Packet packet) {
             "to\t%i\n\r"
             "command\t%i\n\r"
             "data_len\t%i\n\r"
+            "packet-mailbox\t%i\n\r"
             "packet-hi\t%i\n\r"
             "packet-low\t%i\n\r\n\r",
             msg.from, msg.to, msg.command, msg.data_len,
-            packet.data_high,packet.data_low);
+            packet.mailbox, packet.data_high,packet.data_low);
 
     // Short circuit the message handling for the comms board.
     if (local_address == ADDR_COMMS) {
