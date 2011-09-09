@@ -34,16 +34,16 @@ while running:
 
             try:
                 message = address_translation(board) + command_translation(command) + data_translation(data) + ['\xFF']
+                serial.write(''.join(message))
+                if command == 'get':
+                    result = serial.read()
+                    if result:
+                        print 'Received [%d] for [%s].\n' % (ord(result), data.split()[1])
+                    else:
+                        print 'Reception times out.\n'
             except Exception, e:
                 stderr.write('Incorrect command\n')
 
-            serial.write(''.join(message))
-            if command == 'get':
-                result = serial.read()
-                if result:
-                    print 'Received [%d] for [%s].\n' % (ord(result), data.split()[1])
-                else:
-                    print 'Reception times out.\n'
         else:
             stderr.write('Incorrect command\n')
     except EOFError:
