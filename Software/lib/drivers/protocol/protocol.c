@@ -62,8 +62,10 @@ void ISR_Tc0(void)
     transmission_wait++;
 
     // broadcast the error message
-    if (state == ERROR) 
+    if (state == ERROR) {
+        BCAN_AbortAllTransfers(0);
         proto_write(error_message);
+    }
 }
 
 /**

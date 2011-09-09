@@ -99,7 +99,6 @@ void timer_callback(void) {
 int main(int argc, char *argv[]) {
     debug_init(SOFTWARE_NAME);
 
-
     unsigned int num_output_boards = 3;
     output_send_t output_board_send[] = {
         send_motor_value,
