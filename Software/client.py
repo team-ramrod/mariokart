@@ -1,5 +1,6 @@
 from re import compile
 from sys import stderr, exit, argv
+from signal import signal, SIGINT
 from serial import Serial, SerialException
 from definitions import *
 
@@ -21,6 +22,8 @@ except SerialException, e:
 
 print 'Connected.'
 running = True
+def handler(sig, frame): running = False
+signal(SIGINT, handler)
 while running:
     try:
         match = cmd_re.match(raw_input())
