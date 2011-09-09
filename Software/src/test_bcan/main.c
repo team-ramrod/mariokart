@@ -74,7 +74,7 @@ void Test_TransmitWithAccMask(
             BCAN_Write(0, mailboxNumber, dataHigh, dataLow, 0x8)){
     }
     // wait answer
-    while( BCAN_IsInIdle(0) ) {}
+    while( ! BCAN_ReadyToTransmit(0,mailboxNumber) ) {}
     // return in recept
     BCAN_InitMailboxRegisters(0, mailboxNumber, 0,
             AT91C_CAN_MIDvA & (0x0B<<18), AT91C_CAN_MOT_RX, 0x0);
@@ -100,7 +100,8 @@ void Test_TransmitWithoutAccMask(
             BCAN_Write(0, mailboxNumber, dataHigh, dataLow, 0x8)){
     }
     // wait answer
-    while( BCAN_IsInIdle(0) ) {}
+    while( ! BCAN_ReadyToTransmit(0, mailboxNumber) ) {}
+
     // return in recept for all mailbox
     InitCANInRecept();
 }                   
@@ -176,67 +177,63 @@ int main(void)
             
             packet = BCAN_ReadAndClearAny(0);
             
-            while( BCAN_IsInIdle(0) ) {
-                TRACE_INFO("CAN is in idle\n\r");
-
-                while(CharReceive == -1) {
-                //while(1) {
-                    if ( !PIO_Get(&s0) ) {
-                        TRACE_INFO("Switch 0 is pressed\n\r");
-                        CharReceive = '0';
-                    } else if ( !PIO_Get(&s1) ) {
-                        TRACE_INFO("Switch 1 is pressed\n\r");
-                        CharReceive = '1';
-                    } else if ( !PIO_Get(&s2) ) {
-                        TRACE_INFO("Switch 2 is pressed\n\r");
-                        CharReceive = '2';
-                    } else if ( !PIO_Get(&s3) ) {
-                        TRACE_INFO("Switch 3 is pressed\n\r");
-                        CharReceive = '3';
-                    } else {
-                        //TRACE_INFO("No Switch is pressed\n\r");
-                    }
+            while(CharReceive == -1) {
+            //while(1) {
+                if ( !PIO_Get(&s0) ) {
+                    TRACE_INFO("Switch 0 is pressed\n\r");
+                    CharReceive = '0';
+                } else if ( !PIO_Get(&s1) ) {
+                    TRACE_INFO("Switch 1 is pressed\n\r");
+                    CharReceive = '1';
+                } else if ( !PIO_Get(&s2) ) {
+                    TRACE_INFO("Switch 2 is pressed\n\r");
+                    CharReceive = '2';
+                } else if ( !PIO_Get(&s3) ) {
+                    TRACE_INFO("Switch 3 is pressed\n\r");
+                    CharReceive = '3';
+                } else {
+                    //TRACE_INFO("No Switch is pressed\n\r");
                 }
-                if (CharReceive) {
+            }
+            if (CharReceive) {
 
-                    switch(CharReceive) {
+                switch(CharReceive) {
 
-                        case '0': {
-                                      while(!PIO_Get(&s1));
+                    case '0': {
+                                  while(!PIO_Get(&s1));
 
-                                      // Transmit, with acceptance mask
-                                      Test_TransmitWithAccMask(1, 0xAABBCCDD, 0x11223344);
+                                  // Transmit, with acceptance mask
+                                  Test_TransmitWithAccMask(1, 0xAABBCCDD, 0x11223344);
 
-                                      // Wait for the next second
-                                      time = RTT_GetTime(AT91C_BASE_RTTC);
-                                      while (time == RTT_GetTime(AT91C_BASE_RTTC));
-                                  }
-                                  break;
-                        case '1': {                           
-                                      while(!PIO_Get(&s2));
+                                  // Wait for the next second
+                                  time = RTT_GetTime(AT91C_BASE_RTTC);
+                                  while (time == RTT_GetTime(AT91C_BASE_RTTC));
+                              }
+                              break;
+                    case '1': {                           
+                                  while(!PIO_Get(&s2));
 
-                                      // Transmit, no acceptance mask
-                                      Test_TransmitWithoutAccMask(2, 0x12345678, 0xABCDEFAB);                            
+                                  // Transmit, no acceptance mask
+                                  Test_TransmitWithoutAccMask(2, 0x12345678, 0xABCDEFAB);                            
 
-                                      // Wait for the next second
-                                      time = RTT_GetTime(AT91C_BASE_RTTC);
-                                      while (time == RTT_GetTime(AT91C_BASE_RTTC));
-                                  }
-                                  break;
-                        case '2': {
-                                      while(!PIO_Get(&s3));
+                                  // Wait for the next second
+                                  time = RTT_GetTime(AT91C_BASE_RTTC);
+                                  while (time == RTT_GetTime(AT91C_BASE_RTTC));
+                              }
+                              break;
+                    case '2': {
+                                  while(!PIO_Get(&s3));
 
-                                      DumpRegisters();
-                                  }
-                                  break;
-                        default:
-                                  // nothing
-                                  break;
-                    }
-
-                    CharReceive = -1;
-                    DisplayMenu();    
+                                  DumpRegisters();
+                              }
+                              break;
+                    default:
+                              // nothing
+                              break;
                 }
+
+                CharReceive = -1;
+                DisplayMenu();    
             }
             if (packet.valid) {
                 printf("Data (Low/High): %8X%8X\n\r", 

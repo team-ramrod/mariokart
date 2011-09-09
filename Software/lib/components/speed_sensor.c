@@ -42,7 +42,7 @@ void SPEED_ISR ( void )
         if(speed_time == 0){
             //implement error state here
             TRACE_INFO("Error: Kart moving too fast for speed sensors current"
-                    "setup, lower SPEED_TIMER_RES");
+                    "setup, lower SPEED_TIMER_RES\n\r");
         }
         else
         {
@@ -101,5 +101,5 @@ void speed_init(void){
     PIO_ConfigureIt(&speed_pin, (void (*)(const Pin *)) SPEED_ISR);
     PIO_EnableIt(&speed_pin);
 
-    TRACE_INFO("Speed sensor initilazaton complete");
+    TRACE_INFO("Speed sensor initilazaton complete\n\r");
 }

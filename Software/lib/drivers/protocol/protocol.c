@@ -11,8 +11,8 @@
 #include <utility/trace.h>
 #include <components/char_display.h>
 
-#define PROTO_ADDR_PRIORITY 0x0001
-#define PROTO_ADDR_SUFFEX 0x1000
+#define PROTO_ADDR_PRIORITY 0x1
+#define PROTO_ADDR_SUFFEX 0x8
 
 #define ACK_TIMEOUT 500
 
@@ -39,6 +39,8 @@ static message_t error_message;
 // Forward declarations
 unsigned int message_handler(CAN_Packet packet);
 
+static unsigned int transmission_wait = 0;
+
 /**
  * Interrupt handler for TC0, increments a counter and checks
  * to see if the the program has timed out. Sends the board into
@@ -50,16 +52,20 @@ void ISR_Tc0(void)
     AT91C_BASE_TC0->TC_SR;
 
     if (state == RUNNING) {
-        wait_timer += 250;
+        wait_timer += 100;
         if (wait_timer >= TIMEOUT ) {
-            TRACE_WARNING("Timeout while running");
+            TRACE_WARNING("Timeout while running\n\r");
             proto_state_error();
         }
     }
 
+    transmission_wait++;
+
     // broadcast the error message
-    if (state == ERROR) 
+    if (state == ERROR) {
+        BCAN_AbortAllTransfers(0);
         proto_write(error_message);
+    }
 }
 
 /**
@@ -94,8 +100,8 @@ void proto_set_tx_mailbox(address_t from_address, address_t dest_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
 
-    full_address = (PROTO_ADDR_PRIORITY << 7) + (dest_address << 4) +
-        (PROTO_ADDR_SUFFEX << 0);
+    full_address = ((PROTO_ADDR_PRIORITY & 0xF) << 7) | ((dest_address & 0x7) << 4) |
+        ((PROTO_ADDR_SUFFEX & 0xF) << 0);
 
     can_number = 0;
     mailbox_number = from_address;
@@ -114,11 +120,12 @@ void proto_set_rx_mailbox(address_t rx_address) {
     unsigned int full_address, can_number, mailbox_number, acceptance_mask;
     unsigned int identifier, mode_reg, control_reg;
 
-    full_address = (PROTO_ADDR_PRIORITY << 7) + (rx_address << 4) + (PROTO_ADDR_SUFFEX << 0);
+    full_address = ((PROTO_ADDR_PRIORITY & 0xF) << 7) | ((rx_address & 0x7) << 4) |
+        ((PROTO_ADDR_SUFFEX & 0xF) << 0);
 
     can_number = 0;
     mailbox_number = rx_address;
-    acceptance_mask = 0x07F; // ignore the first 3 bits
+    acceptance_mask = AT91C_CAN_MIDvA & (0x07F << 18); // ignore the first 3 bits
     identifier = AT91C_CAN_MIDvA & (full_address << 18);
     mode_reg = AT91C_CAN_MOT_RXOVERWRITE;
     control_reg = 0x0;
@@ -140,9 +147,9 @@ void ConfigureTc(void)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
 
     // Configure TC for a 4Hz frequency and trigger on RC compare
-    TC_FindMckDivisor(4, BOARD_MCK, &div, &tcclks);
+    TC_FindMckDivisor(10, BOARD_MCK, &div, &tcclks);
     TC_Configure(AT91C_BASE_TC0, tcclks | AT91C_TC_CPCTRG);
-    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / 4; // timerFreq / desiredFreq
+    AT91C_BASE_TC0->TC_RC = (BOARD_MCK / div) / 10; // timerFreq / desiredFreq
 
     // Configure and enable interrupt on RC compare
     AIC_ConfigureIT(AT91C_ID_TC0, AT91C_AIC_PRIOR_LOWEST, ISR_Tc0);
@@ -258,6 +265,12 @@ message_t proto_read() {
     };
     if (proto_msg_buff_length()) {
         msg = proto_msg_buff_pop();
+        TRACE_INFO("Incoming Packet\n\r\n\r"
+                "from\t%i\n\r" 
+                "to\t%i\n\r"
+                "command\t%i\n\r"
+                "data_len\t%i\n\r",
+                msg.from, msg.to, msg.command, msg.data_len);
     }
     return msg;
 }
@@ -281,15 +294,7 @@ unsigned int message_handler(CAN_Packet packet) {
         .data[4]  =  packet.data_low          & 0xFF,
     };
 
-    TRACE_DEBUG("Incoming Packet\n\r\n\r"
-            "from\t%i\n\r" 
-            "to\t%i\n\r"
-            "command\t%i\n\r"
-            "data_len\t%i\n\r"
-            "packet-hi\t%i\n\r"
-            "packet-low\t%i\n\r\n\r",
-            msg.from, msg.to, msg.command, msg.data_len,
-            packet.data_high,packet.data_low);
+            
 
     // Short circuit the message handling for the comms board.
     if (local_address == ADDR_COMMS) {
@@ -306,7 +311,7 @@ unsigned int message_handler(CAN_Packet packet) {
                 // Ackknowledge master requests to transition to calibration state
                 case CMD_REQ_CALIBRATE:
                     if (CAN_STATUS_SUCCESS != reply_to_comms(CMD_ACK_CALIBRATE)) {
-                        TRACE_WARNING("Failed to ack CMD_REQ_CALIBRATE");
+                        TRACE_WARNING("Failed to ack CMD_REQ_CALIBRATE\n\r");
                         proto_state_error();
                     }
 
@@ -318,7 +323,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     break;
 
                 default:
-                    TRACE_WARNING("Unknown command %i during startup", msg.command);
+                    TRACE_WARNING("Unknown command %i during startup\n\r", msg.command);
                     proto_state_error();
                     break;
             }
@@ -333,7 +338,7 @@ unsigned int message_handler(CAN_Packet packet) {
                         result = reply_to_comms(CMD_NO);
 
                     if (CAN_STATUS_SUCCESS != result) {
-                        TRACE_WARNING("Failed to ack/deny CMD_REQ_CALIBRATE");
+                        TRACE_WARNING("Failed to ack/deny CMD_REQ_CALIBRATE\n\r");
                         proto_state_error();
                     }
                     break;
@@ -345,7 +350,7 @@ unsigned int message_handler(CAN_Packet packet) {
                     break;
 
                 default:
-                    TRACE_WARNING("Unknown command %i during calibration", msg.command);
+                    TRACE_WARNING("Unknown command %i during calibration\n\r", msg.command);
                     proto_state_error();
                     break;
             }
@@ -357,7 +362,7 @@ unsigned int message_handler(CAN_Packet packet) {
         case ERROR:
             break;
         default:
-            TRACE_WARNING("Unknown state");
+            TRACE_WARNING("Unknown state\n\r");
             proto_state_error();
             break;
     }
@@ -376,8 +381,14 @@ void proto_calibration_complete() {
  * Blocks until the most recent message sent or times out
  * @return true if the message sent, false otherwise
  */
-bool proto_wait_on_send() {
-    //TODO 
+bool proto_wait_on_send(address_t mailbox) {
+    transmission_wait = 0;
+    while (!BCAN_ReadyToTransmit(0, mailbox) ) {
+        if (transmission_wait > 3) {
+            BCAN_AbortTransfer(0, mailbox);
+            return false;
+        }
+    }
     return true;
 }
 

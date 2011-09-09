@@ -26,6 +26,10 @@
 #define SD_PORT PORTD
 #define SD_BIT 4
 
+#define SPI_DDR DDRB
+#define SPI_PORT PORTB
+#define MISO_BIT 4
+
 
 #define RGB_PORT PORTD
 #define RGB_DDR DDRD

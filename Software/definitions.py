@@ -25,6 +25,7 @@ CMD_CALIBRATE     = '\x0B'
 
 VAR_SPEED   = '\x01'
 VAR_BRK_POS = '\x02'
+VAR_STEERING_ANGLE = '\x03'
 
 
 def address_translation(address):
@@ -47,6 +48,7 @@ def command_translation(command):
 var_translation = {
     'speed': VAR_SPEED,
     'brake_position': VAR_BRK_POS,
+    'steering_angle': VAR_STEERING_ANGLE,
 }
 
 def data_translation(data):
@@ -56,5 +58,5 @@ def data_translation(data):
         if datum in var_translation:
             result += [var_translation[datum]]
         else:
-            result += [int(datum,0)]
+            result += [chr(int(datum,0))]
     return result

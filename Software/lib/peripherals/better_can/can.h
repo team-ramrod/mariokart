@@ -56,9 +56,10 @@ void BCAN_InitMailboxRegisters(
 );
 
 /**
- * Returns one if the can peripheral is idle, zero otherwise.
+ * Returns a value > 0 if the mailbox is ready for a new transmission, 0
+ * otherwise.
  */
-unsigned int BCAN_IsInIdle(unsigned int can_number);
+unsigned int BCAN_ReadyToTransmit(unsigned int can_number, unsigned int mailbox);
 
 /**
  * Queues the given data up to be written out of the specified can peripheral
