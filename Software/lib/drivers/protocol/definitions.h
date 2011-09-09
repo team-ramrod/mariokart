@@ -39,13 +39,14 @@ typedef enum {
     CMD_ERROR             = 0x09,
     CMD_RUN               = 0x0A,
     CMD_CALIBRATE         = 0x0B,
+    CMD_ACK_SET           = 0x0C,
 } command_t;
 
 typedef enum {STARTUP, CALIBRATING, RUNNING, ERROR} state_t;
 
 typedef enum {
-    VAR_SPEED   = 0x01,
-    VAR_BRK_POS = 0x02,
+    VAR_SPEED          = 0x01,
+    VAR_BRK_POS        = 0x02,
     VAR_STEERING_ANGLE = 0x03,
 } variable_t;
 

@@ -39,8 +39,6 @@ static message_t error_message;
 // Forward declarations
 unsigned int message_handler(CAN_Packet packet);
 
-static unsigned int transmission_wait = 0;
-
 /**
  * Interrupt handler for TC0, increments a counter and checks
  * to see if the the program has timed out. Sends the board into
@@ -58,8 +56,6 @@ void ISR_Tc0(void)
             proto_state_error();
         }
     }
-
-    transmission_wait++;
 
     // broadcast the error message
     if (state == ERROR) {
@@ -376,21 +372,6 @@ unsigned int message_handler(CAN_Packet packet) {
 void proto_calibration_complete() {
     ready_to_run = true;
 }   
-
-/**
- * Blocks until the most recent message sent or times out
- * @return true if the message sent, false otherwise
- */
-bool proto_wait_on_send(address_t mailbox) {
-    transmission_wait = 0;
-    while (!BCAN_ReadyToTransmit(0, mailbox) ) {
-        if (transmission_wait > 3) {
-            BCAN_AbortTransfer(0, mailbox);
-            return false;
-        }
-    }
-    return true;
-}
 
 /**
  * Attempts a write and returns status code (success == 0)

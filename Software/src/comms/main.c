@@ -62,19 +62,38 @@ message_t motor_msg = {
 
 typedef bool(*output_send_t)(void);
 
+static volatile message_t received_ack;
+
+static unsigned int transmission_wait = 0;
+
+/**
+ * Blocks until the most recent message sent or times out
+ * @return true if the message sent, false otherwise
+ */
+bool wait_on_ack(message_t msg) {
+    transmission_wait = 0;
+    while ( (received_ack.from != msg.to) && (received_ack.data[0] != msg.data[0]) ) {
+        if (transmission_wait > 3) {
+            BCAN_AbortTransfer(0, msg.to);
+            return false;
+        }
+    }
+    return true;
+}
+
 bool send_brake_value(void) {
     proto_write(brake_msg);
-    return proto_wait_on_send(brake_msg.to);
+    return wait_on_ack(brake_msg);
 }
 
 bool send_steering_value(void){
     proto_write(steering_msg);
-    return proto_wait_on_send(steering_msg.to);
+    return wait_on_ack(steering_msg);
 }
 
 bool send_motor_value(void){
     proto_write(motor_msg);
-    return proto_wait_on_send(motor_msg.to);
+    return wait_on_ack(motor_msg);
 }
 
 bool check_speed_timeout(void){
@@ -87,6 +106,7 @@ void timer_callback(void) {
 
     // Update the display
     char_display_tick();
+    transmission_wait++;
     AT91C_BASE_TC1->TC_SR;
     if (i++ > 10) {
         // A flag used to run periodic events in the background
@@ -245,6 +265,10 @@ int main(int argc, char *argv[]) {
                     // A board is refusing the transition
                     case CMD_REPLY:
                         // TODO: sensor data retrieved
+                        break;
+
+                    case CMD_ACK_SET:
+                        received_ack = msg;
                         break;
 
                     // Invalid response

@@ -21,6 +21,7 @@ CMD_NO            = '\x08'
 CMD_ERROR         = '\x09'
 CMD_RUN           = '\x0A'
 CMD_CALIBRATE     = '\x0B'
+CMD_ACK_SET       = '\x0C'
 
 
 VAR_SPEED   = '\x01'
