@@ -233,9 +233,9 @@ int main(int argc, char *argv[]) {
 
 #ifndef DISABLE_PWM
     int speed;
+    cal_state cal = UNCALIBRATED;
 #endif
     message_t msg;
-    cal_state cal = UNCALIBRATED;
 
     TRACE_INFO("Steering board initialization completed\n\r");
 
