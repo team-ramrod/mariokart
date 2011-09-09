@@ -62,6 +62,7 @@ void send_data(address_t to, unsigned char id, variable_t var) {
 //updates time since speed sensor last triggered
 void timer_callback(void) {
     speed_update_time(TIMER_RES);
+    char_display_tick();
 }
 
 //------------------------------------------------------------------------------
@@ -94,13 +95,14 @@ int main(int argc, char *argv[]) {
     proto_init(ADDR_SENSOR);
 
     while (1) {
-        switch (proto_state()) {
+        switch (RUNNING){//proto_state()) {
             case STARTUP:
                 break;
             case CALIBRATING:
                 proto_calibration_complete();
                 break;
-            case RUNNING: 
+            case RUNNING:
+                char_display_number((int)(10.0*speed_output));
                 msg = proto_read();
                 switch(msg.command) {
                     case CMD_GET:
