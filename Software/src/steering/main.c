@@ -203,6 +203,16 @@ void cal_steering(cal_state* cal) {
 
 }
 
+void send_ack(message_t orig_msg) {
+    message_t msg = {
+        .from     = ADDR_STEERING,
+        .to       = orig_msg.from,
+        .command  = CMD_ACK_SET,
+        .data[0]  = orig_msg.data[0],
+    };
+    proto_write(msg);
+}
+
 //------------------------------------------------------------------------------
 //         Main Function
 //------------------------------------------------------------------------------
@@ -260,6 +270,7 @@ int main(int argc, char *argv[]) {
                 switch (msg.command) {
                     case CMD_SET:
                         set_steering(msg.data[0]);
+                        send_ack(msg);
                         proto_refresh();
                     case CMD_NONE:
                         break;

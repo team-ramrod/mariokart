@@ -75,6 +75,16 @@ void timer_callback(void) {
     char_display_tick();
 }
 
+void send_ack(message_t orig_msg) {
+    message_t msg = {
+        .from     = ADDR_MOTOR,
+        .to       = orig_msg.from,
+        .command  = CMD_ACK_SET,
+        .data[0]  = orig_msg.data[0],
+    };
+    proto_write(msg);
+}
+
 
 //------------------------------------------------------------------------------
 //         Main Function
@@ -109,6 +119,7 @@ int main(int argc, char *argv[]) {
                 switch(msg.command) {
                     case CMD_SET:
                         set_motor(msg.data[1]);
+                        send_ack(msg);
                         proto_refresh();
                         break;
                     case CMD_NONE:

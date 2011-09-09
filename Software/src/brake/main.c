@@ -61,6 +61,16 @@ void timer_callback(void) {
 //TODO:reenable PWM commands
 #define DISABLE_PWM
 
+void send_ack(message_t orig_msg) {
+    message_t msg = {
+        .from     = ADDR_BRAKE,
+        .to       = orig_msg.from,
+        .command  = CMD_ACK_SET,
+        .data[0]  = orig_msg.data[0],
+    };
+    proto_write(msg);
+}
+
 //------------------------------------------------------------------------------
 //         Main Function
 //------------------------------------------------------------------------------
@@ -104,6 +114,7 @@ int main(int argc, char *argv[]) {
 #ifndef DISABLE_PWM
                         set_act(msg.data[0]);
 #endif
+                        send_ack(msg);
                         proto_refresh();
                     case CMD_NONE:
                         break;
