@@ -1,0 +1,64 @@
+digraph G {
+  subgraph cluster_src {
+    label = "src";
+    comms;
+  }
+
+  subgraph cluster_highlevel {
+    label = "High Level";
+
+    subgraph cluster_drivers {
+      label = "drivers";
+      protocol;
+    }
+
+    subgraph cluster_usb {
+      label = "usb";
+      stuff;
+    }
+
+    subgraph cluster_utility {
+      label = "utility";
+      trace;
+    }
+  }
+
+  subgraph cluster_lowlevel {
+    label = "Low Level";
+
+    subgraph cluster_components {
+      label = "components";
+      char_display;
+    }
+
+    subgraph cluster_boards {
+      label = "boards";
+      mariokart;
+    }
+
+    subgraph cluster_peripherals {
+      label = "peripherals";
+      pio;
+    }
+  }
+
+  comms -> protocol;
+  comms -> stuff [ltail=cluster_src, lhead=cluster_usb];
+  comms -> trace [ltail=cluster_src, lhead=cluster_utility];
+  comms -> char_display [ltail=cluster_src, lhead=cluster_components];
+  comms -> peripherals;
+  comms -> boards;
+
+  drivers -> peripherals;
+  drivers -> boards;
+
+  usb -> peripherals;
+  usb -> boards;
+
+  utility -> boards;
+
+  components -> peripherals;
+  components -> boards;
+
+  peripherals -> boards;
+}
