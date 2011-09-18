@@ -1,0 +1,45 @@
+digraph G {
+  Software -> src;
+  Software -> lib;
+  Software -> build;
+
+  subgraph cluster_src {
+    shape = polygon;
+    sides = 5;
+    src -> brake;
+    src -> comms;
+    src -> motor;
+    src -> sensor;
+    src -> steering;
+  }
+
+  subgraph cluster_lib {
+    lib -> boards;
+    boards -> mariokart;
+    lib -> components;
+    components -> char_display;
+    lib -> drivers;
+    drivers -> protocol;
+    lib -> peripherals;
+    peripherals -> can;
+    peripherals -> pio;
+    lib -> usb;
+    lib -> utility;
+    utility -> trace;
+  }
+
+  subgraph cluster_build {
+    build -> binaries;
+    build -> objs;
+    objs -> objects;
+  }
+
+  binaries [shape = box];
+  objects [shape = box];
+  trace [shape = box];
+  pio [shape = box];
+  can [shape = box];
+  protocol [shape = box];
+  char_display [shape = box];
+  mariokart [shape = box];
+}
