@@ -25,6 +25,7 @@ local.mk
 *.elf
 *.o
 .dep
+.graphs
 *.a
 
 #Modeling

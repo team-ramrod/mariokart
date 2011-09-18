@@ -149,7 +149,6 @@ int main(int argc, char *argv[]) {
         .data_len = 0
     };
 
-
     while(1) {    
         switch (proto_state()) {
             case STARTUP:

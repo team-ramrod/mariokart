@@ -23,6 +23,7 @@ TRACE_LEVEL ?= 4
 ########################
 
 PREFIX = arm-eabi-
+TOOL_DIR = tools/
 
 CC      = $(PREFIX)gcc
 AR      = $(PREFIX)ar
@@ -31,6 +32,9 @@ RANLIB  = $(PREFIX)ranlib
 OBJCOPY = $(PREFIX)objcopy
 
 OPENOCD = openocd
+
+MAKEMAKE = $(TOOL_DIR)makemake.py
+GRAPHDEPS = $(TOOL_DIR)graphdeps.py
 
 OUTPUT_FOLDER  = build
 OBJECTS_FOLDER = $(OUTPUT_FOLDER)/objs
@@ -43,21 +47,24 @@ VPATH += $(OBJECTS_FOLDER)
 # Define any computer specific PREFIX etc. in here
 -include local.mk
 
+GRAPH_OUTPUT=../Documentation/graphs/
 
 #############
 ##  Flags  ##
 #############
 
-INCLUDES =  -Ilib/boards/$(BOARD)
-INCLUDES += -Ilib/peripherals
-INCLUDES += -Ilib/components
-INCLUDES += -Ilib/drivers
-INCLUDES += -Ilib
+LIBS =  lib/boards/$(BOARD)
+LIBS += lib/peripherals
+LIBS += lib/components
+LIBS += lib/drivers
+LIBS += lib
 
-INCLUDES += -Ilib/usb/common/cdc
-INCLUDES += -Ilib/usb/common/core
-INCLUDES += -Ilib/usb/device/core
-INCLUDES += -Ilib/usb/device/cdc-serial
+LIBS += lib/usb/common/cdc
+LIBS += lib/usb/common/core
+LIBS += lib/usb/device/core
+LIBS += lib/usb/device/cdc-serial
+
+INCLUDES = $(addprefix -I,$(LIBS))
 
 CFLAGS += -Wall -std=gnu99 -pedantic
 CFLAGS += -mcpu=$(MCU)
@@ -234,9 +241,20 @@ clean:
 	rm -rf $(OUTPUT_FOLDER)/*
 	rm -rf .dep/*
 
+graphs-%: 
+	mkdir -p .graphs $(GRAPH_OUTPUT)
+	$(MAKEMAKE) --relpath --files src/$*/main.c $(LIBS) > .graphs/$*-files.d
+	$(GRAPHDEPS) .graphs/$*-files.d --out $(GRAPH_OUTPUT)$*-file_dependencies.pdf
+	$(MAKEMAKE) --relpath --modules src/$*/main.c $(LIBS) > .graphs/$*-modules.d
+	$(GRAPHDEPS) .graphs/$*-modules.d --out $(GRAPH_OUTPUT)$*-modules_dependencies.pdf
+
+graphs-makefile:
+	mkdir -p .graphs $(GRAPH_OUTPUT)
+	$(GRAPHDEPS) ./Makefile --out $(GRAPH_OUTPUT)makefile_dependencies.pdf
+	$(GRAPHDEPS) ./Makefile --out $(GRAPH_OUTPUT)makefile_dependencies.pdf --showops
 
 .PRECIOUS: $(OBJECTS_FOLDER)/%.o %.hex $(OUTPUT_FOLDER)/%.elf
-.PHONY: all rebuild clean
+.PHONY: all rebuild clean graphs
 
 # Include the dependency files, should be the last of the makefile
 -include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
