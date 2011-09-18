@@ -31,3 +31,11 @@ local.mk
 #Modeling
 pan*
 *.trail
+
+# Latex and Beamer temp files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
