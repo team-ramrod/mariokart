@@ -1,0 +1,8 @@
+Intro slide:
+Safety by design - Designing a distributed system to mitigate and elimnate risk.
+
+Overview:
+Many sources of risk in a project like this one.
+Inherited problems - Not our concern
+Hardware problems - easy to test for.
+Software problems - Easy to test for the bugs that present themselves often.
