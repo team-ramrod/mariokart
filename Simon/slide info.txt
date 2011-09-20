@@ -5,4 +5,6 @@ Overview:
 Many sources of risk in a project like this one.
 Inherited problems - Not our concern
 Hardware problems - easy to test for.
-Software problems - Easy to test for the bugs that present themselves often.
+For all of these things we can set guidelines to mitigate problems: Speed limiting, kill button, checking connections etc.
+Software problems - Easy to test for the bugs that present themselves often. How about the unfortunate bug that  
+
