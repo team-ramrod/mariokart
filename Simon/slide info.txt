@@ -1,10 +1,20 @@
 Intro slide:
-Safety by design - Designing a distributed system to mitigate and elimnate risk.
+Safety by design - Designing a distributed system to mitigate and eliminate risk.
 
 Overview:
 Many sources of risk in a project like this one.
 Inherited problems - Not our concern
 Hardware problems - easy to test for.
-For all of these things we can set guidelines to mitigate problems: Speed limiting, kill button, checking connections etc.
-Software problems - Easy to test for the bugs that present themselves often. How about the unfortunate bug that  
+Software problems - Easy to test for the bugs that present themselves often. Errors that take some time or certain conditions to manifest themselves are not likel;y to be discovered during testing.
+
+
+The first set of problems we can discover and correct in the testing phase. For issues we cannot solve we can set guidelines to mitigate problems: Speed limiting, kill button, checking connections etc.
+
+Modelling
+What is a model.
+What does a model not do: implementation, calculation
+What's the point.
+
+SPIN/Promela
+SPIN, the Simple Promela INterpretor, is an tool used to simulate and verify the correctness of models written in the Promela language.
 
