@@ -2,11 +2,12 @@
 
 \usepackage{beamerthemeblackboard}
 \usepackage{graphics}
+%\usepackage[pdftex]{graphicx}
 
 \begin{document}
 
 % set handwritten font, necessary packages are loaded in beamerthemeblackboard.sty
-%\ECFAugie
+\ECFAugie
 
 \begin{frame}
 \title{Mariokart \\ An autonomous go-kart}
@@ -38,37 +39,85 @@ Our Goal
 
 \begin{frame}
 \frametitle{Hardware Layout}
-\framesubtitle{asd}
+\framesubtitle{Each board}
+    \begin{center}
+      \includegraphics[width=.95\textwidth]{Images/Hardware_block}
+    \end{center}
 \end{frame}
 
 \begin{frame}
 \frametitle{Hardware Layout}
-\includegraphics{../../hardware_layout/layout.png}
+\framesubtitle{Whole kart}
+    \begin{center}
+      \includegraphics[width=.95\textwidth]{Images/layout}
+    \end{center}
 \end{frame}
 
 \begin{frame}
 \frametitle{How it all communicates}
-\framesubtitle{asd}
+\framesubtitle{Comms}
+CAN Bus
+\begin{itemize}
+\item Inter-board Communications
+\item Expandable if someone wants to add more nodes
+\end{itemize}
+USART
+\begin{itemize}
+\item Two on each board
+\item One used for debugging
+\end{itemize}
+SPI
+\begin{itemize}
+\item Two on each board
+\item One 5v level logic
+\end{itemize}
+USB
+\begin{itemize}
+\item Fast communication with computer
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Project time line}
-\framesubtitle{asd}
+\framesubtitle{Gantt Chart}
+    \begin{center}
+      \includegraphics[angle=270,width=.95\textwidth]{Images/Gantt}
+    \end{center}
 \end{frame}
 
 \begin{frame}
 \frametitle{Conclusion}
-\framesubtitle{asd}
+\framesubtitle{The end\ldots}
 \begin{itemize}
-\item Only 3 mistakes on boards
-\item Nice hardware platform for future years
-\item Expandable hardware
-\begin{itemize}
-\item 2 x SPI ports
-\item 5v
-\item Sweet Project
-\end{itemize}
+\item All Hardware working
+  \begin{itemize}
+  \item Only 3 minor mistakes on boards
+  \item Nice hardware platform for future years
+  \end{itemize}
+\item Project almost stuck to time plan
+  \begin{itemize}
+  \item Although we cut the goal down, we came close to achieving our stepping
+  stone goal.
+  \end{itemize}
+\item Project well documented
+  \begin{itemize}
+  \item Wiki for documentation
+  \item Group coding standard adhered to
+  \end{itemize}
+\item Most of all
+  \begin{itemize}
+  \item I learnt a lot
+  \item Had a heap of fun
+  \end{itemize}
 \end{itemize}
 \end{frame}
+
+%Question frame
+\begin{frame}
+\begin{center}
+\includegraphics[width=.70\textwidth]{Images/Mario}
+\end{center}
+\end{frame}
+
 
 \end{document}
