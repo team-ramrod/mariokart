@@ -7,8 +7,8 @@
 \setbeamertemplate{blocks}[rounded][shadow=true] 
 \setbeamertemplate{navigation symbols}{} 
 \usepackage{tikz}
+\usepackage{ellipsis}
 
-\newcommand{\authorquote}[2]{\begin{quote}``#2''\textnormal{~--~#1}\end{quote}}
 \author{Wim Looman}
 \title{Software Engineering}
 \subtitle{In the Mariokart system}
@@ -35,30 +35,56 @@
 
   \section{Continuous Integration}
     \subsection{What is it?}
-      \begin{frame}{What is Continuous Integration?}
-        \begin{definition}
-          \authorquote{Martin Fowler\footnotemark}{%
-            Continuous Integration is a software development practice where
-            members of a team integrate their work frequently, usually each
-            person integrates at least daily - leading to multiple integrations
-            per day.  Each integration is verified by an automated build
-            (including test) to detect integration errors as quickly as
-            possible.%
-          }
-        \end{definition}
+      \begin{frame}{What Is Continuous Integration?}
+        \begin{center}\begin{minipage}{0.8\linewidth}\begin{block}{Definition\footnotemark}
+
+              \emph{``Continuous Integration is a software development
+              practice~\dots\ leading to multiple integrations per day~\dots\
+              verified by an automated build~\dots\ to detect integration errors
+              as quickly as possible.''}~---~Martin Fowler
+
+        \end{block}\end{minipage}\end{center}
+
         \footnotetext{\url{http://martinfowler.com/articles/continuousIntegration.html}}
       \end{frame}
 
     \subsection{Why would you use it?}
-      \begin{frame}{Why would you use Continuous Integration?}
+      \begin{frame}{Why Would You Use Continuous Integration?}
+        \large
+        \begin{itemize}
+          \item Detect errors early.
+          \vspace{\baselineskip}\pause
+          \item Force coders to ensure interdependencies are changed at both ends.
+          \vspace{\baselineskip}\pause
+          \item 
+        \end{itemize}
       \end{frame}
 
     \subsection{CI Joe}
-      \begin{frame}{CI Joe}
+      \begin{frame}{CI Joe\footnotemark}
+        \only<1>{
+          \begin{center}\begin{minipage}{0.65\linewidth}\begin{block}{Repository Description}
+            \emph{``CI Joe is a fun Continuous Integration server.''}
+          \end{block}\end{minipage}\end{center}
+        }
+
+        \only<2->{
+          \begin{itemize}
+            \item<2-> Simple setup.
+            \vspace{\baselineskip}
+            \item<3-> Designed to work with git.
+            \vspace{\baselineskip}
+            \item<4-> Can trigger a build via a post-hook on github.
+            \vspace{\baselineskip}
+            \item<5-> Reports status via build-hook (used to send email).
+          \end{itemize}
+        }
+
+        \footnotetext[2]{\url{https://github.com/defunkt/cijoe}}
       \end{frame}
 
     \subsection{Did it help?}
-      \begin{frame}{Did Continuous Integration help?}
+      \begin{frame}{Did Continuous Integration Help?}
       \end{frame}
 
     \subsection{Examples}
