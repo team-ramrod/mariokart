@@ -9,6 +9,12 @@
 \usepackage{tikz}
 \usepackage{ellipsis}
 
+% Use symbols for footnotes.
+% 1 - *
+% 2 - dagger
+% 3 - double dagger
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
 \author{Wim Looman}
 \title{Software Engineering}
 \subtitle{In the Mariokart system}
@@ -40,22 +46,50 @@
         \Large
         \begin{itemize}
           \pause \item Distributed Version Control System (DVCS)
-          \pause \item Initially created by Linus Torvalds for the Linux kernel
-                       project.
-          \pause \item Very \emph{``branch-friendly''}.
+          \pause \item Created by Linus Torvalds for the Linux kernel project.
+          \pause \item High performance and strong safeguards against corruption.
+          \pause \item Very \emph{``branch-friendly.''}
+                       \includegraphics[width=\linewidth]{images/branching}
         \end{itemize}
 
-        \pause \includegraphics[width=\textwidth]{images/branching}
       \end{frame}
 
     \subsection{Github}
       \begin{frame}{Github}
+        \only<1>{
+          \begin{block}{About}
+
+            \emph{``Originally founded by Chris Wanstrath, PJ Hyett and Tom
+            Preston-Werner as a project to simplify sharing code, GitHub has
+            grown into an application used by nearly a million people to store
+            over two million code repositories, making GitHub the largest code
+            host in the world.''}~--~\url{https://github.com/about}
+
+          \end{block}
+
+        }
+        \only<2>{
+          \Huge \centering \scshape{Web Interface}\footnotemark[2]
+
+          \vspace{0.5\baselineskip}
+          \includegraphics[width=\textwidth]{images/web-interface}
+
+          \footnotetext[2]{\url{https://github.com/team-ramrod/mariokart}}
+        }
+        \only<3>{
+          \Huge \centering \scshape{Wiki}\footnotemark[2]
+
+          \vspace{0.5\baselineskip}
+          \includegraphics[width=\textwidth]{images/wiki}
+
+          \footnotetext[2]{\url{https://github.com/team-ramrod/mariokart/wiki}}
+        }
       \end{frame}
 
   \section{Continuous Integration}
     \subsection{What is it?}
       \begin{frame}{What Is Continuous Integration?}
-        \begin{center}\begin{minipage}{0.8\linewidth}\begin{block}{Definition\footnotemark}
+        \begin{center}\begin{minipage}{0.8\linewidth}\begin{block}{Definition\footnotemark[2]}
 
               \emph{``Continuous Integration is a software development
               practice~\dots\ leading to multiple integrations per day~\dots\
@@ -64,7 +98,7 @@
 
         \end{block}\end{minipage}\end{center}
 
-        \footnotetext{\url{http://martinfowler.com/articles/continuousIntegration.html}}
+        \footnotetext[2]{\url{http://martinfowler.com/articles/continuousIntegration.html}}
       \end{frame}
 
     \subsection{Why would you use it?}
@@ -79,14 +113,14 @@
           \begin{itemize}
             \pause \item \large Very useful for branch-happy development in git.
           \end{itemize}
-          \vspace{\baselineskip}
+          \vspace{0.5\baselineskip}
           \pause\item Peer pressure
                 \includegraphics[height=11pt]{images/smiley-devil}.
         \end{itemize}
       \end{frame}
 
     \subsection{CI Joe}
-      \begin{frame}{CI Joe\footnotemark}
+      \begin{frame}{CI Joe\footnotemark[2]}
         \only<1>{
           \begin{center}\begin{minipage}{0.65\linewidth}\begin{block}{Repository Description}
             \emph{``CI Joe is a fun Continuous Integration server.''}
@@ -107,10 +141,6 @@
         }
 
         \footnotetext[2]{\url{https://github.com/defunkt/cijoe}}
-      \end{frame}
-
-    \subsection{Did it help?}
-      \begin{frame}{Did Continuous Integration Help?}
       \end{frame}
 
     \subsection{Examples}
