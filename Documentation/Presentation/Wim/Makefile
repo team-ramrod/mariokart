@@ -8,5 +8,5 @@ IMAGES += $(patsubst %.gif,%.png,$(wildcard images/*.gif))
 	dot -Tps2 $< | ps2pdf - $@
 
 all: $(IMAGES)
-	pdflatex presentation
-	pdflatex presentation
+	pdflatex presentation >/dev/null
+	pdflatex presentation >/dev/null

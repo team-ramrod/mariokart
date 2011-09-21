@@ -1,5 +1,4 @@
 \documentclass[xcolor=dvipsnames]{beamer}
-\usecolortheme[named=PineGreen]{structure} 
 \useoutertheme{infolines} 
 \usetheme[height=7mm]{Rochester} 
 \usefonttheme{structuresmallcapsserif}
@@ -8,6 +7,16 @@
 \setbeamertemplate{navigation symbols}{} 
 \usepackage{tikz}
 \usepackage{ellipsis}
+
+\definecolor{myyellow}{RGB}{224, 207, 159}
+\definecolor{fgColor}{RGB}{220, 220, 204}
+\definecolor{bgColor}{RGB}{63, 63, 63}
+\setbeamercolor{normal text}{bg=bgColor, fg=fgColor}
+\setbeamercolor{structure}{fg=myyellow}
+\setbeamercolor{palette primary}{fg=bgColor}
+\setbeamercolor{palette secondary}{bg=structure.fg!80!black, fg=bgColor}
+\setbeamercolor{palette tertiary}{bg=structure.fg!60!black, fg=bgColor}
+\setbeamercolor{item projected}{fg=bgColor}
 
 % Use symbols for footnotes.
 % 1 - *
@@ -41,15 +50,16 @@
   \end{frame}
 
   \section{Build Toolchain}
+  \subsection{GNU, GNU, GNU}
     \begin{frame}{Build Toolchain}
       \Large
       \begin{itemize}
-        \pause \item \texttt{arm-eabi-gcc}
-        \pause \item \texttt{arm-eabi-gdb}
-        \pause \item \texttt{openocd}
+        \pause \item \texttt{arm-eabi-gcc} -- The GNU Compiler Collection
+        \pause \item \texttt{arm-eabi-gdb} -- The GNU Project Debugger
+        \pause \item \texttt{openocd} -- Open On-Chip Debugger
         \pause \item GNU \texttt{make}
         \begin{itemize}
-          \pause \item Lots of targets to enable easy programming, debugging and testing.
+          \item Lots of targets to enable easy programming, debugging and testing.
         \end{itemize}
       \end{itemize}
     \end{frame}
@@ -179,7 +189,7 @@
 
     \begin{frame}{Git vs SVN}
       \begin{columns}
-        \column{0.5\textwidth}
+        \column{0.45\textwidth}
           \begin{block}{Git}
             \begin{itemize}
               \item Distributed (Generally used with a centralised repository).
@@ -188,7 +198,7 @@
             \end{itemize}
           \end{block}
 
-        \column{0.5\textwidth}
+        \column{0.45\textwidth}
           \begin{block}{SVN}
             \begin{itemize}
               \item Needs a single central repository.
