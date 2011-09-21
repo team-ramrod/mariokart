@@ -1,5 +1,4 @@
 \documentclass[xcolor=dvipsnames]{beamer}
-\usecolortheme[named=PineGreen]{structure} 
 \useoutertheme{infolines} 
 \usetheme[height=7mm]{Rochester} 
 \usefonttheme{structuresmallcapsserif}
@@ -8,6 +7,16 @@
 \setbeamertemplate{navigation symbols}{} 
 \usepackage{tikz}
 \usepackage{ellipsis}
+
+\definecolor{myyellow}{RGB}{224, 207, 159}
+\definecolor{fgColor}{RGB}{220, 220, 204}
+\definecolor{bgColor}{RGB}{63, 63, 63}
+\setbeamercolor{normal text}{bg=bgColor, fg=fgColor}
+\setbeamercolor{structure}{fg=myyellow}
+\setbeamercolor{palette primary}{fg=bgColor}
+\setbeamercolor{palette secondary}{bg=structure.fg!80!black, fg=bgColor}
+\setbeamercolor{palette tertiary}{bg=structure.fg!60!black, fg=bgColor}
+\setbeamercolor{item projected}{fg=bgColor}
 
 % Use symbols for footnotes.
 % 1 - *
@@ -39,6 +48,21 @@
       \end{minipage}
     \end{center}
   \end{frame}
+
+  \section{Build Toolchain}
+  \subsection{GNU, GNU, GNU}
+    \begin{frame}{Build Toolchain}
+      \Large
+      \begin{itemize}
+        \pause \item \texttt{arm-eabi-gcc} -- The GNU Compiler Collection
+        \pause \item \texttt{arm-eabi-gdb} -- The GNU Project Debugger
+        \pause \item \texttt{openocd} -- Open On-Chip Debugger
+        \pause \item GNU \texttt{make}
+        \begin{itemize}
+          \item Lots of targets to enable easy programming, debugging and testing.
+        \end{itemize}
+      \end{itemize}
+    \end{frame}
 
   \section{Source Control}
     \subsection{Git}
@@ -145,18 +169,9 @@
 
     \subsection{Examples}
       \begin{frame}{Example 1}
-        \only<1>{
-          %\includegraphics[width=0.45\linewidth]{images/green-dashboard}
-          \includegraphics[width=\linewidth]{images/green-full}
-        }
-        \only<2>{
-          %\includegraphics[width=0.45\linewidth]{images/building-dashboard}
-          \includegraphics[width=\linewidth]{images/building-full}
-        }
-        \only<3>{
-          %\includegraphics[width=0.45\linewidth]{images/fail-dashboard}
-          \includegraphics[width=\linewidth]{images/fail-full}
-        }
+        \only<1>{\includegraphics[width=\linewidth]{images/green-full}}
+        \only<2>{\includegraphics[width=\linewidth]{images/building-full}}
+        \only<3>{\includegraphics[width=\linewidth]{images/fail-full}}
       \end{frame}
 
       \begin{frame}{Example 2}
@@ -171,4 +186,44 @@
           };
         \end{tikzpicture}
       \end{frame}
+
+    \begin{frame}{Git vs SVN}
+      \begin{columns}
+        \column{0.45\textwidth}
+          \begin{block}{Git}
+            \begin{itemize}
+              \item Distributed (Generally used with a centralised repository).
+              \item Every clone is a full repository.
+              \item Nigh continual branching and merging is expected behaviour.
+            \end{itemize}
+          \end{block}
+
+        \column{0.45\textwidth}
+          \begin{block}{SVN}
+            \begin{itemize}
+              \item Needs a single central repository.
+              \item Can't commit without access to central repository.
+              \item Branching and merging is painful.
+            \end{itemize}
+          \end{block}
+      \end{columns}
+    \end{frame}
+
+    \begin{frame}{Git Overview}
+    \end{frame}
+
+    \begin{frame}{Github Overview}
+    \end{frame}
+
+    \begin{frame}{Unit Testing}
+      \begin{itemize}
+        \item Initially was planned.
+        \item Would require mocking the entire SAM7XC architecture.
+        \begin{itemize}
+          \item Hundreds to thousands of registers.
+          \item Need constraints on which registers get written in which orders.
+        \end{itemize}
+        \item Would be awesome, but probably too large for even its own final year project.
+      \end{itemize}
+    \end{frame}
 \end{document}
