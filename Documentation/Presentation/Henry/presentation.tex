@@ -2,6 +2,7 @@
 
 \usepackage{beamerthemeblackboard}
 \usepackage{graphics}
+\usepackage[final]{pdfpages}
 %\usepackage[pdftex]{graphicx}
 
 \begin{document}
@@ -13,35 +14,55 @@
 \title{Mariokart \\ An autonomous go-kart}
 \author{Henry Jenkins}
 \date{September 26, 2011}
-\institute[2011]{Department of Computer and Electrical Engineering,\\
-    University of Canterbury, \\ Christchurch, \\ New Zealand}
+\institute[2011]{Department of Computer and Electrical Engineering,
+    University of Canterbury, Christchurch, New Zealand}
 \maketitle
 \end{frame}
 
 \begin{frame}
 \frametitle{Overview}
-The Goal
+The Original Goal
 \begin{itemize}
-\item ``The aim of this project is to take the departments go-karts and build in a
-system to replace the human driver. This will entail (at least), selection of
-appropriate actuators, motion and distance sensors, development of a navigation
-system, an interface to the existing control system, and a central computing
-platform. A suitable navigational goal would include a circumnavigation of S
-block.''
+%\item ``The aim of this project is to take the departments go-karts and build in a
+%system to replace the human driver. This will entail (at least), selection of
+%appropriate actuators, motion and distance sensors, development of a navigation
+%system, an interface to the existing control system, and a central computing
+%platform. A suitable navigational goal would include a circumnavigation of S
+%block.''
+\item Make department go-kart drive autonomously
+\item Select actuators, motion and distance sensors
+\item Development of a navigation system
+\item Interface to the existing control system
+\item Have go-kart drive itself around university
 \end{itemize}
 
 Our Goal
 \begin{itemize}
+\item Sub-goal of of drive-by-wire go-kart
 \item Make a robust platform for future projects
-\item Set sub-goal of of drive-by-wire go-kart
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Hardware Layout}
-\framesubtitle{Each board}
+\frametitle{The Go-Kart}
     \begin{center}
-      \includegraphics[width=.95\textwidth]{Images/Hardware_block}
+      \includegraphics[width=.90\textwidth]{Images/kart.jpg}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Hardware Layout}
+\framesubtitle{PCBs}
+    \begin{center}
+      \includegraphics[width=.90\textwidth]{Images/Hardware_block}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Hardware Layout}
+\framesubtitle{PCB Block Diagram}
+    \begin{center}
+      \includegraphics[width=.90\textwidth]{Images/Hardware_block}
     \end{center}
 \end{frame}
 
@@ -78,14 +99,6 @@ USB
 \end{frame}
 
 \begin{frame}
-\frametitle{Project time line}
-\framesubtitle{Gantt Chart}
-    \begin{center}
-      \includegraphics[angle=270,width=.95\textwidth]{Images/Gantt}
-    \end{center}
-\end{frame}
-
-\begin{frame}
 \frametitle{Conclusion}
 \framesubtitle{The end\ldots}
 \begin{itemize}
@@ -112,11 +125,70 @@ USB
 \end{itemize}
 \end{frame}
 
-%Question frame
+%Questions frame
 \begin{frame}
 \begin{center}
-\includegraphics[width=.70\textwidth]{Images/Mario}
+\includegraphics[width=.70\textwidth]{Images/Mario.png}
 \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%
+% Extra slides
+%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Project time line}
+    \begin{center}
+      \includegraphics[angle=270,width=1.0\textwidth]{Images/Gantt}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why use Atmel SAM7s}
+\begin{itemize}
+\item Required Peripherals 
+  \begin{itemize}
+  \item CAN Controller
+  \item USB
+  \end{itemize}
+\item Familiarity
+  \begin{itemize}
+  \item Have used SAM7s before
+  \item Large Library for Atmel
+  \end{itemize}
+\item Expansible
+  \begin{itemize}
+  \item Spare GPIO
+  \item Can do some signal processing
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Board Design}
+\framesubtitle{Dreaming about Altium}
+\begin{enumerate}
+\item Select major components
+  \begin{itemize}
+  \item MCU
+  \item Voltage regulators
+  \item etc\ldots
+  \end{itemize}
+\item Select headers and connectors
+\item layout schematics
+  \begin{itemize}
+  \item Use sheets to modularise!
+  \end{itemize}
+\item Connect sheets
+\item Layout schematics
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Main Schematic}
+    \begin{center}
+      \includegraphics[width=1.0\textwidth]{Images/Schematic}
+    \end{center}
 \end{frame}
 
 
