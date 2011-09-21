@@ -40,6 +40,20 @@
     \end{center}
   \end{frame}
 
+  \section{Build Toolchain}
+    \begin{frame}{Build Toolchain}
+      \Large
+      \begin{itemize}
+        \pause \item \texttt{arm-eabi-gcc}
+        \pause \item \texttt{arm-eabi-gdb}
+        \pause \item \texttt{openocd}
+        \pause \item GNU \texttt{make}
+        \begin{itemize}
+          \pause \item Lots of targets to enable easy programming, debugging and testing.
+        \end{itemize}
+      \end{itemize}
+    \end{frame}
+
   \section{Source Control}
     \subsection{Git}
       \begin{frame}{Git}
@@ -162,4 +176,44 @@
           };
         \end{tikzpicture}
       \end{frame}
+
+    \begin{frame}{Git vs SVN}
+      \begin{columns}
+        \column{0.5\textwidth}
+          \begin{block}{Git}
+            \begin{itemize}
+              \item Distributed (Generally used with a centralised repository).
+              \item Every clone is a full repository.
+              \item Nigh continual branching and merging is expected behaviour.
+            \end{itemize}
+          \end{block}
+
+        \column{0.5\textwidth}
+          \begin{block}{SVN}
+            \begin{itemize}
+              \item Needs a single central repository.
+              \item Can't commit without access to central repository.
+              \item Branching and merging is painful.
+            \end{itemize}
+          \end{block}
+      \end{columns}
+    \end{frame}
+
+    \begin{frame}{Git Overview}
+    \end{frame}
+
+    \begin{frame}{Github Overview}
+    \end{frame}
+
+    \begin{frame}{Unit Testing}
+      \begin{itemize}
+        \item Initially was planned.
+        \item Would require mocking the entire SAM7XC architecture.
+        \begin{itemize}
+          \item Hundreds to thousands of registers.
+          \item Need constraints on which registers get written in which orders.
+        \end{itemize}
+        \item Would be awesome, but probably too large for even its own final year project.
+      \end{itemize}
+    \end{frame}
 \end{document}
