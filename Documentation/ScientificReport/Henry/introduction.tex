@@ -1,5 +1,33 @@
 \section{Introduction}
+% Goal / problem statement (what is your goal/what problem are you solving)
+  Currently the Electrical and Computer engineering department of the
+  University of Canterbury has several go-karts. These go-karts were purchased
+  as petrol go-karts then retrofitted with control electronics, power
+  electronics, lead-acid batteries and a DC electric motor. The goal of this
+  project was to take one of these existing electric go-karts and have it drive
+  it's self autonomously. 
 
-  Yeah, no actual content yet.  Need at least two lines for the drop cap or
-  something so I'll just keep typing until there must be at least two lines by
-  now. \cite{yeah,lol}
+  An autonomous vehicle is a driver-less vehicle that is able to navigate from
+  a location to another set location by controlling actuators and motors. This
+  is achieved by gathering data from the surrounding environment in order to
+  find and track the vehicle's current location. While the vehicle can have
+  communications off the vehicle, like off loading signal processing, it is
+  ideal to have the vehicle completely self contained. This, however, does not
+  dismiss using incoming radio signals. For example using Global Positioning
+  System (GPS) would be perfectly acceptable\cite{yeah,lol}.
+
+  The control systems, both mechanical and electrical, must interface with
+  existing hardware on the go-kart. The project aimed to select appropriate
+  actuators, motion and distance sensors, develop a navigation system,
+  interface to the existing control systems and interface to a central
+  computing platform.  As the kart also was required for other projects, it was
+  also a requirement to able return the kart to it's initial electric go-kart
+  state within an hour.
+
+  To be able to drive a go-kart autonomously, first the kart must be able drive
+  according to given digital instructions. So the initial milestone is to build
+  embedded hardware systems that are able to control the go-kart and drive
+  actuators for both the brake and steering. Because the timeline of this
+  project spans approximately 24 weeks, a sub-goal was set of having
+  \emph{drive-by-wire} go-kart my the end of the project.
+
