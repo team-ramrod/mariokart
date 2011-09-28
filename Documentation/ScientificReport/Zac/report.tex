@@ -1,0 +1,28 @@
+\documentclass[a4paper,conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage[cmex10]{amsmath}
+\interdisplaylinepenalty=2500
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{fixltx2e}
+\usepackage{hyperref}
+
+\input{mystyle}
+
+\begin{document}
+  \input{frontmatter}
+  \input{introduction}
+  \input{marker_method}
+  \input{CV_Theroy}
+  \input{Implement_Solutions}
+  \input{Path_Folllowing}
+  \input{Perform_Solution}
+  \input{Conclusion}
+
+  % Change to balance the columns on the last page
+  \IEEEtriggeratref{2}
+
+  \bibliographystyle{IEEEtran}
+  \bibliography{IEEEabrv,report}
+\end{document}

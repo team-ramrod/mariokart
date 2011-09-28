@@ -1,0 +1,12 @@
+\section{Path Following}
+Once the kart had located a marker a method for following the marker had to be implemented. The simplest solution of simply driving towards the marker had many drawbacks. An example would be that if the kart was following the marker and the marker moved forwards and then after a few meters turned to the right. The following kart would cut the corner and potentially smash straight into an obstacle. A second problem would be that if the marker left the karts field of vision the kart would be forced to immediately come to a stop as it no longer had anything to track.
+
+The algorithm constantly updated the absolute position of the kart. It did this by using the karts speed sensor and a sensor that gave the angle of the karts wheels. Using this information and recording the time between runs of the kart the position and orientation of the kart could be found. Once the location of the kart had been found the relative position and orientation of the chessboard marker if present was also recorded. After this had been done the absolute position of the marker was calculated. The current and all previous positions were stored in an array.
+
+The core of the path following algorithm was very simple and executed as follows. 
+1) The kart would select the first point on the path
+2) The kart would set the steering to point at the point and drive towards it
+3) When the kart came within a minimum distance of the line (set to the turning radius of the kart)  or the point became too ‘old’ the kart would deem itself to have reached the point
+4) The kart would then repeat the process for the next point
+
+By setting the criteria for meeting the point to twice the turning radius of the kart this meant that the kart would always be able to turn to be within this distance  of the next point regardless of where it lay. The kart skipping a point if it became older then a set value (in testing set to 10 seconds) meant that if the kart began to lag behind the object it was tracking it would start cutting corners in order to catch up to the target. This meant that if the target was slowly moving through tight turns the system would work on matching its path and when the target was moving quickly the system would priorities keeping up with the target.

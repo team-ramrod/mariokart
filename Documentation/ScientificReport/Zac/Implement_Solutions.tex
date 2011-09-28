@@ -1,0 +1,9 @@
+\section{Implementation of Solutions}
+
+Color detection, SURF and Chessboard detection were all then implemented to examine their performance for tracking an object in the required environment. To aid in this implementation extensive use was made of the opencv computer vision libraries. These libraries were used as they contained implementations of a large number of computer vision algorithms that had been thoroughly tested by a large community and optimized to run as effectively and efficiently as possible.
+
+The first algorithm implemented was the simple color based approach. In this approach a bright red ball was used as the marker to track. For this approach the scene was thresholded for a value that was approximately red and opening (that is erosion followed by dilation) was used to fill any holes in the image of the ball and remove background noise. A rough estimation of the balls location was then made using its x and y position in pixels from the center of the camera. The z location of the ball was taken to be proportional to the inverse of the size of the ball in pixels. These measures of x, y and z were extremely crude however they provided adequate for the testing that was performed on the color method.
+
+The SURF algorithms marker was a printout of a -------------. This image was used as it contained a large amount of strong lines and detail that meant that a large number of unique and easily identifiable points could be located on the image.
+
+Two chessboards were constructed and tested with the alg
