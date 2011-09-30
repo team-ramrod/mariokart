@@ -14,4 +14,12 @@ The first algorithm implemented was the simple color based approach. In this app
 
 For both the SURF and chessboard algorithms the intrinsic parameters of the camera had to be found so that the size of an object on the screen could be translated from the arbitrary pixel co-ordinate system used by the images to real world distances. These parameters were found by using the camera to take a series of photos of the chessboard from different angles and distances and using the geometry of the chessboard to extrapolate the cameras parameters \cite{cali}. Once this had been performed the parameters were saved to a file that was used by both algorithms. This calibration was a small disadvantage of these algorithms however as it only had to be performed once for a web-cam it did not diminish the practicality of their use by much.
 
-The SURF algorithms marker was a printout of a -------------. This image was used as it contained a large amount of strong lines and detail that meant that a large number of unique and easily identifiable points could be located on the image. Two chessboards were constructed and tested with the chessboard registration algorithm. A large 6 by 5 chessboard with 100 mm squares and a smaller 7 by 8 chessboard. The larger chessboard was used for testing the distance at which the algorithm could pick up the board. The smaller one was used for calibrating the camera and some initial testing of the path finding algorithm discussed in this report. 
+The SURF algorithms marker was a printout of a cut away of an aeroplane. This image was used as it contained a large amount of strong lines and detail that meant that a large number of unique and easily identifiable points could be located on the image. An example of the SURF algorithm working can be seen in Figure~\ref{plane}. Two chessboards were constructed and tested with the chessboard registration algorithm. A large 6 by 5 chessboard with 100 mm squares and a smaller 7 by 8 chessboard. The larger chessboard was used for testing the distance at which the algorithm could pick up the board. The smaller one was used for calibrating the camera and some initial testing of the path finding algorithm discussed in this report. 
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{surf_match}
+	\end{center}
+	\caption{The SURF algorithm matching points in the image to the scene}
+	\label{plane}
+\end{figure}
