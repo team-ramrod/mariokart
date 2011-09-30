@@ -42,6 +42,32 @@ int return_three() {
     possible to perform exhaustive testing and/or modelling of the system within
     acceptable time.
 
+    The major components of software engineering that will be discussed in this
+    report are: version control, unit testing and continuous integration.
+    Version control is probably the aspect of software engineering that is best
+    applied by current engineers, however most still use an old system such as
+    Subversion despite their being much better alternatives like Git and
+    Mercurial available.  Unit testing is a developmental practice that has been
+    seeing a major increase in use for traditional software in recent years.
+    This is largely because of development processes such as Test-Driven and
+    Behaviour-Driven Development evangelised by the Agile Software Development
+    proponents.  Continuous integration is a major aspect of these newer
+    software development methods where quality control is continuously applied
+    to the system while under development, normally utilising unit testing as
+    the main quality assurance system.
+
+    A lot of this is standard practice in software development shops.
+    Unfortunately despite the large amount of code written by other engineering
+    disciplines the same level of engineering practice they apply in designing
+    their circuit board, concrete floor or ethanol extractor doesn't get applied
+    to the code they develop in pursuit of these goals.  This is most relevant
+    to embedded development where the entire range of software engineering
+    practices can be applied; some take a bit more effort because of the lower
+    abstraction level, but they are all applicable in some way.  Parts of this
+    are also relevant for the other engineering disciplines, Matlab may not be a
+    real programming language, but when developing simulations in it proper
+    software engineering practices should still be followed.
+
   \subsection{Mariokart}
 
     The system on which this report will base most of the examples was codenamed
@@ -50,7 +76,7 @@ int return_three() {
     of the project was to take one of the electric go-karts the department had
     and retrofit a drive-by-wire system on to it with an overall goal of having
     the kart autonomously drive around the campus.  For the purposes of this
-    report the main details are:
+    report the main details of the system developed are:
 
     \renewcommand{\labelitemi}{}
     \begin{itemize}
