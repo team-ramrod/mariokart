@@ -6,6 +6,7 @@
  */
 
 #include "chessboard.h"
+#include <cstdio>
 
 //Use the c++ std namespace
 using namespace std;
