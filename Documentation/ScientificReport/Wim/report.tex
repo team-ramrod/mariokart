@@ -1,0 +1,27 @@
+\documentclass[a4paper,conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage[cmex10]{amsmath}
+  \interdisplaylinepenalty=2500
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{fixltx2e}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\input{mystyle}
+
+\begin{document}
+  
+  \lstset{language=C}
+
+  \input{frontmatter}
+  \input{introduction}
+  \input{software-engineering}
+
+  % Change to balance the columns on the last page
+  \IEEEtriggeratref{2}
+
+  \bibliographystyle{IEEEtran}
+  \bibliography{IEEEabrv,report}
+\end{document}
