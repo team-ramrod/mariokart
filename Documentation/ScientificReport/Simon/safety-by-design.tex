@@ -92,28 +92,40 @@ The level of detail which is right for a project is subject to the law of dimini
 returns, where an increase in the severity of failure or the resources available to
 the project will justify a more in depth model to be developed.
 
-  ▲
-▲▲
 \subsubsection{The (other) Benefits of Modelling a Distributed System}
 The obvious aim of modelling is model checking, proving that a design is
-correct. 
+correct. That is not the only benefit that modelling brings to a project
+however. 
+
+Writing a model before code provided the author with a `sketched' version of 
+the code. 
 Promela model vs state diagrams and other sketched plans - or both. iSpin will
  generate sequence diagrams to help visualise process execution.
 
 \subsection{Modelling Mariokart}
-A focus on message passing and states.
+The software for mariokart was modelled with a focus on the state machine seen in 
+appendix B and the message passing between boards. Failure was explicitly allowed
+as seen in the first part of appendix A where the client board may non-deterministically
+(the :: operator) choose to either reset itself, discover an error or continue running as
+expected. Notice the probabilities of these three events occurring is not specified
+as SPIN will exhaustively explore all possibilities regardless of the probabilities.
 
-Unexpected behaviour (errors and power loss) are explicitly specified instead of 
-a fine-grained model in which these may arise naturally.
+The constraints placed on the model were written to enforce a consistent state between
+the boards. 
 
-Explain the never claim. plus the automatically generated claims.
+As previously explained, if the team had more resources (read time) or if the
+project came with significantly more danger (for example if the authors were modifying
+a space shuttle instead of a go-kart) then a more in depth model would be justified.
+
+As it stands, the time restrictions imposed on the project led to the relatively simple
+model described above being developed quickly before being implemented in C.
 
 
 \section{Discussion}
-A responsible engineer evaluates his design before implementing it and it is the author's opinion 
-that this is belief is sometimes lacking in software development. Since a Promela model skips
+A responsible engineer evaluates his or her design before implementing it and it is the author's opinion 
+that this belief is sometimes lacking in software development. Since a Promela model skips
 the details of implementation it is simple to write and understand and does not bury the top level design 
-in details. If written beforehand or concurrently then it simplifies writing the software proper
+in details. If written beforehand or concurrently it  simplifies writing the actual software 
 as the design is already specified and proven.
 
 Balancing the cost of Modelling with the benefits it can bring. At what level of detail is it no longer worth 
