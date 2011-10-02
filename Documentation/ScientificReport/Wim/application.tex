@@ -38,7 +38,7 @@
       branch, this ensured that any changes they had to make to ensure the demo
       went smoothly could be segregated.
 
-      \item CIJoe integration, this will be detailed more later, but the
+      \item CI Joe integration, this will be detailed more later, but the
       combination of Git and GitHub made it extremely simple to set up CI Joe.
     \end{itemize}
 
@@ -59,17 +59,18 @@
 
     Once the basics of CI Joe were set up a few more complex things could very
     easily be done with it.  The trigger to tell it to update and attempt a new
-    build was a simple post, GitHub supported post-hooks to notify services when
-    someone pushed code to the repository so we could easily add a link to CI
-    Joe to that.  This meant that every time somebody changed something CI Joe
-    would run.  The next step was getting the output from Joe, the basic
-    interface was via a website as shown in Figure \ref{joe-website}.
-    Additionally to this we were able to set up a build-hook that would be run
-    when the build was finished.  This was setup to push the status of the build
-    to a dashboard so we could utilise multiple instances of CI Joe for
-    different projects (shown in Figure \ref{joe-dashboard}) along with sending
-    an email out to the group mailing list when a failure occured (shown in
-    Figure \ref{joe-email}).
+    build was a simple HTTP POST, GitHub supported POST-hooks to notify services
+    when someone pushed code to the repository, so we could easily add a link to
+    CI Joe with that.  This meant that every time somebody changed anything CI
+    Joe would run.
+
+    The next step was getting the output from Joe, the basic interface was via a
+    website as shown in Figure \ref{joe-website}.  Additionally to this we were
+    able to set up a build-hook that would be run when the build was finished.
+    This was setup to push the status of the build to a dashboard so we could
+    utilise multiple instances of CI Joe for different projects (shown in Figure
+    \ref{joe-dashboard}) along with sending an email out to the group mailing
+    list when a failure occured (shown in Figure \ref{joe-email}).
 
     \begin{figure}
     \centering
