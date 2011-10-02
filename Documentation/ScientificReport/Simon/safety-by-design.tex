@@ -31,7 +31,7 @@ than loss of power. Preventing this from occurring is the main focus of this pap
 \subsection{Preventing Mistakes (Green)}
 For a detailed look into software and systems engineering practices see 
 Looman's \emph{Software Engineering in the Mariokart System}\cite{
-Software Engineering in the Mariokart System}. If standard design practices
+Looman_2011}. If standard design practices
 such as unit testing are followed then it is possible to eliminate risk from these sources. 
 
 \subsection{Risk Analysis (Red)}
@@ -41,11 +41,11 @@ probabilities of risks. Such tools are popular mainly for their simplicity
 and have little backing in research, taking criticism from researchers such
 as Tony Cox\cite{cox} for reasons such as their qualitative nature and reliance
 on experienced judgement. Cox even goes as far to suggest that in some cases
-using Risk Matrices leads worse-than-random decisions.
+using Risk Matrices leads to worse-than-random decisions.
 
-For this reason and for simplicity's sake it was decided to mitigate potential
-failure modes with broad strokes and so we have the following set of guidelines
-and design decisions:
+For this reason and for simplicity's sake it was decided to lessen the consequences of
+potential failure modes with a set of general mitigating techniques. Hence we have 
+the following set of guidelines and design decisions:
 
 \begin{itemize}
 \item Despite the goal of autonomous function, a passenger should always be in
@@ -59,7 +59,9 @@ into an error state.
 \item In the error state each board will perform whatever is necessary to minimise
 the potential harm in case the go-kart is currently mobile. The important detail here
 is that both the brake board and motor will attempt to slow the vehicle (the motor
-is capable of regenerative braking) providing redundancy of the most critical function. 
+is capable of regenerative braking) providing redundancy of the most critical function.
+
+%%%%%%%%%%%%%% 
 \end{itemize}
  
 
@@ -75,7 +77,7 @@ due to the relative flexibility of the medium, been exempt from the expectation
 
 SPIN is an automated model checker for `the formal verification of
 distributed software system.'\cite{spinroot} The name is an acronym for
-Simple Promela INterpretor where Promela is the language used to 
+Simple Promela INterpretor, where Promela is the language used to 
 specify a model and its constraints. For more information on SPIN and
 Promela visit spinroot.com but for the purposes of this paper an in-depth
 knowledge is not required.
@@ -97,17 +99,19 @@ a system down to the instruction set level.
 
 The level of detail which is right for a project is subject to the law of diminishing
 returns, where an increase in the severity of failure or the resources available to
-the project will justify a more in depth model to be developed.
+the project will justify a more in depth model to be developed. 
 
 \subsubsection{The (other) Benefits of Modelling a Distributed System}
 The obvious aim of modelling is model checking, proving that a design is
 correct. That is not the only benefit that modelling brings to a project
 however. 
 
-Writing a model before code provided the author with a `sketched' version of 
-the code. 
-Promela model vs state diagrams and other sketched plans - or both. iSpin will
- generate sequence diagrams to help visualise process execution.
+Writing a model before code provides the author with a `sketched' version of 
+the code. Unlike a state diagram sketched on paper however the Promela
+sketch can be simulated visually using the iSpin frontend for spin. iSpin
+is capable of generating sequence diagram-like output showing message transmission
+and reception between processes as well as other, more complicated graphical output 
+we won't discuss here.
 
 \subsection{Modelling Mariokart}
 The software for mariokart was modelled with a focus on the state machine seen in 
@@ -121,13 +125,14 @@ The constraints placed on the model enforce a consistent state between
 the boards and ensure that the system either executes infinitely or all boards reach an 
 error state and exit. Although the second option is not desirable in practice, showing
 that the boards fail gracefully regardless of the failure mode is the most important
-part of the model as it proves 
+part of the model as it proves the correctness of an aspect of the system that would
+be difficult or maybe even impossible to test manually.
 
 As previously explained, if the team had more resources or if the
 project came with significantly more danger (for example if the authors were modifying
 a space shuttle instead of a go-kart) then a more in depth model would be justified.
 
-As it stands, the time restrictions imposed on the project led to the relatively simple
+As it stands, however, the time restrictions imposed on the project led to the relatively simple
 model described above being developed quickly before being implemented in C.
 
 
@@ -135,13 +140,17 @@ model described above being developed quickly before being implemented in C.
 A responsible engineer evaluates his or her design before implementing it and it is the author's opinion 
 that this belief is sometimes lacking in software development. Since a Promela model skips
 the details of implementation it is simple to write and understand and does not bury the top level design 
-in details. If written beforehand or concurrently it  simplifies writing the actual software 
+in details. If written before implementation or concurrently it simplifies writing the actual software 
 as the design is already specified and proven.
 
-Balancing the cost of Modelling with the benefits it can bring. At what level of detail is it no longer worth 
-exploring - dependence on project budget and magnitude of risk outcomes. Focus on projects similar to
-Mariokart (ie ones I have experience in).
+Balancing the cost of developing the model with the benefits it can bring is an important
+consideration for any team wishing to travel the same path as the authors did with 
+mariokart. For groups or individuals working on projects similar to the authors' it is recommended to
+at least explore modelling top level designs before implementing them. The worst case outcome
+is the cost of learning a new language (and Promela contains few difficult concepts) and the potential
+benefits include quicker development times and the chance to catch a potentially dangerous fault
+before it can manifest itself.
 
 \section{Conclusion}
-The potential for failure in the mariokart system was analysed and solutions, mitigations and justifications
-for ignoring potential problems were described. 
+The potential for failure in the mariokart system was analysed. Solutions, mitigations and justifications
+for ignoring potential problems were described along with the costs and benefits of modelling software. 
