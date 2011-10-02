@@ -46,7 +46,12 @@ the existing motor driver  hardware.
  of a student project so the only requirement from the motor driver board was to interface with this over
  the available SPI link.
 
- \item The CAN bus:
+ \item The CAN bus: CAN is a multi-master serial bus with guaranteed sending and message priority. It 
+ was designed by Robert Bosch GmBH for networking micro-controllers in automobiles and has
+ also some popularity in industrial automation. The CAN specification is low-level only, it does not specify 
+ a data protocol or a method address allocation. There are numerous similar software stacks built on top
+ of CAN for various purposes such as the Society of Automotive Engineers' J1939\cite{J1939} however due to the simplistic nature of our 
+ network we implemented our own protocol.
 \end{itemize}
 
 For a more detailed description see \emph{Embedded Hardware Design For Autonomous Electric
