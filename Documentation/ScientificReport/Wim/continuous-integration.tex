@@ -1,0 +1,52 @@
+\subsection{Continuous Integration}
+
+  Continuous Integration (CI) is another software development practice highly
+  pushed in the Agile development community.  The main goal behind CI is to
+  minimize the time between an error being introduced in the code base and the
+  error being detected and fixed.  This is achieved by having developers
+  continuously integrating their changes and verifying the integrated code via
+  an automatic test.  To ensure this is happening a few key steps have to be
+  taken; testing the code has to be almost painless, it must be easy for the
+  developers to merge their work back into the master development branch and if
+  a bug is ever introduced the developer responsible is not allowed to ignore
+  it.
+
+  Ensuring that testing the code is almost painless can sometimes be a big task.
+  Especially if this was not a priority at the beginning of development, build
+  times and test suites have a tendency to expand out of control very quickly.
+  This is absolutely necessary for CI to work well though.  To keep the error
+  detection time as small as possible you really want all developers to be
+  running the test suite after every change, so really a maximum run time of two
+  to three minutes is required.  For large systems this can be achieved by
+  splitting the test suite up, you just need to be careful to ensure all tests
+  relating to any change will be run as part of that section of test suite.
+
+  Continuously integrating developers code requires having a single
+  \emph{master} development branch.  Whenever a developer decides to do some
+  work they will grab the latest version of this branch and start their work
+  form there.  Because their team is performing Continuous Integration they can
+  be confident that the master branch will be in a working state, or if not that
+  whoever broke it knows and will have a fix pushed up to it within a few
+  minutes.  They will then write a test for the feature they are going to be
+  implementing, followed by the code to make the feature work.  This will be
+  repeated until they have finished implementing the feature.  If for some
+  reason this is a very large feature that is going to take more than a day or
+  two they will try and aim for a few checkpoints consisting of just a few hours
+  work.  At each of these checkpoints they will merge in any changes that have
+  happened to the master branch and ensure that none of them introduce any
+  problems with the feature they're currently implementing.  It is this
+  integration of the work other developers are doing multiple times through the
+  day that gives Continuous Integration its name.  Once the feature is finished
+  it is merged back into the master development branch and pushed out for other
+  developers to use.
+
+  Once a feature has been merged into master other developers will be pulling it
+  down and integrating it into their current work.  If there is a bug in it then
+  it is going to affect a lot of people.  For this reason most teams using CI
+  use a Continuous Integration server.  This is simply a server set up to
+  continuously pull any change to the master branch, build it, test it, and
+  notify the developers if it fails.  In this way if someone accidentally
+  commits broken code the CI server will detect it and inform them within a few
+  minutes.  At this point the developer has to make getting a fix out their
+  highest priority, if they can't see some way to fix it straight away they
+  should revert their merge and spend time working out what broke it.
