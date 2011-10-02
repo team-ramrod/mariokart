@@ -35,27 +35,34 @@ Software Engineering in the Mariokart System}. If standard design practices
 such as unit testing are followed then it is possible to eliminate risk from these sources. 
 
 \subsection{Risk Analysis (Red)}
+Traditional project management tools for risk management involve tools
+like Risk Matrices and qualitatively assessing the potential consequences and
+probabilities of risks. Such tools are popular mainly for their simplicity
+and have little backing in research, taking criticism from researchers such
+as Tony Cox\cite{cox} for reasons such as their qualitative nature and reliance
+on experienced judgement. Cox even goes as far to suggest that in some cases
+using Risk Matrices leads worse-than-random decisions.
 
+For this reason and for simplicity's sake it was decided to mitigate potential
+failure modes with broad strokes and so we have the following set of guidelines
+and design decisions:
 
-Project managementy stuff
+\begin{itemize}
+\item Despite the goal of autonomous function, a passenger should always be in
+the vehicle during operation so that the vehicle may be shut down immediately 
+by the provided kill switch.
 
- Full description of all possible failure modes
+\item All subsystems fall into an error state immediately after communication is
+lost with any board. Any board losing then regaining power will also transition 
+into an error state.
+
+\item In the error state each board will perform whatever is necessary to minimise
+the potential harm in case the go-kart is currently mobile. The important detail here
+is that both the brake board and motor will attempt to slow the vehicle (the motor
+is capable of regenerative braking) providing redundancy of the most critical function. 
+\end{itemize}
  
-\subsection{Pitfalls in Risk Management}
-relying on qualitative judgement
 
-Checking after vs integrated into design
-
-
-
-\subsection{Mitigation}
-Results of previous section
-
-Global mitigations
-
-Specific mitigations
-
-Un-mitigated risk?
 
 \subsection{Automated model checking to prevent design errors (Blue)}
 While it is a given that a structural engineer will calculate forces and stress before
@@ -133,3 +140,5 @@ exploring - dependence on project budget and magnitude of risk outcomes. Focus o
 Mariokart (ie ones I have experience in).
 
 \section{Conclusion}
+The potential for failure in the mariokart system was analysed and solutions, mitigations and justifications
+for ignoring potential problems were described. 
