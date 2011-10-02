@@ -1,0 +1,18 @@
+\section{Appendices}
+
+\subsection{Promela examples}
+Client Board proctype:
+\lstinputlisting[language=Promela]{client.pml}
+
+Never claim: All boards transition to error state
+or remain in running state indefinitely:
+\lstinputlisting[language=Promela]{never.pml}
+
+\subsection{Single board state machine}
+
+\begin{figure}[!ht]
+  \caption{The state machine each board follows.}
+  \label{states}
+  \centering
+    \includegraphics[width=0.5\textwidth]{states}
+\end{figure}
