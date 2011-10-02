@@ -38,17 +38,19 @@
   
   \begin{itemize}
     \item[LIN]{LIN is a single wire communications standard which supports
-    speeds of up to 19.2kbit/s. It is a master slave design which supports up
-    to sixteen slaves. The data frame on the LIN Bus is variable length of
-    either 2, 4 or 8 bytes. There is no collision detection, however data
-    checksumming and error detection is implemented in the standard.  LIN was
-    designed in 1999 with further LIN standards released in 2002 and 2003.}
+    speeds of up to 19.2kbit/s\cite{LIN}. It is a master slave design which
+    supports up to sixteen slaves. The data frame on the LIN Bus is variable
+    length of either 2, 4 or 8 bytes. There is no collision detection, however
+    data checksumming and error detection is implemented in the standard.  LIN
+    was designed in 1999 with further LIN standards released in 2002 and 2003.}
 
     \item[CAN]{CAN 2.0 is a master-master broadcast serial bus standard. It
     supports half-duplex data rates of up to 1Mbit/s. The CAN Bus uses a
     differential pair with the traffic encoded in non return to zero. Each
     packet is formatted with a header, including receivers address, followed by
-    zero to eight bytes of data.}
+    zero to eight bytes of data. Robert Bosch GmbH \cite{bosch} developed the
+    standard in 1983, but now days the ISO11989 standard also describes CAN 2.0
+    \cite{boschCAN, ISOCAN}.}
 
     \item[UART]{Using Universal Asynchronous Receiver/Transmitter was dropped
     as an idea rather early on. This is because it does not support the error
@@ -78,16 +80,31 @@
   controller and hardware USB. Also because previous projects had used either
   the Atmel ATMega or the Atmel AT91SAM7 micro controllers, we had preference
   of using these rather than learning a new architecture and data sheet format.
-  Knowing that the software 
 
   \subsection{Motor Drivers}
   To drive the actuators for the steering and brake we decided to use a motor
   driver IC. By basing our motor driver circuit specification on the current
   draw of the steering motor, then reused the same design for the brake linear
   actuator. This was done both to save time in the hardware design, but also
-  time in software later on. The motor drives were placed on their own small PCB
+  time in software later on\cite{Looman_2011}. The motor drives were placed on their own small PCB
   to save space on the main PCB and also provide more opportunity for heat
   dissipation if this were to become a problem. 
+
+  The motor driver that was used is the DRV8432 made by Texas
+  Instruments\cite{ti-motor-driver}. It is a dual full bridge PWM motor driver.
+  It has a split logic and driving voltage, so it is driven directly from the
+  batteries, but the control logic is at 3.3V. It has a peak voltage of 50V and
+  a maximum current of 12A which is more than we need for either of the
+  actuators. Figure \ref{motorPCB} shows one of the two motor driver boards with
+  a heat sink covering the motor driver IC.
+
+   \begin{figure}[h]
+     \centering
+     \includegraphics[width=.9\linewidth]{Images/motorPCB.png}
+     \caption{Motor driver board for driving actuators}
+     \label{motorPCB}
+   \end{figure}
+
 
   \subsection{Expansion IO}
   To allow the hardware to be expandable, two 3.3V UARTs, one 3.3V SPI and
@@ -140,3 +157,4 @@
     Both the inductance sensor used for speed detection and the motor driver
     required 12 volts, which both of these applications use less than 150mA so a
     TPS7A4901 linear voltage regulator was used\cite{TPS7A4901}.
+

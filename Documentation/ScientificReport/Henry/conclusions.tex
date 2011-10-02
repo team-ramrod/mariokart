@@ -1,1 +1,37 @@
 \section{Conclusions}
+  The design process used for the schematic and PCB layout worked well providing
+  a set of very functional and reliable PCBs. They have been shown to all
+  communicate together via the CAN Bus protocol and drive both the steering and
+  brake actuators. 
+
+  Since the project has been in the software development stage for some time
+  now, there have only been three mistakes in the hardware found. All of these
+  mistakes have had relatively easy fixes. The worst of the three is one side of
+  the quadrature clock converter's pins were reversed. This was fixed by
+  soldering the IC on upside down and then wiring the pins over to the correct
+  pins. The second worst was a miss placed decoupling capacitor on the
+  \emph{avref} pin of the SAM7. This was simply replaced with a zero ohm
+  resistor to solve the problem. The third problem was that the UART connectors
+  don't have a ground pin. To get around this the \emph{sclk} pin in tied low in
+  software to act as a ground.
+
+  Using the same design for all of the five main PCBs worked well. Doing this
+  saved time in the design, ordering and population. This also saved money by
+  being able panellise the boards which would have cost 50 USD more if wasn't
+  done. By not having to spend time on making five different designs, more time
+  was able to be spent checking for mistakes in the design. If there were
+  multiple designs more mistakes would have happened.
+
+  The CAN Bus produced clean signals with all nodes connected. Even with the CAN
+  bus running at 1Mb/s its maximum speed. While the bandwidth of the CAN Bus is
+  about 1000 times more than required for the current application of a
+  drive-by-wire go-kart, it does mean the CAN bus can be expanded for future
+  use with sensors and other devices generating traffic on the network. If noise
+  were to become a problem, the bus is able to run at a slower rate potentially
+  solving this issue.
+  \newpage
+
+  The help received from Michael Cusdin made this project possible. His
+  knowledge and experience guided us through the PCB population process. Also
+  technical knowledge provided by Dr Michael Hayes often lead us out of strife
+  with challenging problems.

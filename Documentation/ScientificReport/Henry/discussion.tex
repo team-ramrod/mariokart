@@ -1,7 +1,38 @@
 \section{Discussion}
+
 \subsection{Debug Port}
-  TODO: expose the dbg pins 
+  When the schematic was being set out the debug unit from the SAM7 were left
+  with no header leading to them. At the time it was thought that they would be
+  unnecessary then were forgotten about. This meant all the debugging was
+  required to be done via a UART port and the display. While this wasn't a bad
+  solution to the problem, it would have been better to have access to the debug
+  unit.
+
+\subsection{Test points}
+  At the last minute in the PCB design about 100 test points was added to the
+  bottom of the PCB. This was very useful and one of the better design decisions
+  with the PCB. The test points gave access to many different signals on the
+  board with test point probes able to be clipped onto them. The only thing that
+  should be done differently with the test points is placing more ground test
+  points around the board. This would allow more than one oscilloscope cable to
+  be hooked up to the ground on the board.
+
 \subsection{Power Supply Selector}
-  TODO: be able to disable the power supply form the can bus
+  Making the decision to put battery voltage over the same cables that the CAN
+  bus uses made the system work well. However when developing and debugging, it
+  would have been ideal to be able to disconnect the power coming in from the
+  CAN bus cable. This would mean that an individual board could be power cycled
+  without having to power cycle all of them. This could have been done by simply
+  putting two jumpers on the PCBs to connect specific ones to enable either the
+  CAN bus power or the battery header power.
+
 \subsection{Connectors}
-  TODO: don't use pico blade!
+  To save space the Molex Pico Blade \cite{PicoBlade} connectors were used.
+  However after using them this was a bad choice. They are very hard to make
+  cables for, then brake a short time after. This is frustrating when it takes
+  so long to make them, yet they don't last long. While using bigger more
+  traditional connectors would have taken up more space on the PCBs, it would
+  have saved a lot of time while developing with the boards.
+
+%\subsection{Atmel Library}
+  % You suck atmel
