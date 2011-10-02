@@ -16,7 +16,7 @@
       \item Two of the developers on the project had previously used Git and
       were using it daily for many other projects.
 
-      \item Github provided us with many very useful features such as a Wiki to
+      \item GitHub provided us with many very useful features such as a Wiki to
       use for documentation and project management.
     \end{itemize}
 
@@ -39,7 +39,7 @@
       went smoothly could be segregated.
 
       \item CIJoe integration, this will be detailed more later, but the
-      combination of Git and Github made it extremely simple to set up CI Joe.
+      combination of Git and GitHub made it extremely simple to set up CI Joe.
     \end{itemize}
 
   \subsection{Unit Testing}
@@ -52,7 +52,42 @@
 
     Continuous integration was implemented using a piece of software known as CI
     Joe.  This is a continuous integration server designed to be as simple as
-    possible to setup.  You provide CI Joe with a git repository and a command
+    possible to setup \cite{ci-joe}.  You provide CI Joe with a git repository and a command
     to use to test the project and you are done.  In our case since we did not
     have the time to set up a unit testing system we just had CI Joe building
     the project to detect any compilation errors or warnings.
+
+    Once the basics of CI Joe were set up a few more complex things could very
+    easily be done with it.  The trigger to tell it to update and attempt a new
+    build was a simple post, GitHub supported post-hooks to notify services when
+    someone pushed code to the repository so we could easily add a link to CI
+    Joe to that.  This meant that every time somebody changed something CI Joe
+    would run.  The next step was getting the output from Joe, the basic
+    interface was via a website as shown in Figure \ref{joe-website}.
+    Additionally to this we were able to set up a build-hook that would be run
+    when the build was finished.  This was setup to push the status of the build
+    to a dashboard so we could utilise multiple instances of CI Joe for
+    different projects (shown in Figure \ref{joe-dashboard}) along with sending
+    an email out to the group mailing list when a failure occured (shown in
+    Figure \ref{joe-email}).
+
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/joe-website}
+    \caption{CI Joe's website interface.}
+    \label{joe-website}
+    \end{figure}
+
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/joe-dashboard}
+    \caption{Dashboard set up to show multiple CI Joes statuses.}
+    \label{joe-dashboard}
+    \end{figure}
+
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/joe-email}
+    \caption{Build failure email from CI Joe.}
+    \label{joe-email}
+    \end{figure}
