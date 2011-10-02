@@ -40,3 +40,6 @@ pan*
 *.snm
 *.toc
 *.synctex.gz
+report.bbl
+*.blg
+*.fdb_latexmk

@@ -55,15 +55,24 @@
     The steering motor is a 24V DC motor that has a step down gear box with an
     output ratio of 393:1. On the top end of the motor, there is an magnetic
     encoder that outputs 18 pulses per motor revolution. This is that it outputs
-    7,074 pulses per 360 degrees of rotation on the steering wheel.
+    7,074 pulses per 360 degrees of rotation on the steering wheel. At peak
+    load, the steering motor could draw up to 10Amps.
 
   \subsubsection{Brake}
-    To control the possition of the brake a linear actuator was used. The linear
+    To control the position of the brake a linear actuator was used. The linear
     actuator has an extension of 101.6mm and can travel at $20mm/s$. It provides
-    absolout possition feedback via a $10k\ohm$ potentiometer.
+    absolute position feedback via a $10k\ohm$ potentiometer. As with the
+    steering motor, the brake linear actuator ran at 24V but only draws a peak
+    current of 1.3Amps.
 
 \subsection{Communication With A Laptop}
-  Because most laptops have dropped all serial RS-232 ports, the only
-  reliable option for serial communications is to use USB. This also conforms as
-  in the future USB web-cams can be used as sensors.
+  Because most laptops have dropped all serial RS-232 ports, the only reliable
+  option for serial communications is to use USB. This also conforms as in the
+  future USB web-cams can be used as sensors.
+
+\subsection{Schematic \& PCB design tools}
+  To generate the PCBs and schematics, Altium Designer was used\cite{altium}.
+  Altium Designer is a complex electronics design package that can be used from
+  a variety of tasks. However in this project only the schematic layout and PCB
+  design tools were used.
 
