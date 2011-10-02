@@ -78,18 +78,22 @@ int return_three() {
     the kart autonomously drive around the campus.  For the purposes of this
     report the main details of the system developed are:
 
-    \renewcommand{\labelitemi}{}
+    \renewcommand{\labelitemi}{$\bullet$}
+    \renewcommand{\labelitemii}{$\circ$}
     \begin{itemize}
-      \item 
-        The overall design is a distributed system, 5 boards are used; one for
-        communication with a host laptop, one for steering, one for brakes, one
-        to interface to the motor controller and one for collecting data from a
-        variety of sensors.
+      \item The overall design is a distributed system with 5 boards:
+            \begin{itemize}
+              \item One for communication with a host laptop.
+              \item One for steering.
+              \item One for brakes.
+              \item One to interface to the motor controller.
+              \item One for collecting data from a variety of sensors.
+            \end{itemize}
 
-      \item
-        Each board is running an Atmel SAM7XC microprocessor.
+      \item Each board is running an Atmel SAM7XC microprocessor.
 
-      \item
+      \item Communication between boards is carried over a Controller Area
+            Network (CAN) bus.
         
     \end{itemize}
 

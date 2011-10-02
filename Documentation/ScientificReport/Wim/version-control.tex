@@ -1,0 +1,56 @@
+\subsection{Version Control}
+
+  Out of all Software Engineering practices Version Control is definitely the
+  most widely used by normal engineers.  Unfortunately it is still not used
+  everywhere.  For example, you have just finished looking at a new power
+  regulation system that you want to switch to for your next PCB revision; now
+  you need to write a quick report on why it is so much better than the
+  current system that you should spend all this time changing your design.
+  What's the first thing you should do, open a new Microsoft Word document?
+  Load up your \LaTeX\ editor?  \emph{No}, you should initialise a new
+  repository or ensure you have the projects documentation repository
+  available and updated.  Anything and everything that is more than a few
+  lines long, or will ever be shared with a team member should be under
+  version control.
+
+  This is very important for a multitude of reasons.  Firstly it provides you
+  with a time line of development activity.  If you need to revisit a decision
+  months later you can identify exactly when the initial review was made and
+  when any revisions happened.
+  
+  Secondly it provides you with a safety net.  The following anecdote is a
+  very good example of why this safety net is important.
+
+  \begin{bigquote}
+
+    {A younger programmer asked an elder about his code and his coding style,
+    and how the older programmer would do certain things. The older programmer
+    said `Let's take a look at your code', so the younger took out his laptop,
+    opened his editor, and showed him.}
+
+    \vspace{5pt}
+
+    {The older programmer looked at the code, thought about it for a bit, and
+    then started editing it. He deleted the class internals, leaving only the
+    structure, and then rearranged the structure, saying `Here's how I would
+    do it to make it more efficient and readable'. After he was done, he saved
+    the file and gave it back to the younger programmer, who was ashen-faced.}
+
+    \vspace{5pt}
+
+    {`That... My code is gone!' said the younger programmer. `But you have it
+    in version control somewhere, right?' asked the elder. `N.... no.' was the
+    reply. `Well then,' said the older, `now you've learned two lessons.'}
+
+    \vspace{5pt}
+    
+    --- \emph{Dan Udey} \cite{Udey_2008}.
+
+  \end{bigquote}
+
+  Having this safety net is also a very good incentive to experiment.  As
+  mentioned in the anecdote the older programmer, assuming that the younger
+  was using version control, felt free to delete most of the code and
+  rearrange what remained.  If the younger had been using version control then
+  they could have simply committed this major change on a separate branch and
+  checked out their prior work to compare the two.
