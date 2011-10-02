@@ -1,4 +1,4 @@
-\title{Development of a Marker Location System for use in the Mariokart System}
+\title{Development of a Marker Following System for use in the Mariokart System}
 
 \author{
   \IEEEauthorblockN{
@@ -34,5 +34,5 @@
 \maketitle
 
 \begin{abstract}
-  An autonomous go-kart system, nicknamed Mariokart was being developed. It required a simple algorithm to demonstrate its abilities and test its systems. To meet this need an algorithm was developed to follow the path of a marker. Three computer vision techniques color tracking, SURF and chessboard recognition were examined for the identification of the marker. Chessboard detection was chosen mainly due to its robustness to changes in lighting. The system was tested but never mounted to the Mariokart due to delays in the development of systems it required to interface with the kart.
+  An autonomous go-kart system, nicknamed Mariokart was being developed. It required a simple algorithm to demonstrate its abilities and test its systems. To meet this need an algorithm was developed to follow the path of a marker. Three computer vision techniques color detection, SURF and chessboard detection were evaluated to see if they could be used to locate the marker. SURF performed slowly and only at very short ranges, colour detection was found to be too sensitive to lighting changes but otherwise a viable option. Chessboard detection was found to meet all the needs of the system with the exception of having a reasonably short range. Once the method of marker detection was in place a method for allowing the kart to follow the same route as the marker was implemented. This utilized the kart’s on board sensors to estimate its location. The system was tested but never mounted to the Mariokart due to delays in the development of systems it required to interface with the kart.
 \end{abstract}

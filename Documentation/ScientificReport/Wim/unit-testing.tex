@@ -1,23 +1,35 @@
 \subsection{Unit Testing}
-  
+
   As mentioned earlier Unit Testing is currently seeing a major increase in use
   in forward-thinking software development companies, mainly because of
-  evangelical Agile development proponents.  Unfortunately despite this increase
-  for traditional software development, the uptake in embedded development
-  projects has been a lot slower.
+  evangelical Agile development proponents (especially from the Ruby on Rails
+  community).  Unfortunately despite this increase for traditional software
+  development, the uptake in embedded development projects has been a lot
+  slower.
 
   The basic premise of unit testing is that if you verify that all parts of your
   system work as intended, then the system as a whole will work as intended.  To
-  do the verify you write a lot of small \emph{unit} tests to verify minimal
-  sections of your code.  By ensuring that all code you write is tested by
-  multiple unit tests you can be confident that the code performs as you expect.
+  do the verification you write a lot of small \emph{unit} tests to verify
+  minimal sections of your code.  By ensuring that all code you write is tested
+  by multiple unit tests you can be confident that the code performs as you
+  expect.
 
   Of course this isn't the same thing as being right, unit tests only verify
   that the code does what the test says it should.  To ensure the code does what
   it should do you need to validate your tests.  This is most commonly done
-  informally, the test developers know the intended outcome and the tests with
-  the codes purpose in mind.  For more critical systems an external validation
-  can be performed using a method such as modelling.  Our attempts at modelling
-  one of the critical sections of our system can be read about in \emph{Safety
-  by Design for the Mariokart System} by Simon Richards \cite{Richards_2011}.
+  informally, the test developers know the intended outcome and write the tests
+  with the codes final purpose in mind.  For more critical systems an external
+  validation can be performed using a method such as modelling.  Our attempts at
+  modelling one of the critical sections of our system can be read about in
+  \emph{Safety by Design for the Mariokart System} by Simon Richards
+  \cite{Richards_2011}.
 
+  The big problem with unit testing an embedded system is the very low level of
+  abstraction.  One of the big reasons it is so popular in the Ruby on Rails
+  community is because of how easy it is to write tests for Ruby thanks to its
+  very high level of abstraction.  For embedded development you are likely going
+  to want to run a few different testing layers; one testing the very low level
+  libraries to ensure the registers are being accessed correctly, one testing
+  mid level libraries such as character or LCD displays to make sure they're
+  calling the low level libraries properly and one testing the actual
+  application code.
