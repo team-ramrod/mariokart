@@ -14,7 +14,7 @@
   communications off the vehicle, like off loading signal processing, it is
   ideal to have the vehicle completely self contained. This, however, does not
   dismiss using incoming radio signals. For example using Global Positioning
-  System (GPS) would be perfectly acceptable\cite{yeah,lol}.
+  System (GPS) would be perfectly acceptable.
 
   The control systems, both mechanical and electrical, must interface with
   existing hardware on the go-kart. The project aimed to select appropriate
@@ -30,4 +30,10 @@
   actuators for both the brake and steering. Because the timeline of this
   project spans approximately 24 weeks, a sub-goal was set of having
   \emph{drive-by-wire} go-kart my the end of the project.
+
+  To allow high performance, high level signal processing the control system
+  must be able interface to a computer based platform. This platform will be
+  able to run processor intensive tasks, like image processing for computer
+  vision\cite{openCV}, or a Bayes filter for estimating the kart's current
+  location before it receives accurate sensor data.
 
