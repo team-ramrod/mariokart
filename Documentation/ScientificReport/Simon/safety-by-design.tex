@@ -115,12 +115,15 @@ appendix B and the message passing between boards. Failure was explicitly allowe
 as seen in the first part of appendix A where the client board may non-deterministically
 (the :: operator) choose to either reset itself, discover an error or continue running as
 expected. Notice the probabilities of these three events occurring is not specified
-as SPIN will exhaustively explore all possibilities regardless of the probabilities.
+as SPIN will exhaustively explore all possibilities regardless of their respective probabilities.
 
-The constraints placed on the model were written to enforce a consistent state between
-the boards. 
+The constraints placed on the model enforce a consistent state between
+the boards and ensure that the system either executes infinitely or all boards reach an 
+error state and exit. Although the second option is not desirable in practice, showing
+that the boards fail gracefully regardless of the failure mode is the most important
+part of the model as it proves 
 
-As previously explained, if the team had more resources (read time) or if the
+As previously explained, if the team had more resources or if the
 project came with significantly more danger (for example if the authors were modifying
 a space shuttle instead of a go-kart) then a more in depth model would be justified.
 
