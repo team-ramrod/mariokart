@@ -3,26 +3,25 @@
 \usepackage{cite}
 \usepackage{graphicx}
 \usepackage[cmex10]{amsmath}
-\usepackage{gensymb}
   \interdisplaylinepenalty=2500
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{fixltx2e}
 \usepackage{hyperref}
+\usepackage{listings}
 
 \input{mystyle}
 
 \begin{document}
+  
+  \lstset{language=C}
+
   \input{frontmatter}
   \input{introduction}
-  \input{background}
-  \input{implementation}
-  \input{discussion}
-  \input{conclusions}
-  \input{images}
+  \input{safety-by-design}
 
   % Change to balance the columns on the last page
   \IEEEtriggeratref{2}
 
   \bibliographystyle{IEEEtran}
-  \bibliography{IEEEabrv,../complete}
+  \bibliography{IEEEabrv,report}
 \end{document}
