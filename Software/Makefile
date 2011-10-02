@@ -132,6 +132,8 @@ test:
 LIB = $(OUTPUT_FOLDER)/libmario.a
 libs: $(LIB)
 
+splint:
+	splint $(INCLUDES) src/*/main.c
 
 hexes: $(patsubst src/%/main.c,$(OUTPUT_FOLDER)/%.bin,$(wildcard src/*/main.c))
 
