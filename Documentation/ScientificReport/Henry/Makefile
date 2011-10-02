@@ -1,10 +1,8 @@
 all:
-	pdflatex -draftmode -interaction=nonstopmode -file-line-error report
-	bibtex report
-	pdflatex -draftmode -interaction=batchmode report
-	pdflatex -interaction=batchmode report
+	./latexmake report
 
 clean:
 	rm -rf ./report.aux ./report.bbl ./report.blg ./report.log ./report.out
+	rm -rf ./*.fdb_latexmk
 
 .PHONY: clean
