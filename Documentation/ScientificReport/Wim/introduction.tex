@@ -6,9 +6,10 @@
     believe that a description of Software Engineering is not really required.
     Unfortunately true Software Engineering is relatively unknown, especially in
     programming courses run in Electrical departments around the world.  That is
-    not to say that Computer Science departments do a better job of teaching it,
-    in fact Software Engineering really should be taught as a subset of
-    Engineering \cite{Parnas_1999}, just that the style of programming taught to
+    not to say that Computer Science departments do a better job of teaching it
+    --- they don't \cite{Shepard:2001:MTT:376134.376180} and in fact Software
+    Engineering really should be taught as a subset of Engineering
+    \cite{Parnas_1999} --- just that the style of programming taught to
     Electrical students is generally light on following the engineering
     practices that the rest of their courses rely on.
 
@@ -16,8 +17,8 @@
     Engineering practice to the development of software.  However because of the
     nature of software as a much more fluid abstract thing than the normal
     circuits designed by Electrical Engineers the precise method of application
-    has to be changed.
-    
+    has to be changed \cite{vanVliet:2000:SEP:352372}.
+
     At the same time as being more abstract than a circuit software is also much
     more concrete; there are no (or at least very few) annoying real world
     effects directly on the software.  Assuming the circuit a microprocessor is
@@ -47,14 +48,16 @@ int return_three() {
     Version control is probably the aspect of software engineering that is best
     applied by current engineers, however most still use an old system such as
     Subversion despite their being much better alternatives like Git and
-    Mercurial available.  Unit testing is a developmental practice that has been
-    seeing a major increase in use for traditional software in recent years.
-    This is largely because of development processes such as Test-Driven and
-    Behaviour-Driven Development evangelised by the Agile Software Development
-    proponents.  Continuous integration is a major aspect of these newer
-    software development methods where quality control is continuously applied
-    to the system while under development, normally utilising unit testing as
-    the main quality assurance system.
+    Mercurial available
+    \cite{Glassy:2006:UVC:1089182.1089195,Gurbani:2005:CSO:1083258.1083264}.
+    Unit testing is a developmental practice that has been seeing a major
+    increase in use for traditional software in recent years.  This is largely
+    because of development processes such as Test-Driven and Behaviour-Driven
+    Development evangelised by the Agile Software Development proponents
+    \cite{Muller:2001:CSE:381473.381536}.  Continuous integration is a major
+    aspect of these newer software development methods where quality control is
+    continuously applied to the system while under development, normally
+    utilising unit testing as the main quality assurance system \cite{Holck}.
 
     A lot of this is standard practice in software development shops.
     Unfortunately despite the large amount of code written by other engineering
@@ -94,7 +97,7 @@ int return_three() {
 
       \item Communication between boards is carried over a Controller Area
             Network (CAN) bus.
-        
+
     \end{itemize}
 
     For more details see \emph{Embedded Hardware Design For Autonomous Electric
