@@ -4,7 +4,7 @@
 
     Since this report is aimed at an engineering audience most of you will
     believe that a description of Software Engineering is not really required.
-    Unfortunately true Software Engineering is relatively unknown, especially in
+    Unfortunately, true Software Engineering is relatively unknown, especially in
     programming courses run in Electrical departments around the world.  That is
     not to say that Computer Science departments do a better job of teaching it
     --- they don't \cite{Shepard:2001:MTT:376134.376180} and in fact Software
@@ -14,32 +14,25 @@
     practices that the rest of their courses rely on.
 
     So, what is Software Engineering?  It is simply the application of standard
-    Engineering practice to the development of software.  However because of the
+    Engineering practice to the development of software.  However, because of the
     nature of software as a much more fluid abstract thing than the normal
     circuits designed by Electrical Engineers the precise method of application
     has to be changed \cite{vanVliet:2000:SEP:352372}.
 
-    At the same time as being more abstract than a circuit software is also much
-    more concrete; there are no (or at least very few) annoying real world
+    At the same time as being more abstract than a circuit, software is also
+    much more concrete; there are no (or at least very few) annoying real world
     effects directly on the software.  Assuming the circuit a microprocessor is
     in has been designed well the Software Engineer can take it for granted that
     the digital I/O used by something like a Inter-Integrated Circuit
     (I\textsuperscript{2}C) is basically a perfect connection straight to the
     internals of another device.  Internally if there are no weird defects in
-    the microcontroller you can assume that a function like:
-
-\begin{lstlisting}
-int return_three() {
-    int three = 3;
-    return three;
-}
-\end{lstlisting}
-
-    will always return exactly 3.  Not 2 when the batteries start running low,
-    not 4 when it is a particularly hot day, always exactly 3.
+    the microcontroller you can assume that a function like the one shown in
+    Listing \ref{function} will always return exactly 3.  Not 2 when the
+    batteries start running low, not 4 when it is a particularly hot day, always
+    exactly 3.
 
     This exactness of software enables the use of a few techniques that are not
-    normally available in most engineering professions.  For example it is
+    normally available to most engineering professions.  For example it is
     possible to perform exhaustive testing and/or modelling of the system within
     acceptable time.
 
@@ -51,13 +44,14 @@ int return_three() {
     Mercurial available
     \cite{Glassy:2006:UVC:1089182.1089195,Gurbani:2005:CSO:1083258.1083264}.
     Unit testing is a developmental practice that has been seeing a major
-    increase in use for traditional software in recent years.  This is largely
-    because of development processes such as Test-Driven and Behaviour-Driven
-    Development evangelised by the Agile Software Development proponents
-    \cite{Muller:2001:CSE:381473.381536}.  Continuous integration is a major
-    aspect of these newer software development methods where quality control is
-    continuously applied to the system while under development, normally
-    utilising unit testing as the main quality assurance system \cite{Holck}.
+    increase in use for traditional software development during recent years.
+    This is largely because of development processes such as Test-Driven and
+    Behaviour-Driven Development evangelised by the Agile Software Development
+    proponents \cite{Muller:2001:CSE:381473.381536}.  Continuous integration is
+    another major aspect of these newer software development methods involving
+    continuous application of quality control to the system while under
+    development, normally utilising unit testing as the main quality assurance
+    system \cite{Holck}.
 
     A lot of this is standard practice in software development shops.
     Unfortunately despite the large amount of code written by other engineering
@@ -66,20 +60,27 @@ int return_three() {
     to the code they develop in pursuit of these goals.  This is most relevant
     to embedded development where the entire range of software engineering
     practices can be applied; some take a bit more effort because of the lower
-    abstraction level, but they are all applicable in some way.  Parts of this
-    are also relevant for the other engineering disciplines, Matlab may not be a
-    real programming language, but when developing simulations in it proper
-    software engineering practices should still be followed.
+    abstraction level, but they are all applicable in some way.  However parts
+    of this are also relevant for the other engineering disciplines; Matlab may
+    not be a real programming language, but when developing simulations in it
+    proper software engineering practices should still be followed.
+
+\begin{lstlisting}[float,caption={Small function example.},label=function]
+int return_three() {
+    int three = 3;
+    return three;
+}
+\end{lstlisting}
 
   \subsection{Mariokart}
 
     The system on which this report will base most of the examples was codenamed
     Mariokart.  This was a final year project for the University of Canterbury's
-    Bachelor of Engineering degree carried out by the authors.  The overall goal
-    of the project was to take one of the electric go-karts the department had
-    and retrofit a drive-by-wire system on to it with an overall goal of having
-    the kart autonomously drive around the campus.  For the purposes of this
-    report the main details of the system developed are:
+    Bachelor of Engineering degree carried out by the authors.  The aim of the
+    project was to take one of the electric go-karts the department had and
+    retrofit a drive-by-wire system on to it, with an overall goal of having the
+    kart autonomously drive around the campus.  For the purposes of this report
+    the main details of the system developed are:
 
     \renewcommand{\labelitemi}{$\bullet$}
     \renewcommand{\labelitemii}{$\circ$}
@@ -88,7 +89,7 @@ int return_three() {
             \begin{itemize}
               \item One for communication with a host laptop.
               \item One for steering.
-              \item One for brakes.
+              \item One for braking.
               \item One to interface to the motor controller.
               \item One for collecting data from a variety of sensors.
             \end{itemize}
@@ -100,5 +101,7 @@ int return_three() {
 
     \end{itemize}
 
-    For more details see \emph{Embedded Hardware Design For Autonomous Electric
-    Vehicle} by Henry Jenkins \cite{jenkins_2011}.
+    For more details of the system development see \emph{Embedded Hardware
+    Design For Autonomous Electric Vehicle} by Henry Jenkins \cite{jenkins_2011}
+    and for the autonomous goal see \emph{Development of a Marker Tracking
+    System for use in the Mariokart System} by Zachary Taylor \cite{Taylor_2011}.

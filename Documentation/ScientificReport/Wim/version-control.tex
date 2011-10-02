@@ -1,17 +1,18 @@
 \subsection{Version Control}
 
   Out of all Software Engineering practices Version Control is definitely the
-  most widely used by normal engineers.  Unfortunately it is still not used
-  everywhere.  For example, you have just finished looking at a new power
-  regulation system that you want to switch to for your next PCB revision; now
-  you need to write a quick report on why it is so much better than the
-  current system that you should spend all this time changing your design.
-  What's the first thing you should do, open a new Microsoft Word document?
-  Load up your \LaTeX\ editor?  \emph{No}, you should initialise a new
-  repository or ensure you have the projects documentation repository
-  available and updated.  Anything and everything that is more than a few
-  lines long, or will ever be shared with a team member should be under
-  version control.
+  most widely used by all engineering profession.  Unfortunately it is still not
+  used as much as it should be.  For example, you have just finished looking at
+  a new power regulation system that you want to switch to for your next PCB
+  revision; now you need to write a quick report to describe why it is so much
+  better than the current system -- enough better that it makes sense to spend
+  the time to change the design.  What's the first thing you should do, open a
+  new Microsoft Word document?  Load up your \LaTeX\ editor?  \emph{No}, you
+  should initialise a new repository or ensure you have the projects
+  documentation repository available and updated.  Anything and everything that
+  is more than a few lines long, or will ever be shared with a team member
+  should be under version control.  Even if it is just a todo list you wrote for
+  yourself and one other team member, it should be under version control.
 
   This is very important for a multitude of reasons.  Firstly it provides you
   with a time line of development activity.  If you need to revisit a decision
@@ -133,21 +134,21 @@
 
     Generally in an organizational context a central server will still be used
     with the DVCS system.  This way everyone has a single source so they can
-    keep their code tightly integrated and reduce the headaches introduced of
+    keep their code tightly integrated and reduce the headaches introduced if
     their repositories diverge too much.
 
-    Comparing the workflow mentioned above on a DVCS it would go as follows:
-    The developer updates their clone of the repository to the latest version.
-    They then do the changes to implement whatever feature they are working on.
+    Comparing the workflow mentioned above on a DVCS it would go as follows: The
+    developer updates their clone of the repository to the latest version.  They
+    then do the changes to implement whatever feature they are working on.
     These changes are committed to their local repository, this always succeeds
-    since they are the only ones with access to it.  They then push this
-    changeset up to the central server.  If no-one else has pushed this succeeds
-    and the central server will be at the same version as their repository.  If
-    someone else has pushed to the central server then they will have to pull
-    the changeset and merge it into their repository.  One of the key
-    differences at this point is that their change has been committed and can
-    trivially be recovered if something goes wrong.  Once they resolve the merge
-    they create a new merge commit that has both their change and the other
-    change that was pushed to the server as parents.  They can then push this
-    change up to the central server (assuming no one else has pushed during this
-    time).
+    since they are the only ones with access to it.  They then attempt to push
+    this changeset up to the central server.  If no-one else has pushed this
+    succeeds and the central server will be at the same version as their
+    repository.  If someone else has pushed to the central server then they will
+    have to pull the changeset and merge it into their repository.  One of the
+    key differences at this point is that their change has been committed and
+    can trivially be recovered if something goes wrong.  Once they resolve the
+    merge they create a new merge commit that has both their change and the
+    other change that was pushed to the server as parents.  They can then push
+    this change up to the central server (assuming no one else has pushed during
+    this time).
