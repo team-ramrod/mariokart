@@ -1,30 +1,62 @@
+
+\begin{abstract}
+An electric go-kart is outfitted with a drive-by-wire system in the first phase of development of 
+an autonomous vehicle. The safety aspects of such are design are evaluated and analysed  
+using typical project management techniques. A model of the distributed software required is 
+developed and proven and the place of modelling in systems engineering is discussed..
+\end{abstract}
+
 \section{Introduction}
 
-  \subsection{Stuff}
-  \subsection{Mariokart}
+\subsection{Project Description}
 
-    The system on which this report will base most of the examples was codenamed
-    Mariokart.  This was a final year project for the University of Canterbury's
-    Bachelor of Engineering degree carried out by the authors.  The overall goal
-    of the project was to take one of the electric go-karts the department had
-    and retrofit a drive-by-wire system on to it with an overall goal of having
-    the kart autonomously drive around the campus.  For the purposes of this
-    report the main details of the system developed are:
+The authors' reports are based on a group project carried out in the final year 
+of their Bachelor of Engineering degree at Canterbury University. The original goal 
+of this project was to take one of the electric go-karts used by the department for
+power electronics projects and convert it into an autonomous vehicle capable of
+a simple navigation task. Due to time restrictions the aim was reduced to implementing
+the mechanical and electronic systems needed to control the kart's motion over a USB link.
 
-    \renewcommand{\labelitemi}{}
-    \begin{itemize}
-      \item 
-        The overall design is a distributed system, 5 boards are used; one for
-        communication with a host laptop, one for steering, one for brakes, one
-        to interface to the motor controller and one for collecting data from a
-        variety of sensors.
+The authors refer to the project using the moniker Mariokart and this name may be used 
+throughout this report in reference to the team, the vehicle or the project itself.
 
-      \item
-        Each board is running an Atmel SAM7XC microprocessor.
+\subsection{System Design}
+The overall system design consisted of a laptop, electronics, a CAN bus, actuators and an interface to 
+the existing motor driver  hardware.
 
-      \item
-        
-    \end{itemize}
 
-    For more details see \emph{Embedded Hardware Design For Autonomous Electric
-    Vehicle} by Henry Jenkins \cite{jenkins_2011}.
+\begin{itemize}
+ \item Electronics: Five PCBs were located around the kart, each in close proximity to 
+ the sub-system it was responsible for. The PCBs were identical in layout, specialisation was
+ achieved by removing components from boards where they were not needed. For example
+ it was intended for only one board to communicate directly with a laptop and so the other
+ boards did not have USB headers. The decision to distribute control was made primarily to avoid
+ problems caused by driving motors and actuators over a long distance in a high noise environment.
+ \item Actuators: The brake pads were driven by a linear actuator mounted in place of the brake pedal. 
+ The actuator was mounted to the floor of the go-kart and its driver board was situated nearby. The 
+ steering column was similarly controlled by a DC motor mounted in place of the steering wheel 
+ and fixed to the frame. The DC motor included an encoder so that the relative angle of the 
+ steering column could be determined. Limit switches at each extreme of rotation ensures the
+ motor does not turn too far and allows for the absolute angle to be measured.
+ \item Controller laptop: To simplify use for future projects, the entire system is controllable via
+ commands sent over a USB cable. The communications board is responsible for interfacing with
+ a laptop and distributing the user's commands 
+ \item Motor interface:
+
+
+ \item The CAN bus:
+\end{itemize}
+
+For a more detailed description see \emph{Embedded Hardware Design For Autonomous Electric
+Vehicle} \cite{jenkins_2011}.
+
+\subsection{Risk}
+As with any vehicle, autonomous or otherwise, there is always a risk to the user, bystanders and
+ the go-kart itself if a part of the system malfunctions in any way. Replacing a human driver with 
+ electromechanical control systems removes the non-deterministic element of human error 
+ from the system but adds a new set of risks and potential design mistakes.
+ 
+ In this paper, the sources of these risks will be listed analysed and techniques for mitigation and
+ negation will be investigated and evaluated.
+
+
