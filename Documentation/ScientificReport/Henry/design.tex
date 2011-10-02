@@ -1,8 +1,13 @@
 \section{Design}
-  To avoid problems of running long signal wires, especially around the large
-  DC go-kart motor, it was decided to distribute our control hardware. This
-  also has the benefit that our system is extensible including being able add
-  new sensors.
+  To avoid problems of running long signal wires, especially near the large DC
+  go-kart motor, it was decided to distribute the electronic control hardware.
+  This also has the benefit that the system is extensible including being able
+  add new sensors later on with plenty of spare IO spread around the kart.
+
+  To make the design simpler and cheaper the same design was used for all the
+  main PCBs. Just not populating certain components where they are un-nessary.
+  For example, the USB connector was only placed on the \emph{comms board} as it
+  is the only board that requires to talk to a computer.
 
   \subsection{Board locations}
   To prevent long runs of digital logic in the go-kart there were five PCBs
@@ -52,25 +57,23 @@
     standard in 1983, but now days the ISO11989 standard also describes CAN 2.0
     \cite{boschCAN, ISOCAN}.}
 
-    \item[UART]{Using Universal Asynchronous Receiver/Transmitter was dropped
-    as an idea rather early on. This is because it does not support the error
-    correction that was needed for the project. Another area it was lacking is
-    being expandable. A new UART would be required for each new node or
-    device.}
+    \item[UART]{Using UART was dropped as an idea rather early on. This is
+    because it does not support the error correction that was needed for the
+    project. Another area it was lacking is being expandable. A new UART would
+    be required for each new node or device.}
 
     \item[SPI]{For much the same reasons UART was not used for our central
-    communications bus, Serial Peripheral Interface Bus was also not
-    appropriate.} 
+    communications bus, SPI was also not appropriate.} 
 
   \end{itemize}
 
-  It was decided to that using a CAN Bus would be the best option. Some major
-  factors that influenced this choice were; the CAN standard had better
-  documentation, later work can add more nodes into the network, hardware level
-  collision and error detection and CAN controller supported by Atmel SAM7
-  series micro controller. Atmel also provided a CAN transceiver
-  IC\cite{ata666}, however this could have been replaced by a IC made by Texas
-  Instruments\cite{ti-can-trans}.
+  It was decided that using a CAN Bus would be the best option. Some major
+  factors that influenced this choice over LIN were; the CAN standard had better
+  documentation, more nodes can be added to the network later on with little
+  extra effort, hardware level collision and error detection and CAN controller
+  supported by Atmel SAM7 series micro controller. Atmel also provided a CAN
+  transceiver IC\cite{ata666}, however this could have been replaced by a IC
+  made by Texas Instruments\cite{ti-can-trans}.
 
   Although both UART and SPI were not used for the system bus, both can be used
   for local sensors, or other expansion modules.
@@ -78,16 +81,17 @@
   \subsection{Micro Controller}
   The main requirements of the micro controller are that it supports both a CAN
   controller and hardware USB. Also because previous projects had used either
-  the Atmel ATMega or the Atmel AT91SAM7 micro controllers, we had preference
-  of using these rather than learning a new architecture and data sheet format.
+  the Atmel ATMega or the Atmel AT91SAM7 micro controllers, it was of preference
+  to use these rather than learning a new architecture and data sheet format.
 
   \subsection{Motor Drivers}
   To drive the actuators for the steering and brake we decided to use a motor
   driver IC. By basing our motor driver circuit specification on the current
   draw of the steering motor, then reused the same design for the brake linear
-  actuator. This was done both to save time in the hardware design, but also
-  time in software later on\cite{Looman_2011}. The motor drives were placed on their own small PCB
-  to save space on the main PCB and also provide more opportunity for heat
+  actuator we could use the same circuit for both actuators. This was done both
+  to save time in the hardware design, but also time in software later
+  on\cite{Looman_2011}. The motor driver circuits were placed on their own small
+  PCB to save space on the main PCBs and also provide more opportunity for heat
   dissipation if this were to become a problem. 
 
   The motor driver that was used is the DRV8432 made by Texas
@@ -108,7 +112,7 @@
 
   \subsection{Expansion IO}
   To allow the hardware to be expandable, two 3.3V UARTs, one 3.3V SPI and
-  one 5V logic SPI are been exposed on each PCB. Each serial port has it's own
+  one 5V logic SPI are exposed on each PCB. Each serial port has it's own
   PicoBlade connector\cite{PicoBlade} as well as all the power supplies are
   exposed via another connector. All the serial port pins can also be set to be
   GPIO to allow them to be used for other purposes too.
@@ -121,18 +125,18 @@
 
   \subsection{Encoder Reading}
   Because getting both speed and directions from an encoder signal in software
-  is quite tricky, a quadrature clock converter was used. This takes in the
-  encoder pulses and out puts a single pulse and which direction it is rotating
-  in. Which allows a simple counter and incrementing or de-incrementing it to
-  keep the actuators position.
+  is quite tricky, a quadrature clock converter was placed on the main steering
+  PCB.  This takes in the encoder pulses and out puts a single pulse and which
+  direction it is rotating in. Which allows a simple counter and incrementing or
+  de-incrementing it to keep the actuators position.
 
   \subsection{Debugging}
   To make debugging easier, epically in the early stages of development, a two
-  digit seven segment display and 4 push buttons are placed on each PCB. The
+  digit seven segment display and 4 push buttons are placed on each main PCB. The
   display is driven by a display driver. This display driver takes a four bit
   number in parallel and converts it into the segment array lines. It is
   multiplexed with the second segment so by switching between the displays
-  faster than 20Hz allows both digits to be used.
+  faster than 20Hz allows both digits can be used.
 
   \subsection{On Board Power}
   On each board there is four different voltage five levels. There is the
@@ -154,7 +158,8 @@
     also.
 
     \subsubsection{12 Volts}
-    Both the inductance sensor used for speed detection and the motor driver
-    required 12 volts, which both of these applications use less than 150mA so a
-    TPS7A4901 linear voltage regulator was used\cite{TPS7A4901}.
+    Both the inductance sensor, which is used for speed detection, and the motor
+    driver required 12 volts. Both of these applications use less than 150mA so
+    a Texas Instruments TPS7A4901 linear voltage regulator was
+    used \cite{TPS7A4901}.
 

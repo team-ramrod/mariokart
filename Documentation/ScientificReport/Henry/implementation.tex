@@ -1,8 +1,6 @@
 \section{Implementation}
-  This meant that it was going to be ideal associating electronic hardware with
-  each component of the kart. This was especially important as to minimise the
-  delay for PID control of the actuators meant that a higher baud rate was
-  required. 
+  The Main PCBs are four layer PCBs that were designed using Altium software.
+  They are approximately 120mm long by 60mm wide.
 
   \subsection{Schematics}
   Using Altium Designer the schematics were laid out. Two techniques were used
@@ -24,7 +22,7 @@
   Figure \ref{main-schematic} shows the top level schematic with the MCU in the
   middle of the page. The green boxes on the sheet show where other sub sheets
   have been included and wired up. For example, doing this all the decoupling
-  capacitors for the micro controller can be essentially hidden in one of these
+  capacitors for the micro controller are essentially hidden in one of these
   sub sheets. 
 
   \subsection{PCB Design}
@@ -62,7 +60,7 @@
   were manually cut into the individual PCBs, using a band saw.
   
   \subsection{PCB Population}
-  Component population was done by hand initially using a PCB oven, then
+  Component population was done initially using a PCB oven, then
   reverting back to hand soldering once the bulk of the components were on the
   PCBs. Population was done in stages, to allow testing of the boards at each
   stage. Figure \ref{fullPCB} shows the brake PCB with all it's components on
@@ -79,9 +77,9 @@
   Before the PCBs even had any components put on them they were tested for
   manufacturing and design flaws. Simply using a multi meter, checking to make
   sure the power planes were not shorted and other key pads were connected as
-  they should have been. Then at every stage especially making sure the power
-  and ground planes were not shorted was a key concept. At several stages
-  shorted pins were picked up because of this testing.
+  they should have been. Then continued to be tested at every stage especially
+  making sure the power and ground planes were not shorted was a key concept. At
+  several stages shorted pins were picked up because of this testing.
 
   Once the PCBs had their micro controller placed on its PCB, led test code was
   written to ensure we were able to program and control the board. This also
