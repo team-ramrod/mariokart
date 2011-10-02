@@ -1,17 +1,35 @@
 \section{Performance of Solutions}
-The algorithms were put through a series of tests to guage how well they would perform in the system. A summary of the result of these tests is shown in Table~\ref{results}. All the tests were performed on a test was performed on a 2.1 GHz notebook with an Intel Centrino Duo processor. The webcam was a Creative Labs Laptop Integrated Webcam. This webcam had a resolution of 320 by 240 pixels anh operated at 20 fps.
+The algorithms were put through a series of tests to guage how well they would perform in the system. A summary of the result of these tests is shown in Table~\ref{results}. All the tests were performed on a test was performed on a 2.1 GHz notebook with an Intel Centrino Duo processor. The webcam was a Creative Labs Laptop Integrated Webcam. This webcam had a resolution of 320 by 240 pixels and operated at 20 fps.
+
+\begin{table}
+	\begin{center}
+    	\begin{tabular}{ | l | l | l | p{2.5cm} |}
+    	\hline
+    	Algorithm & Colour & SURF & Chessboard \\ \hline
+		Robust to light & Poor & Average & Good \\ \hline
+		FPS & 25+ & 2 & 15 \\ \hline		
+		Robust to motion & Very good & Poor & average \\ \hline		
+		Max distance & 10 m & 1.1 m & 3.0 m \\ \hline
+		Robust to background & Poor & Average & Very Good \\ \hline
+    	\end{tabular}
+	\end{center}
+	
+	\caption{Results from testing}
+	\label{results}
+
+\end{table}
 
 \subsection{Robustness to lighting}
-The robustness to light was tested by setting up an algorithm to recognise its marker in a room with a large amount of natural light. The lighting was then changed by closing the curtains and seeing if the object was still detected, once this was done the rooms lights were turned on. The maximum distance an object could be detected at was. Colour detection performed the worst in this test requiring recalibration before it could detect the target after every change in lighting. Its robustness could be improved but this caused issues with background noise, this is gone into in more detail in the section on background noise. This problem steamed from the fact that while the hue of the object being tracked remained constant changing the lighting levels altered the hue the camera perceived the object to be by a small amount. This problem stemmed right from the fundamental method by which the camera detects light and so very little could be done without recalibrating to attempt to account for this change \cite{detect}. The SURF algorithm handled almost all lighting changes without issue. The one situation in which it failed was if enough glare was coming off the object it was tracking to completely obscurer most of the features it was tracking. The chessboard algorithm worked under every tested lighting condition. Large amounts of glare reduced the distance it could be detected from but even in this situation the small chessboard could be detected at up to 4m. An example of this systems robustness is shown in Figure.
+The robustness to light was tested by setting up an algorithm to recognise its marker in a room with a large amount of natural light. The lighting was then changed by closing the curtains and seeing if the object was still detected, once this was done the rooms lights were turned on. Colour detection performed the worst in this test requiring recalibration before it could detect the target after every change in lighting. Its robustness could be improved but this caused issues with background noise, this is gone into in detail in subsection E. This problem steamed from the fact that while the hue of the marker being locateded remained constant changing the lighting levels altered the hue the camera perceived the marker to be by a small amount. This problem stemmed right from the fundamental method by which the camera detects light and so very little could be done without recalibrating to attempt to account for this change \cite{detect}. The SURF algorithm handled almost all lighting changes without issue. The one situation in which it failed was if enough glare was coming off the marker it was locating to completely obscurer most of the features it was trying to find. The chessboard algorithm worked under every tested lighting condition.
 
 \subsection{Frame processing speed}
 The FPS (frames per second) for each system was recorded under normal operation. The color detection algorithm required easily the least processing power of all the computer vision methods looked at running at a solid 20 fps only limited by the speed of the camera it was receiving the images from. The SURF algorithm operated very slowly original operating at 0.8 FPS on locating a 640 by 480 pixel reference image in the scene. This speed was increase to 2 FPS by decreasing the reference image to 320 by 240. This was the lowest quality reference image which could be accurately placed in the scene. Chessboard detection operated slowly if the chessboard had not been located in the previous frame only operating at a rate as low as 2 fps. Once the chessboard was found however the algorithm used the previous location to find it more quickly raising the frame rate to around 15 fps.
 
 \subsection{Robustness to motion}
-Robustness to motion was tested in a fairly subjective manner. The marker was held 1 m from the camera and shaken until detection was lost. With colour detection regardless of how fast the marker was moved detection was never lost, though the detected size decreased by up to around 50\% as the image of the marker became a blur. With SURF detection only slow and careful movements would prevent the camera losing the target. Chessboard detection would lose the board if any quick or jerky movements were made. While this test was quite crud it clearly showed that SURF would be too susceptible to motion blur to be appropriate. It also showed that chessboard detection was also weak to this and a higher quality camera or some pre processing might be needed to help reduce the effect of motion blur when the system is attached to the kart.
+Robustness to motion was tested in a fairly subjective manner. The marker was held roughly 1m from the camera and shaken until detection was lost. With colour detection regardless of how fast the marker was moved detection was never lost, though the detected size decreased by up to around 50\% as the image of the marker became a blur. With SURF detection only slow and careful movements would prevent the camera losing the target. Chessboard detection would lose the board if any quick or jerky movements were made. While this test was quite crud it clearly showed that SURF would be too susceptible to motion blur to be appropriate. It also showed that chessboard detection was weak to this and a higher quality camera or some pre-processing might be needed to help reduce the effect of motion blur when the system is attached to the kart.
 
 \subsection{Maximum distance for detection}
-Maximum distance the algorithm could detect a marker from was tested next. To make this a fair test for all systems the marker size for each system was set to an A4 page with the colour detections blue ball replaced by a sheet of blue card. The test was performed by walking away from the camera holding the marker and recording the distance at which the target was lost for the first time. The process was repeated three times and the results shown in Table~\ref{dist}. SURF performed easily the poorest of the solutions with the marker needing to take up a large portion of the field of view before recognition occurred. The chessboard algorithm lost the beard at around 3 m. At this point the 2.5 cm squares on the board were only around 3 pixels in height and so it would be hard to expect much more from this algorithm without a larger board or better camera. Similarly the colour detection operated up to 10 m at which point the marker was so small on the camera that it was removed as noise during opening. All three algorithms only operated over a relatively short distance in comparison to how far the kart might be from the marker. This would mean that the actual marker to be tracked would need to be significantly larger then those used in testing or/and a higher resolution camera would have to be used.
+The maximum distance the algorithm could detect a marker from was tested next. To make this a fair test for all systems the marker size for each system was set to an A4 page with the colour detections blue ball replaced by a sheet of blue card. The test was performed by walking away from the camera holding the marker and recording the distance at which the target was lost for the first time. The process was repeated three times and the results shown in Table~\ref{dist}. SURF performed easily the poorest of the solutions with the marker needing to take up a large portion of the field of view of the camera before recognition occurred. The chessboard algorithm lost the board at around 3m. At this point the 2.5cm squares on the board were only around 3 pixels in height and so little more in terms of performance could be expected from the algorithm. The colour detection operated up to 10 m at which point the marker was so small on the camera that it was removed as noise during opening. All three algorithms only operated over a relatively short distance in comparison to how far the kart might be from the marker. This would mean that the actual marker to be tracked would need to be significantly larger then those used in testing and/or a higher resolution camera would have to be used.
 
 \begin{table}
 	\begin{center}
@@ -24,31 +42,30 @@ Maximum distance the algorithm could detect a marker from was tested next. To ma
     	\end{tabular}
 	\end{center}
 	
-	\caption{Maximum distance before detection of marker is lost (all values in meters).}
+	\caption{Distance before detection of marker is lost (all values in meters).}
 	\label{dist}
 	
 \end{table}
 
 \subsection{Robustness to background noise}
-The ability of the algorithm to operate on a variety of backgrounds was tested. How effected the colour detection was was closely coupled to how well it performed in varying light. If the range of hues and saturations was set to be very close to the marker then almost no issues with background objects occurred. An example of this can be seen in Figure~\ref{ball} where the blue ball is detected while sitting next to a blue can and a blue towel with neither of these being detected. These close tolerances meant that lighting had to be kept almost constant for the marker to be detected. If these ranges were relaxed to work in more varying light then any similarly coloured part of the background would also be detected. The SURF algorithm also had issues with the background. When the image was being tracked a small amount of the points (usually less then 10\%) would be attributed to points in the background. These incorrect points did not effect the algorithm however as the RANSAC algorithm detected them for the outliers that they were. The main issues came when the image was far away, partly obscured or absent from the scene. In this situation a large number of points would be detected as locations in the background giving false positives for locations of the image. This locations were almost always easy to detect as they often claiming the marker to be hundreds of meters away however they still required filtering and subtracted from the robustness of SURF. The chessboard was almost completely unaffected by the background. This was because while on occasion a false corner point was detected as it did not match the structure of the rest of the points it was disguarded without problem. This lead to no false positives as for this to occur 42 false points would have had to of been detected laid out in a 6 by 7 grid.
+The ability of the algorithm to operate on a variety of backgrounds was tested. How much the colour detection was effected was closely coupled to how well it performed in varying light. If the range of hues and saturations was set to be very close to the markers colour then almost no issues with background objects occurred. An example of this can be seen in Figure~\ref{ball} where the blue ball is detected while sitting next to a blue can and a blue towel with neither of these being detected. These close tolerances meant that lighting had to be kept almost constant for the marker to be detected. If these ranges were relaxed to work in more varying light then any similarly coloured part of the background would also be detected. The SURF algorithm also had issues with the background. When the image was being tracked a small amount of the points (usually less then 10\%) would be attributed to points in the background. These incorrect points did not effect the algorithm however as the RANSAC algorithm detected them for the outliers that they were. The main issues came when the image was far away, partly obscured or absent from the scene. In these situations a large number of points would be detected at locations in the background giving false positives for locations of the marker. These locations were almost always easy to detect as they usually claimed that the marker was hundreds of meters away however they still required filtering and subtracted from the robustness of SURF. The chessboard was almost completely unaffected by the background. This was because while on occasion a false corner point was detected as it did not match the structure of the rest of the points it was disguarded without problem. This lead to no false positives as for this to occur 42 false points would have had to of been detected laid out in a 6 by 7 grid.
 
 \subsection{Accuracy of distance measurement}
-The accuracy of the distances given was tested by placing the marker at 3 different points and recording the error of the system. These measurements are shown in table TODO. The color detection is in reality less accurate then this table would show. This is because the amount of the marker detected depends on the lighting conditions and the distance was calculated by the size of the marker. This meant turning on a light could change the distance the process belived the marker was at by up to 20\%.
+The accuracy of the distances given was tested by placing the marker at 3 different points and recording the error of the system. These measurements are shown in Table~\ref{acc}. The SURF detection performed poorly in this test having an average error of 18\%. It also failed to register on the 2 meters test performing easily the worst of the three. Chessboard detection was almost as accurate as the tape measure being used to compare the distances giving a maximum error of only 1.5\%. Colour detection performed far better then expected given its crud distance calculation method having an error of only 6.8\%. Something that must be taken into account however is that the color detection is in reality less accurate then this test indicated. This is because the amount of the marker detected depends on the lighting conditions and the distance was calculated using size of the marker. This meant turning on a light could change the distance the process believed the marker was at by a large amount (20\% in one rough test).
 
 \begin{table}
 	\begin{center}
-    	\begin{tabular}{ | l | l | l | p{2.5cm} |}
+    	\begin{tabular}{ | p{1.1cm} | p{0.5cm} | p{0.6cm} | p{0.5cm} | p{0.6cm} | p{0.5cm} | p{0.6cm} | l |}
     	\hline
-    	Algorithm & Colour & SURF & Chessboard \\ \hline
-		FPS & 25+ & 3 & 15 \\ \hline
-		Robust to light & No & Yes & Yes \\ \hline
-		Max distance & 20 m & 2 m & 10 m \\ \hline
-		Needs calibration & Yes & No & No \\ \hline
-		Robust to motion & Yes & No & handles small movements \\ \hline
+    	Algoritm & \multicolumn{2}{|c|}{At 0.5m} & \multicolumn{2}{|c|}{At 1m} & \multicolumn{2}{|c|}{At 2m} & Avg \\ \hline
+    	& Value & Error & Value & Error & Value & Error & \\ \hline
+		Colour & 0.57 & 14.0\% & 1.03 & 3.0\% & 2.07 & 3.5\% & 6.8\% \\ \hline
+		SURF & 0.61 & 22.0\% & 1.14 & 14.0\% & - & - & 18.0\% \\ \hline
+		Chessboard & 0.495 & 1.0\% & 0.99 & 1.0\% & 1.97 & 1.5\% & 1.2\% \\ \hline
     	\end{tabular}
 	\end{center}
 	
-	\caption{Results from testing}
-	\label{results}
-
+	\caption{Accuracy of distance measurements}
+	\label{acc}
+	
 \end{table}
