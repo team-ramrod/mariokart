@@ -1,6 +1,7 @@
 /* 
  * File:   Registration.cpp
- * Author: z
+ * Author: Based almost entirely on code presented in COSC428 by Richard Green
+ * modified to output the board transforms to a variable rather then printing them to the screen
  *
  * Created on September 6, 2011, 1:55 PM
  */
