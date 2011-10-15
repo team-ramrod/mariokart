@@ -1,6 +1,8 @@
 MarioKart
 =========
 
+The full description of this project can be found on our [github wiki](https://github.com/team-ramrod/mariokart/wiki)
+
 Purpose
 -------
 
